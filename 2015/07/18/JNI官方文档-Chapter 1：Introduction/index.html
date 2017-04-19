@@ -1,0 +1,579 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.3"/>
+
+
+    <meta name="description" content="Personal Blog" />
+
+
+
+  <meta name="keywords" content="Java JNI," />
+
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    analytics: {
+      google: ''
+    },
+    sidebar: 'post'
+  };
+</script>
+
+
+
+
+  <title> JNI官方文档-Chapter 1：Introduction // GeneBlue's Blog </title>
+</head>
+
+<body>
+<!--[if lte IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari." style='margin-left:auto;margin-right:auto;display: block;'/></a></div> <![endif]-->
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <div id="header" class="header">
+      <div class="header-inner">
+        <h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand">
+      <span class="logo">
+        <i class="icon-logo"></i>
+      </span>
+      <span class="site-title">GeneBlue's Blog</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+
+  <ul id="menu" class="menu">
+     
+    
+      
+      <li class="menu-item menu-item-home">
+        <a href="/">
+          <i class="menu-item-icon icon-home"></i> <br />
+          首页
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-about">
+        <a href="/about">
+          <i class="menu-item-icon icon-about"></i> <br />
+          关于
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-archives">
+        <a href="/archives">
+          <i class="menu-item-icon icon-archives"></i> <br />
+          归档
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-tags">
+        <a href="/tags">
+          <i class="menu-item-icon icon-tags"></i> <br />
+          标签
+        </a>
+      </li>
+    
+  </ul>
+
+
+      </div>
+    </div>
+
+    <div id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              JNI官方文档-Chapter 1：Introduction
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于 2015-07-18
+        </span>
+
+        
+
+        
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <p><strong>Author: GeneBlue</strong></p>
+<p>在使用NDK的时候，发现自己对jNI机制并不是很了解，就把官方文档拿来看了看并翻译了一下。官方文档地址看<a href="http://docs.oracle.com/javase/6/docs/technotes/guides/jni/spec/jniTOC.html" target="_blank" rel="external">这里</a>。自己也是首次翻译英文资料，有翻译不妥的地方请联系我，我将及时更改。</p>
+<hr>
+<p>本篇开始介绍JNI（Java Native Interface）技术。JNI是一种本地编程接口。它允许运行在java VM 中的java代码与使用C/C++或汇编等其它编程语言写成的应用或者库进行交互操作。</p>
+<p>JNI机制能够存在的最重要一点在于利用了JVM的基础实现是没有被限制死。因此，JVM的构建者可以增添对JNI的支持而不会影响到VM的其他部分。开发人员在编写完一个版本的native程序或库后就可以在所有支持JNI技术的JVM中运行。</p>
+<a id="more"></a>
+<p>本篇包括以下几个话题：</p>
+<ul>
+<li>Java Native Interface Overview</li>
+<li>Background</li>
+<li>Objectives</li>
+<li>Java Native Interface Approach</li>
+<li>Programming to the JNI</li>
+<li>Changes</li>
+</ul>
+<h3 id="Java-Native-Interface-Overview"><a href="#Java-Native-Interface-Overview" class="headerlink" title="Java Native Interface Overview"></a>Java Native Interface Overview</h3><p>当使用java语言开发应用程序时，我们常常遇到java语言无法满足程序需求的情况。所以在应用程序无法完全用java语言实现时，开发人员就会使用JNI编写java本地方法来解决程序需求。</p>
+<p>在以下情形中可能会用到java本地方法：</p>
+<ul>
+<li>标准的java类库不支持程序需求的平台特性</li>
+<li>希望通过java语言直接使用由其它语言编写的库</li>
+<li>希望通过低级语言如汇编来实现计算复杂度较高的部分代码，依次来提高计算效率</li>
+</ul>
+<p>通过JNI编程，可以使用本地方法来达到以下目的：</p>
+<ul>
+<li>创建、检查和更新java对象（包括arrays和strings）</li>
+<li>调用java方法</li>
+<li>捕获和抛出异常</li>
+<li>加载类和获得类信息</li>
+<li>执行运行时的类型检查</li>
+</ul>
+<p>也可以通过JNI的Invocation API将任意一个本地程序嵌入到java VM中。这使得开发者可以很容易地将已存在的程序成为可以被java语言使用的（java-enabled）而且不需要与VM的源码相关联。</p>
+<h3 id="Historical-Background"><a href="#Historical-Background" class="headerlink" title="Historical Background"></a>Historical Background</h3><p>不同构造者的VM可能会提供不同的本地方法接口。在特定平台，这些不同的接口会造成开发人员开发、维护和分发不同版本的本地方法库。</p>
+<p>我们简要地列举一些本地方法接口：</p>
+<ul>
+<li>JDK1.0本地方法接口</li>
+<li>Netscape java运行接口</li>
+<li>Microsoft’s Raw本地接口和Java/COM接口</li>
+</ul>
+<h4 id="JDK-1-0本地方法接口"><a href="#JDK-1-0本地方法接口" class="headerlink" title="JDK 1.0本地方法接口"></a>JDK 1.0本地方法接口</h4><p>JDK 1.0中首次引入了本地方法接口。不幸的是，有两个主要问题导致该版本的接口无法对其它的java VM适用。</p>
+<p>首先，本地代码是以C结构体成员的形式进入到java对象的字段中。但是，java语言的说明文档中没有定义对象在内存中是如何分配的。如果一个java VM以不同的方式在内存中分配对象，那么开发人员就不得不重新编译本地方法库。</p>
+<p>其次，JDK 1.0本地方法接口依赖较为保守的垃圾收集策略。比如无节制地使用unhand macro就会导致垃圾收集器以一种较为保守的方式扫描本地方法的内存栈。</p>
+<h4 id="Java-运行接口"><a href="#Java-运行接口" class="headerlink" title="Java 运行接口"></a>Java 运行接口</h4><p>Netscape曾推荐的JRI（The Java Runtime Interface）对于JVM提供的服务来说是一种较通用的接口。本质上，JRI被设计的容易移植，它在基本的JVM的实现细节上做了些许改动。JRI机制解决了很多的问题，比如本地方法，调试，反射，嵌入（invocation）等。</p>
+<h4 id="Raw本地接口和Java-COM接口"><a href="#Raw本地接口和Java-COM接口" class="headerlink" title="Raw本地接口和Java/COM接口"></a>Raw本地接口和Java/COM接口</h4><p>Microsoft的JVM支持两种本地方法接口。在低等级中，它提供了高效的RNI（Raw Native Interface）。在JDK的本地方法接口方面，RNI机制提供了高度的源码级向后兼容性。但是它有一个重要的不同点，本地代码必须使用RNI的函数来精确地与垃圾收集器交互，而不是依赖保守的垃圾收集策略。</p>
+<p>在高等级中，微软的Java/COM接口为JVM提供了一个不受语言约束的单独的二进制接口。java代码即使是java对象也可以使用COM对象。同样地，一个java类也会以COM类的形式对系统的剩余部分暴露。</p>
+<h3 id="Objectives"><a href="#Objectives" class="headerlink" title="Objectives"></a>Objectives</h3><p>我们相信提供一个统一的经过深思熟虑的单独接口可以为所有人带来以下优点：</p>
+<ul>
+<li>每一个VM的构建者都能够支持更多的本地代码</li>
+<li>编译工具提供商也不必再维护针对不同本地方法接口的版本工具</li>
+<li>应用程序开发者可以一次编译本地代码并在所有的JVM上运行</li>
+</ul>
+<p>标准化本地方法接口的最好办法就是召集所有与JVM相关的厂商和人员。因此，在关于java授权中标准本地接口的设计方面，我们组织了一些列交流会。交流会上一致认同标准的本地方法接口必须满足以下几点要求：</p>
+<ul>
+<li>二进制兼容性-二进制兼容性的基本目标是在一个平台上本地方法库可以适用于所有的JVM。开发人员也只需维护该平台上的一个版本的本地方法库。</li>
+<li>效率-为了支持计算复杂的代码，本地方法接口必须利用小部分的上层代码。所有确保VM独立性（保证二进制兼容性）的技术都涉及了一定数量的上层代码。我们必须知道如何在效率和VM独立性之间折中。</li>
+<li>泛函数-为了本地方法等顺利完成任务，接口必须能揭示足够多的JVM内部构件</li>
+</ul>
+<h3 id="Java-Native-Interface-Approach"><a href="#Java-Native-Interface-Approach" class="headerlink" title="Java Native Interface Approach"></a>Java Native Interface Approach</h3><p>我们希望采用现存的接口来作为标准接口，这样可以减少大量的工作，因为不同VM里的接口是不同的。不幸的是，没有一个现存的途径可以满足标准接口的需求。</p>
+<p>Netscape的JRI是一种轻便的本地方法接口，它起初是最靠近我们的设想，而且也在我们设计之初被采用。对JRI较熟悉的读者会觉得在API命名约定，方法和字段的使用，本地和全局引用的使用等都是非常相似的。尽管我们力推JRI，但是JRI（尽管虚拟机可以同时支持JRI和JNI）并不支持二进制兼容性。</p>
+<p>Microsoft的RNI对JDK 1.0做了改善因为它解决了本地方法和垃圾收集器之间的问题。但是RNI不满足虚拟机的独立性，就像JDK，RNI的本地方法仍然采用C结构体的形式进入java对象。这导致两个主要问题：</p>
+<ul>
+<li>RNI对本地代码暴露了java对象的内部布局</li>
+<li>以C结构体的形式直接进入java对象可能会造成大量的“写障碍”，在高版本的垃圾收集算法中尤为突出。</li>
+</ul>
+<p>作为二进制独立的COM可以确保在不同虚拟机中二进制兼容性。只能通过间接方式调用COM的方法，因为COM中也设计了部分上层代码。此外，在解决版本问题方面，COM对象相比动态链接库有了极大的提升。</p>
+<p>但是采用COM作为标准本地方法接口也存在几点障碍：</p>
+<ul>
+<li>第一，Java/COM接口缺乏几个重要功能，例如获取私有的成员字段和提供通用的异常。</li>
+<li>第二，Java/COM接口自动为java对象提供标准的IUnknown和IDispatch COM接口，所以本地代码可以获取到公有的方法和字段。不幸的是，IDispatch接口没有解决java方法过度加载和匹配函数名大小写不敏感的问题。而且，所有通过IDispatch接口暴露的java方法都会被重新封装执行动态类型检查。这是因为在本质上IDispatch接口本设计成弱类型的语言。</li>
+<li>第三，COM被设计为允许软件模块（包括功能完善的应用）协同工作，而不是解决单个的低级功能。我们认为让所有的java类和低层次本地方方法作为软件模块是不合适的。</li>
+<li>第四，COM缺乏对UNIX平台的支持也是一个阻碍因素</li>
+</ul>
+<p>尽管作为COM对象的java对象没有对本地代码暴露，但JNI接口本身对COM具备二进制兼容性。JNI采用COM采用的跳转表结构和调用约定。这意味着，一旦COM满足了跨平台特性，对JVM来说JNI就可以成为一个COM接口。</p>
+<p>JNI并没有被设计为针对特定JVM的唯一的本地方法接口。一个标准的接口是有利于开发者的，这是的能在不同的JVM中加载同一个本地代码库。在一些情况下，开发者可能会使用低级的，特定虚拟机的接口来达到更高的效率。在其它情况下，开发者会采用高级接口来构建软件模块。从长远来看，软件技术变得更加成熟，本地方法会渐渐失去它们的意义。</p>
+<h3 id="Programming-to-the-JNI"><a href="#Programming-to-the-JNI" class="headerlink" title="Programming to the JNI"></a>Programming to the JNI</h3><p>开发本地方法的人员应该学会JNI编程。JNI编程可以做到编程与终端用于的VM相隔离。通过标准化JNI，你将会更好地在JVM中使用本地方法库。</p>
+<p>如果你是JVM的构建者，那么你应该在JVM中实现JNI机制。经过时间的检验JNI在VM的实现上不会牵涉任何上层代码而且没有什么限制，包括对象表述，垃圾收集机制等。如果你发现我们遗漏的问题请给我们反馈。</p>
+<h3 id="Changes"><a href="#Changes" class="headerlink" title="Changes"></a>Changes</h3><p>在Java SE 6.0中，一直被反对的JDK1_1InitArgs和JDK1_1AttachArgs结构已经被移除，取而代之的是JavaVMInitArgs和JavaVMAttachArgs结构。</p>
+
+      
+    </div>
+
+    <div class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java-JNI/"> #Java JNI </a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/04/20/Android开发中错误解决（持续更新）/">Android开发中错误解决（持续更新）</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/07/20/JNI官方文档-Chapter 2：Design Overview/">JNI官方文档-Chapter 2：Design Overview</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </div>
+  </div>
+
+
+
+    
+      <div class="comments" id="comments">
+        
+      </div>
+    
+  </div>
+
+
+        </div>
+
+        
+      </div>
+
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview">
+        <div class="site-author motion-element">
+          <img class="site-author-image" src="/images/default_avatar.jpg" alt="GeneBlue" />
+          <p class="site-author-name">GeneBlue</p>
+        </div>
+        <p class="site-description motion-element">Personal Blog</p>
+        <div class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">17</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">0</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </div>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+      </div>
+
+      
+        <div class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-Native-Interface-Overview"><span class="nav-number">1.</span> <span class="nav-text">Java Native Interface Overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Historical-Background"><span class="nav-number">2.</span> <span class="nav-text">Historical Background</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JDK-1-0本地方法接口"><span class="nav-number">2.1.</span> <span class="nav-text">JDK 1.0本地方法接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Java-运行接口"><span class="nav-number">2.2.</span> <span class="nav-text">Java 运行接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Raw本地接口和Java-COM接口"><span class="nav-number">2.3.</span> <span class="nav-text">Raw本地接口和Java/COM接口</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Objectives"><span class="nav-number">3.</span> <span class="nav-text">Objectives</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-Native-Interface-Approach"><span class="nav-number">4.</span> <span class="nav-text">Java Native Interface Approach</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Programming-to-the-JNI"><span class="nav-number">5.</span> <span class="nav-text">Programming to the JNI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Changes"><span class="nav-number">6.</span> <span class="nav-text">Changes</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </div>
+      
+
+    </div>
+  </div>
+
+
+    </div>
+
+    <div id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; &nbsp; 
+  2017
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author">GeneBlue</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+
+      </div>
+    </div>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js" id="motion.global"></script>
+
+
+
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var $sidebarInner = $('.sidebar-inner');
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.didShow', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+          var self = this;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      $(indicator).velocity('stop').velocity({
+        opacity: action === 'show' ? 0.4 : 0
+      }, { duration: 100 });
+    }
+
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      var $tocContent = $('.post-toc-content');
+      if (isDesktop() && CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    });
+  </script>
+
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+    });
+  </script>
+
+  
+
+  
+  
+  
+
+  
+
+
+
+
+  
+  
+
+</body>
+</html>

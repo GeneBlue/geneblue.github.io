@@ -1,0 +1,641 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.3"/>
+
+
+    <meta name="description" content="Personal Blog" />
+
+
+
+  <meta name="keywords" content="Android OLLVM Obfuscator," />
+
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    analytics: {
+      google: ''
+    },
+    sidebar: 'post'
+  };
+</script>
+
+
+
+
+  <title> 利用OLLVM混淆Android Native代码篇一 // GeneBlue's Blog </title>
+</head>
+
+<body>
+<!--[if lte IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari." style='margin-left:auto;margin-right:auto;display: block;'/></a></div> <![endif]-->
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <div id="header" class="header">
+      <div class="header-inner">
+        <h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand">
+      <span class="logo">
+        <i class="icon-logo"></i>
+      </span>
+      <span class="site-title">GeneBlue's Blog</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+
+  <ul id="menu" class="menu">
+     
+    
+      
+      <li class="menu-item menu-item-home">
+        <a href="/">
+          <i class="menu-item-icon icon-home"></i> <br />
+          首页
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-about">
+        <a href="/about">
+          <i class="menu-item-icon icon-about"></i> <br />
+          关于
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-archives">
+        <a href="/archives">
+          <i class="menu-item-icon icon-archives"></i> <br />
+          归档
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-tags">
+        <a href="/tags">
+          <i class="menu-item-icon icon-tags"></i> <br />
+          标签
+        </a>
+      </li>
+    
+  </ul>
+
+
+      </div>
+    </div>
+
+    <div id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              利用OLLVM混淆Android Native代码篇一
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于 2016-10-09
+        </span>
+
+        
+
+        
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <p><strong>Author: GeneBlue</strong></p>
+<p>这里将会用两篇文章解释OLLVM混淆Android Native代码的方法和原理。篇一主要聚焦NDK中OLLVM的编译构建和主要混淆模式的使用，并简要解释各混淆模式的效果；篇二主要研究默认混淆模式的实现并尝试编写调试自定义Pass。<br><a id="more"></a></p>
+<h3 id="0X01-OLLVM简介"><a href="#0X01-OLLVM简介" class="headerlink" title="0X01 OLLVM简介"></a>0X01 OLLVM简介</h3><p>OLLVM（Obfuscator-LLVM）是瑞士西北应用科技大学安全实验室于2010年6月份发起的一个项目，该项目旨在提供一套开源的针对LLVM的代码混淆工具，以增加对逆向工程的难度。目前，OLLVM已经支持LLVM-3.6.1版本。</p>
+<p>LLVM是一个优秀的编译器框架，它也采用经典的三段式设计。前端可以使用不同的编译工具对代码文件做词法分析以形成抽象语法树AST，然后将分析好的代码转换成LLVM的中间表示IR（intermediate representation）；中间部分的优化器只对中间表示IR操作，通过一系列的Pass对IR做优化；后端负责将优化好的IR解释成对应平台的机器码。LLVM的优点在于，中间表示IR代码编写良好，而且不同的前端语言最终都转换成同一种的IR。</p>
+<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-1.png " alt="LLVM架构" style="width: 299.87px; height: 131.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="LLVM架构"><br></div>
+
+<p>LLVM IR是LLVM的中间表示，优化器就是对IR进行操作的，具体的优化操作由一些列的Pass来完成，当前端生成初级IR后，Pass会依次对IR进行处理，最终生成后端可用的IR。下图可以说明这个过程。</p>
+<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-2.png " alt="Passes" style="width: 448.00px; height: 97.58px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="Passes"><br></div>
+
+<p>OLLVM的混淆操作就是在中间表示IR层，通过编写Pass来混淆IR，然后后端依据IR来生成的目标代码也就被混淆了。得益于LLVM的设计，OLLVM适用LLVM支持的所有语言（C, C++, Objective-C, Ada 和 Fortran）和目标平台（x86, x86-64, PowerPC, PowerPC-64, ARM, Thumb, SPARC, Alpha, CellSPU, MIPS, MSP430, SystemZ, 和 XCore）。</p>
+<h3 id="0X02-OLLVM-Android编译环境搭建"><a href="#0X02-OLLVM-Android编译环境搭建" class="headerlink" title="0X02 OLLVM Android编译环境搭建"></a>0X02 OLLVM Android编译环境搭建</h3><p>以下，介绍OLLVM Android编译环境的搭建过程。环境信息：ndk（android-ndk-r10e）、LLVM（llvm-3.6.1）</p>
+<p>首先下载源码，编译OLLVM混淆器，这里采用LLVM的版本是3.6.1。下载编译过程如下：</p>
+<pre><code>git clone -b llvm-3.6.1 https://github.com/obfuscator-llvm/obfuscator.git
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE:String=Release ../obfuscator/
+make -j5
+</code></pre><p>下载的源码里已经包含了LLVM和Clang，编译完成后，编译好的二进制程序都存放在build/bin目录下。</p>
+<p>依据github上的<a href="https://github.com/obfuscator-llvm/obfuscator/wiki/Installation" target="_blank" rel="external">wiki</a>，bin目录下编译好的工具链可以直接用来编译混淆linux下的程序，就像我们常用的gcc那样。若想使用OLLVM来混淆Android Native程序，还需将bin目录下的工具链整合进ndk环境中。</p>
+<p>按照ndk编译工具链的组织结构，我们照样子新建一条工具链即可。在toolchains目录下新建obfuscator-llvm-3.6目录，并将llvm-3.6目录下的config.mk、setup.mk和setup-common.mk拷贝到obfuscator-llvm-3.6目录中，不做任何修改。然后，把源码编译好的bin目录和lib目录按照llvm-3.6中prebuilt/linux-x86_64的目录格式拷贝。接着，在toolchains目录下分别建立arm-linux-androideabi-obfuscator3.6, mipsel-linux-android-obfuscator3.6, x86-obfuscator3.6目录，注意文件夹的前缀要与原toolchains中的目录保持一致，然后把arm-linux-androideabi-clang3.6, mipsel-linux-android-clang3.6, x86-clang3.6文件夹下的 config.mk 和 setup.mk 对应拷贝到上述三个文件夹中，此时要分别修改 setup.mk 中的 LLVM_NAME ，即将其指定到开始建立的obfuscator-llvm-3.6目录。</p>
+<pre><code>LLVM_NAME := obfuscator-llvm-$(LLVM_VERSION)
+</code></pre><p>若编译64位版本的so，也要按照上面的格式依次配置x86_64-obfuscator3.6，mips64el-linux-android-obfuscator3.6，aarch64-linux-android-obfuscator3.6三个文件夹。还要修改$NDK_PATH/build/core/setup-toolchain.mk文件，在NDK_64BIT_TOOLCHAIN_LIST := 加入 obfuscator 对应的NDK_TOOLCHAIN_VERSION</p>
+<pre><code>NDK_64BIT_TOOLCHAIN_LIST := obfuscator3.6 clang3.6 clang3.5 clang3.4 4.9
+</code></pre><p>至此，新增加的具备OLLVM混淆的编译工具链就添加完成了，在编译native程序时，在Android.mk和Application.mk中配置编译参数即可。</p>
+<p>在Application.mk中指定编译器名字：</p>
+<pre><code>NDK_TOOLCHAIN_VERSION := obfuscator3.6
+</code></pre><p>在Android.mk中设置混淆参数：</p>
+<pre><code>LOCAL_CFLAGS += -mllvm -sub -mllvm -bcf -mllvm -fla
+</code></pre><p>这样配置完成后，使用ndk-build命令即可编译出混淆代码。代码在64位机器上执行正常，内容仅仅是一条if-else语句，混淆的效果确实不错。</p>
+<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-3.png " alt="编译" style="width: 378.99px; height: 125.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="编译"><br></div>
+
+<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-4.png " alt="执行" style="width: 362.15px; height: 66.95px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="执行"><br></div>
+
+<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-5.png " alt="混淆效果" style="width: 337.40px; height: 494.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="混淆效果"><br></div>
+
+<h3 id="0X03-OLLVM混淆使用"><a href="#0X03-OLLVM混淆使用" class="headerlink" title="0X03 OLLVM混淆使用"></a>0X03 OLLVM混淆使用</h3><p>通过简单的demo可以看出OLLVM的混淆功能确实强大。本小节将介绍混淆功能的具体使用。</p>
+<p>OLLVM默认支持 -fla -sub -bcf 三个混淆参数，这三个参数可以单独使用，也可以配合着使用。-fla 参数表示使用控制流平展（Control Flow Flattening）模式，-sub参数表示使用指令替换（Instructions Substitution）模式，-bcf参数表示使用控制流伪造（Bogus Control Flow）模式。下述if-else分支代码用于验证各混淆模式的效果。</p>
+<pre><code>int main(){
+    int a = 1;
+    int b = 0;
+    int c = 0;
+
+    if(a &gt; b){
+        a = 100;  
+        b = 50;  
+        c = a - b;  
+        int d = a + b;  
+        int e = a &amp; b;  
+        int f = a ^ b;  
+        printf(&quot;c = %d\n&quot;,c);  
+        printf(&quot;d = %d\n&quot;,d);  
+        printf(&quot;e = %d\n&quot;,e);  
+        printf(&quot;f = %d\n&quot;,f);  
+        printf(&quot;a &gt; b\n&quot;);  
+    }else{
+        printf(&quot;a &lt; b\n&quot;);  
+    }
+    return 0;
+}
+</code></pre><h5 id="Control-Flow-Flattening"><a href="#Control-Flow-Flattening" class="headerlink" title="Control Flow Flattening"></a>Control Flow Flattening</h5><p>控制流平展模式可以完全改变程序原本的控制流图。如下示例代码是简单的if-else分支语句，正常编译后其控制流图在IDA中如图6所示￼，是正常的if-else分支，使用 -mllvm -fla 参数混淆后，在IDA中显示的控制流图如图7所示。</p>
+<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-6.png " alt="FLA混淆前" style="width: 248.90px; height: 441.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="FLA混淆前"><br></div>
+
+<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-7.png " alt="FLA混淆后" style="width: 216.77px; height: 471.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="FLA混淆后"><br></div>
+
+<p>经FLA模式混淆后，程序的执行流程已经被打乱，出现许多代码分支。通过仔细对比程序混淆前后，可以发现上图着色区域是相对应的，也就是说，FLA模式只会去更改代码分支，而不会对单个代码块做处理。用IDA反编译的混淆后的伪码如下：</p>
+<pre><code>int __cdecl main(int argc, const char **argv, const char **envp)
+{
+    signed int v4; // [sp+38h] [bp-28h]@1
+
+    v4 = 1837851710;  
+    while ( 1 )  
+    {  
+        while ( v4 &lt;= 1496444127 )  
+        {  
+            if ( v4 == 1258601415 )  
+            {  
+                v4 = 1496444128;  
+                printf(&quot;a &lt; b\n&quot;, argv, envp);  
+            }  
+            }
+            if ( v4 == 1496444128 )
+              break;
+            if ( v4 == 1806065225 )
+            {
+                  printf(&quot;c = %d\n&quot;, 50LL, envp);
+                  printf(&quot;d = %d\n&quot;, 150LL);
+                  argv = (const char **)86;
+                  printf(&quot;e = %d\n&quot;, 32LL);
+                  printf(&quot;f = %d\n&quot;, 86LL);
+                  v4 = 1496444128;
+                  printf(&quot;a &gt; b\n&quot;);
+            }
+            else if ( v4 == 1837851710 )
+            {
+                  envp = (const char **)1;
+                  argv = 0LL;
+                  v4 = 1806065225;
+            }
+      }
+      return 0;
+}
+</code></pre><p>原程序中，if-else的代码块是顺序执行的，混淆后代码块的执行由while循环和变量v4动态计算而得。</p>
+<h5 id="Instructions-Substitution"><a href="#Instructions-Substitution" class="headerlink" title="Instructions Substitution"></a>Instructions Substitution</h5><p>指令替换模式主要是将正常的运算操作（+，-，&amp;，|等）替换成功能相等但表述更复杂的形式。比如，对于表达式 a = b + c，它的等价式可以有 a = - ( -b - c), a = b - (-c) 或 a = -(-b) + c 等，原表达式可以替换成任意相等式，或者通过随机数在多个相等式中做选择。SUB模式目前只支持整数运算操作，支持 + , - , &amp; , | 和 ^ 操作，还是比较局限的。编译时，使用 -mllvm -sub 参数即可。</p>
+<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-8.png " alt="SUB混淆前" style="width: 254.15px; height: 236.19px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="SUB混淆前"><br></div>
+
+<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-9.png " alt="SUB混淆后" style="width: 264.60px; height: 525.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="SUB混淆后"><br></div>
+
+<h5 id="Bogus-Control-Flow"><a href="#Bogus-Control-Flow" class="headerlink" title="Bogus Control Flow"></a>Bogus Control Flow</h5><p>控制流伪造模式也是对程序的控制流做操作，不同的是，BCF模式会在原代码块的前后随机插入新的代码块，新插入的代码块不是确定的，然后新代码块再通过条件判断跳转到原代码块中。更要命地是，原代码块可能会被克隆并插入随机的垃圾指令。这么多不确定性，就导致对同一份代码多次做BCF模式的混淆时，得到的是不同的混淆效果。可见，BCF混淆模式还是很强大的，不同于FLA那种较确定的混淆模式。使用BCF模式编译时配置参数 -mllvm -bcf 即可，此外，BCF模式还支持其它几个参数，下面参数与 -mllvm -bcf 参数配合使用。</p>
+<pre><code>-mllvm -perBCF=20: 对所有函数都混淆的概率是20%，默认100%
+-mllvm -boguscf-loop=3: 对函数做3次混淆，默认1次
+-mllvm -boguscf-prob=40: 代码块被混淆的概率是40%，默认30%
+</code></pre><div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-10.png " alt="BCF混淆后" style="width: 126.68px; height: 403.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="BCF混淆后"><br></div>
+
+<p>如上图，下面两个着色的代码块就是有上面两个代码块克隆而来，而且其中被插入了一些垃圾指令，类似于这样：</p>
+<pre><code>mov     ecx, ds:x
+mov     edx, ds:y
+mov     esi, ecx
+sub     esi, 1
+imul    ecx, esi
+and     ecx, 1
+cmp     ecx, 0
+setz    r8b
+cmp     edx, 0Ah
+setl    r9b
+or      r8b, r9b
+test    r8b, 1
+</code></pre><p>当然，上述介绍的三种混淆模式可以搭配使用，同时使用三个参数混淆后，原本简单的if-else分支代码将会变得异常复杂，这无疑给逆向分析增加巨大的难度。</p>
+<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-11.png " alt="三种模式混淆" style="width: 207.65px; height: 376.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="三种模式混淆"><br></div>
+
+<h5 id="Functions-annotations"><a href="#Functions-annotations" class="headerlink" title="Functions annotations"></a>Functions annotations</h5><p>有的时候，由于效率或其它原因的考虑，我们只想给指定的函数混淆，OLLVM也提供了对这一特性的支持。比如，想对函数func()使用bcf混淆，只需要给函数func()增加bcf属性即可。</p>
+<pre><code>int func() __attribute((__annotate__((&quot;bcf&quot;))));
+</code></pre><p>fla，sub和bcf三个属性可以搭配使用。如果不想对func()函数使用bcf属性，那标记为“nobcf”即可。</p>
+<h3 id="0X04-参考"><a href="#0X04-参考" class="headerlink" title="0X04 参考"></a>0X04 参考</h3><ul>
+<li><a href="http://blog.csdn.net/wangbaochu/article/details/45370543" target="_blank" rel="external">Android LLVM-Obfuscator C/C++ 混淆编译的深入研究</a></li>
+<li><a href="http://llvm.org/" target="_blank" rel="external">The LLVM Compiler Infrastructure</a></li>
+<li><a href="https://github.com/obfuscator-llvm/obfuscator" target="_blank" rel="external">obfuscator-llvm</a></li>
+</ul>
+<hr>
+
+      
+    </div>
+
+    <div class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android-OLLVM-Obfuscator/"> #Android OLLVM Obfuscator </a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/16/Android内核模块编译执行/">Android内核模块编译执行</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/02/在 OS X 上使用 PGP 发送加密邮件/">在 OS X 上使用 PGP 发送加密邮件</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </div>
+  </div>
+
+
+
+    
+      <div class="comments" id="comments">
+        
+      </div>
+    
+  </div>
+
+
+        </div>
+
+        
+      </div>
+
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview">
+        <div class="site-author motion-element">
+          <img class="site-author-image" src="/images/default_avatar.jpg" alt="GeneBlue" />
+          <p class="site-author-name">GeneBlue</p>
+        </div>
+        <p class="site-description motion-element">Personal Blog</p>
+        <div class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">17</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">0</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </div>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+      </div>
+
+      
+        <div class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0X01-OLLVM简介"><span class="nav-number">1.</span> <span class="nav-text">0X01 OLLVM简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X02-OLLVM-Android编译环境搭建"><span class="nav-number">2.</span> <span class="nav-text">0X02 OLLVM Android编译环境搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X03-OLLVM混淆使用"><span class="nav-number">3.</span> <span class="nav-text">0X03 OLLVM混淆使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Control-Flow-Flattening"><span class="nav-number">3.0.1.</span> <span class="nav-text">Control Flow Flattening</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Instructions-Substitution"><span class="nav-number">3.0.2.</span> <span class="nav-text">Instructions Substitution</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Bogus-Control-Flow"><span class="nav-number">3.0.3.</span> <span class="nav-text">Bogus Control Flow</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Functions-annotations"><span class="nav-number">3.0.4.</span> <span class="nav-text">Functions annotations</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X04-参考"><span class="nav-number">4.</span> <span class="nav-text">0X04 参考</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </div>
+      
+
+    </div>
+  </div>
+
+
+    </div>
+
+    <div id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; &nbsp; 
+  2017
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author">GeneBlue</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+
+      </div>
+    </div>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js" id="motion.global"></script>
+
+
+
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var $sidebarInner = $('.sidebar-inner');
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.didShow', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+          var self = this;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      $(indicator).velocity('stop').velocity({
+        opacity: action === 'show' ? 0.4 : 0
+      }, { duration: 100 });
+    }
+
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      var $tocContent = $('.post-toc-content');
+      if (isDesktop() && CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    });
+  </script>
+
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+    });
+  </script>
+
+  
+
+  
+  
+  
+
+  
+
+
+
+
+  
+  
+
+</body>
+</html>

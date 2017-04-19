@@ -1,0 +1,614 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.3"/>
+
+
+    <meta name="description" content="Personal Blog" />
+
+
+
+  <meta name="keywords" content="Android Driver ko," />
+
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    analytics: {
+      google: ''
+    },
+    sidebar: 'post'
+  };
+</script>
+
+
+
+
+  <title> Android内核模块编译执行 // GeneBlue's Blog </title>
+</head>
+
+<body>
+<!--[if lte IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari." style='margin-left:auto;margin-right:auto;display: block;'/></a></div> <![endif]-->
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <div id="header" class="header">
+      <div class="header-inner">
+        <h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand">
+      <span class="logo">
+        <i class="icon-logo"></i>
+      </span>
+      <span class="site-title">GeneBlue's Blog</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+
+  <ul id="menu" class="menu">
+     
+    
+      
+      <li class="menu-item menu-item-home">
+        <a href="/">
+          <i class="menu-item-icon icon-home"></i> <br />
+          首页
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-about">
+        <a href="/about">
+          <i class="menu-item-icon icon-about"></i> <br />
+          关于
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-archives">
+        <a href="/archives">
+          <i class="menu-item-icon icon-archives"></i> <br />
+          归档
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-tags">
+        <a href="/tags">
+          <i class="menu-item-icon icon-tags"></i> <br />
+          标签
+        </a>
+      </li>
+    
+  </ul>
+
+
+      </div>
+    </div>
+
+    <div id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              Android内核模块编译执行
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于 2016-08-16
+        </span>
+
+        
+
+        
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <p><strong>Author: GeneBlue</strong></p>
+<h3 id="0X01-前言"><a href="#0X01-前言" class="headerlink" title="0X01 前言"></a>0X01 前言</h3><p>内核驱动是漏洞的高发区，了解Android驱动代码的编写是分析、利用驱动漏洞的基础。本文以一个“hello”驱动为例，简单介绍内核驱动编写、编译的基本过程，包括内核模块的内建编译和动态加载方式的编译。</p>
+<a id="more"></a>
+<h3 id="0X02-编写"><a href="#0X02-编写" class="headerlink" title="0X02 编写"></a>0X02 编写</h3><p>在./goldsifh/drivers文件夹下新建hello目录，在hello目录中新建hello.c文件：</p>
+<pre><code>#include &lt;linux/module.h&gt;  
+#include &lt;linux/kernel.h&gt;  
+#include &lt;linux/fs.h&gt;  
+#include &lt;linux/miscdevice.h&gt;  
+
+MODULE_LICENSE(&quot;GPL&quot;);  
+MODULE_AUTHOR(&quot;GeneBlue&quot;);  
+MODULE_DESCRIPTION(&quot;Hello Kernel Device&quot;);  
+MODULE_VERSION(&quot;1.0&quot;);  
+
+#define CMD_COMMAND 0x1336  
+
+long hello_ioctl(struct file *filp,  //ioctl函数
+    unsigned int cmd,  
+    unsigned long arg){  
+    switch(cmd){  
+    case CMD_COMMAND:  
+        printk(&quot;Hello Module hello_ioctl() exced&quot;);  
+        break;  
+    default:  
+        printk(&quot;Hello Module unknown ioctl cmd&quot;);  
+    }  
+    return 0;  
+}  
+
+struct file_operations hello_fops = {  //设备的操作函数指针表
+    unlocked_ioctl: hello_ioctl  
+};  
+
+static struct miscdevice hello_device = {  //注册为misc设备的基本属性
+    minor: MISC_DYNAMIC_MINOR,  
+    name: &quot;hello&quot;,  
+    fops: &amp;hello_fops,  
+    mode: 777
+};  
+
+static int __init hello_begin(void){  
+    int ret;  
+    ret = misc_register(&amp;hello_device);  //注册为misc设备
+    if(ret)  
+        printk(&quot;Failed to register misc device&quot;);  
+    else  
+        printk(&quot;Hello Module successfully loaded&quot;);  
+
+    return ret;  
+}  
+
+static void __exit hello_exit(void){  
+    int ret = misc_deregister(&amp;hello_device);  //设备卸载
+    if(ret)  
+        printk(&quot;Hello module exit&quot;);  
+}  
+
+module_init(hello_begin);  //模块初始化函数
+module_exit(hello_exit);  //模块卸载函数
+</code></pre><p>写驱动模块时都要包含module.h头文件，该头文件定义了一些编写模块时常用宏或函数;kernel.h提供常用的内核函数，如printk();fs.h提供文件表和文件结构，如file_operations;miscdevice.h提供注册为misc设备的常用函数。</p>
+<h3 id="0X03-编译"><a href="#0X03-编译" class="headerlink" title="0X03 编译"></a>0X03 编译</h3><p>在编译之前，要确保下载下来的内核代码已经可以顺利地编译运行，具体可以参考<a href="https://geneblue.github.io/2016/01/27/Android%E5%86%85%E6%A0%B8%E7%BC%96%E8%AF%91%E8%B0%83%E8%AF%95/" target="_blank" rel="external">这里</a>。</p>
+<p>在hello目录中要增加Makefile配置文件用于编译。在Makefile中添加：</p>
+<pre><code>obj-y +=  hello.o
+</code></pre><p>表示内建编译，即直接编译到内核文件zImage中。然后在goldfish/drivers/Makefile中包含新建的驱动设备</p>
+<pre><code>obj-y += hello/
+</code></pre><p>这样，再次编译内核后，驱动设备即可包含在内核中。</p>
+<p>有的时候，我们需要在手机中编写可动态加载的驱动模块，可动态加载模块非常便于调试，在kmsg中可直接看到调试信息，这个时候需要重新编译手机内核，开启内核的动态加载属性。在编译的内核的时候，使用</p>
+<pre><code>make menuconfig
+</code></pre><p>命令，并在menuconfig中做如下配置：</p>
+<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/Android-kernel-module.png " alt="menuconfig" style="width: 371.65px; height: 237.22px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="menuconfig"><br></div>
+
+
+
+<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/Android-kernel-module3.png " alt="menuconfig" style="width: 382.15px; height: 243.28px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="menuconfig"><br></div>
+
+<p>如果不开启该选项就直接insmod加载hello.ko，一般情况下都会报如下错误：</p>
+<pre><code>insmod: init_module &apos;hello.ko&apos; failed (Function not implemented)
+</code></pre><p>编译完内核之后，还需要将内核拷贝到aosp的源码中，替换掉默认的内核文件，在我的Android源码中默认的内核文件存放在如下路径中：</p>
+<pre><code>/android-4.4.4_r1/device/lge/hammerhead-kernel/zImage-dtb
+</code></pre><p>编译Android源码生成新的boot.img文件，然后只将boot.img刷入到手机即可。</p>
+<p>完成内核的准备工作之后，下面就要编译动态加载模块hello.ko，依然是上述的hello.c文件，在任意位置建一个目录，拷贝hello.c并编写Makefile如下：</p>
+<pre><code>obj-m := hello.o  
+
+KERNELDIR := /home/geneblue/Android/Source/kernel/msm/  
+PWD :=$(shell pwd)  
+ARCH=arm  
+CROSS_COMPILE=/home/geneblue/Android/Source/tsinghua_aosp/android-4.4.4_r1/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.6/bin/arm-linux-androideabi-  
+CC=$(CROSS_COMPILE)gcc  
+LD=$(CROSS_COMPILE)ld  
+CFLAGS_MODULE=-fno-pic  
+
+modules:  
+    make -C $(KERNELDIR) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) M=$(PWD) modules    
+clean:    
+    rm *.o *.ko *.mod.c *.order *.symvers
+</code></pre><p>注意，Makefile中要加上CFLAGS_MODULE=-fno-pic选项，不然编译好的hello.ko relocation节会错误：</p>
+<pre><code>insmod: init_module &apos;hello.ko&apos; failed (Exec format error)  
+kmsg:  
+&lt;3&gt;[ 1646.589131] hello: unknown relocation: 27  
+</code></pre><p>最后，使用make命令即可编译正确的hello.ko文件。</p>
+<h3 id="0X04-运行"><a href="#0X04-运行" class="headerlink" title="0X04 运行"></a>0X04 运行</h3><p>使用模拟器来加载新编好的内核，并在adb shell中查看新编的驱动：</p>
+<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/Android-kernel-module1.png " alt="内建编译" style="width: 436.22px; height: 76.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="内建编译"><br></div>
+
+<p>这样，一个最简单的设备驱动已经可以正确运行了。</p>
+<p>将hello.ko文件push的手机中，用insmod来加载即可。</p>
+<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/Android-kernel-module2.png " alt="模块编译" style="width: 437.65px; height: 52.08px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="模块编译"><br></div>
+
+<h3 id="0X05-参考"><a href="#0X05-参考" class="headerlink" title="0X05 参考"></a>0X05 参考</h3><ul>
+<li><a href="http://blog.csdn.net/pillarbuaa/article/details/40340165" target="_blank" rel="external">在Ubuntu上为Android系统编写Linux内核驱动程序</a></li>
+<li><a href="http://stackoverflow.com/questions/11614441/hello-world-kernel-module-for-android-unknown-relocation-27-when-insmod" target="_blank" rel="external">Hello world kernel module for android &amp; unknown relocation: 27 when insmod</a></li>
+</ul>
+
+      
+    </div>
+
+    <div class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android-Driver-ko/"> #Android Driver ko </a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/27/Android PXN绕过技术研究/">Android PXN绕过技术研究</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/09/利用OLLVM混淆Android Native代码篇一/">利用OLLVM混淆Android Native代码篇一</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </div>
+  </div>
+
+
+
+    
+      <div class="comments" id="comments">
+        
+      </div>
+    
+  </div>
+
+
+        </div>
+
+        
+      </div>
+
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview">
+        <div class="site-author motion-element">
+          <img class="site-author-image" src="/images/default_avatar.jpg" alt="GeneBlue" />
+          <p class="site-author-name">GeneBlue</p>
+        </div>
+        <p class="site-description motion-element">Personal Blog</p>
+        <div class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">17</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">0</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </div>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+      </div>
+
+      
+        <div class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0X01-前言"><span class="nav-number">1.</span> <span class="nav-text">0X01 前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X02-编写"><span class="nav-number">2.</span> <span class="nav-text">0X02 编写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X03-编译"><span class="nav-number">3.</span> <span class="nav-text">0X03 编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X04-运行"><span class="nav-number">4.</span> <span class="nav-text">0X04 运行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X05-参考"><span class="nav-number">5.</span> <span class="nav-text">0X05 参考</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </div>
+      
+
+    </div>
+  </div>
+
+
+    </div>
+
+    <div id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; &nbsp; 
+  2017
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author">GeneBlue</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+
+      </div>
+    </div>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js" id="motion.global"></script>
+
+
+
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var $sidebarInner = $('.sidebar-inner');
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.didShow', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+          var self = this;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      $(indicator).velocity('stop').velocity({
+        opacity: action === 'show' ? 0.4 : 0
+      }, { duration: 100 });
+    }
+
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      var $tocContent = $('.post-toc-content');
+      if (isDesktop() && CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    });
+  </script>
+
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+    });
+  </script>
+
+  
+
+  
+  
+  
+
+  
+
+
+
+
+  
+  
+
+</body>
+</html>

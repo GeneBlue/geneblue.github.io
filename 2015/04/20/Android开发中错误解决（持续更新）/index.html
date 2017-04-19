@@ -1,0 +1,571 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.3"/>
+
+
+    <meta name="description" content="Personal Blog" />
+
+
+
+  <meta name="keywords" content="Android," />
+
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    analytics: {
+      google: ''
+    },
+    sidebar: 'post'
+  };
+</script>
+
+
+
+
+  <title> Android开发中错误解决（持续更新） // GeneBlue's Blog </title>
+</head>
+
+<body>
+<!--[if lte IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari." style='margin-left:auto;margin-right:auto;display: block;'/></a></div> <![endif]-->
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <div id="header" class="header">
+      <div class="header-inner">
+        <h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand">
+      <span class="logo">
+        <i class="icon-logo"></i>
+      </span>
+      <span class="site-title">GeneBlue's Blog</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+
+  <ul id="menu" class="menu">
+     
+    
+      
+      <li class="menu-item menu-item-home">
+        <a href="/">
+          <i class="menu-item-icon icon-home"></i> <br />
+          首页
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-about">
+        <a href="/about">
+          <i class="menu-item-icon icon-about"></i> <br />
+          关于
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-archives">
+        <a href="/archives">
+          <i class="menu-item-icon icon-archives"></i> <br />
+          归档
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-tags">
+        <a href="/tags">
+          <i class="menu-item-icon icon-tags"></i> <br />
+          标签
+        </a>
+      </li>
+    
+  </ul>
+
+
+      </div>
+    </div>
+
+    <div id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              Android开发中错误解决（持续更新）
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于 2015-04-20
+        </span>
+
+        
+
+        
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <p><strong>Author: GeneBlue</strong></p>
+<p>平时写Android程序时遇到的一些错误， 在此记录方便以后查找。</p>
+<h3 id="类中方法找不到问题"><a href="#类中方法找不到问题" class="headerlink" title="类中方法找不到问题"></a>类中方法找不到问题</h3><p>logcat中报错提示如下：<br>    java.lang.NoClassDefFoundError: com.google.zxing.EncodeHintType</p>
+<p>这个问题是在二维码编码中遇到的但是在代码使用的jar包中明明已经定义了该类，就是提示找不到该类，最后查找别人的解决办法，将jar文件存放在libs文件夹下就顺利解决了，之前我将其存放在了自定义的lib文件夹下。可问题是为什么别的jar文件放在lib下依然可以顺利使用jar中的类呢？？？？？？？？</p>
+<a id="more"></a>
+<h3 id="Activity无法启动的错误"><a href="#Activity无法启动的错误" class="headerlink" title="Activity无法启动的错误"></a>Activity无法启动的错误</h3><p>遇见的错误信息如下：</p>
+<pre><code>java.lang.RuntimeException: Unable to start activity ComponentInfo{com.security.ass.privacy/com.security.ass.ui.SplashActivity}: java.lang.NullPointerException
+06-30 16:41:03.958: E/AndroidRuntime(10588):     at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2306)
+06-30 16:41:03.958: E/AndroidRuntime(10588):     at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2358)
+06-30 16:41:03.958: E/AndroidRuntime(10588):     at android.app.ActivityThread.access$600(ActivityThread.java:156)
+06-30 16:41:03.958: E/AndroidRuntime(10588):     at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1340)
+06-30 16:41:03.958: E/AndroidRuntime(10588):     at android.os.Handler.dispatchMessage(Handler.java:99)
+06-30 16:41:03.958: E/AndroidRuntime(10588):     at android.os.Looper.loop(Looper.java:153)
+06-30 16:41:03.958: E/AndroidRuntime(10588):     at android.app.ActivityThread.main(ActivityThread.java:5297)
+06-30 16:41:03.958: E/AndroidRuntime(10588):     at java.lang.reflect.Method.invokeNative(Native Method)
+06-30 16:41:03.958: E/AndroidRuntime(10588):     at java.lang.reflect.Method.invoke(Method.java:511)
+06-30 16:41:03.958: E/AndroidRuntime(10588):     at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:833)
+06-30 16:41:03.958: E/AndroidRuntime(10588):     at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:600)
+06-30 16:41:03.958: E/AndroidRuntime(10588):     at de.robv.android.xposed.XposedBridge.main(XposedBridge.java:132)
+06-30 16:41:03.958: E/AndroidRuntime(10588):     at dalvik.system.NativeStart.main(Native Method)
+06-30 16:41:03.958: E/AndroidRuntime(10588): Caused by: java.lang.NullPointerException
+06-30 16:41:03.958: E/AndroidRuntime(10588):     at com.security.ass.ui.SplashActivity.onCreate(SplashActivity.java:31)
+06-30 16:41:03.958: E/AndroidRuntime(10588):     at android.app.Activity.performCreate(Activity.java:5122)
+06-30 16:41:03.958: E/AndroidRuntime(10588):     at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1081)
+06-30 16:41:03.958: E/AndroidRuntime(10588):     at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2270)
+06-30 16:41:03.958: E/AndroidRuntime(10588):     ... 12 more
+</code></pre><p>始终提示一个空指针错误，但真实原因是在其他activity中定义的主题style与程序定义的注意style冲突。也就是说，主题最好不要混用，虽然程序编译不会报错，但运行时可能会出现很奇怪的错误</p>
+<h3 id="LinearLayout布局文件出错"><a href="#LinearLayout布局文件出错" class="headerlink" title="LinearLayout布局文件出错"></a>LinearLayout布局文件出错</h3><p>提示的错误信息如下：</p>
+<pre><code>No orientation specified, and the default is horizontal. This is a common source of bugs when children are added dynamically.
+</code></pre><p>从提示的信息中可以看出，linearLayout的方向未确定，默认是水平方向。当该LinearLayout中动态添加控件时候，这可能会触发一个bug。</p>
+<p>解决：添加linearLayout的方向信息即可：<br><code>android:orientation = &quot;vertical&quot;</code><br>或<br><code>android:orientation = &quot;horizontal&quot;</code></p>
+<h3 id="Android-canvas以res下的图片做背景出错"><a href="#Android-canvas以res下的图片做背景出错" class="headerlink" title="Android canvas以res下的图片做背景出错"></a>Android canvas以res下的图片做背景出错</h3><p>错误如下：</p>
+<pre><code>07-13 11:03:29.428: E/AndroidRuntime(29848): FATAL EXCEPTION: Thread-1672
+07-13 11:03:29.428: E/AndroidRuntime(29848): java.lang.IllegalStateException: Immutable bitmap passed to Canvas constructor
+07-13 11:03:29.428: E/AndroidRuntime(29848):     at android.graphics.Canvas.&lt;init&gt;(Canvas.java:127)
+07-13 11:03:29.428: E/AndroidRuntime(29848):     at com.security.ass.accesscontrol.PictureLockerGameView.draws(PictureLockerGameView.java:65)
+07-13 11:03:29.428: E/AndroidRuntime(29848):     at com.security.ass.accesscontrol.PictureLockerGameView.run(PictureLockerGameView.java:87)
+07-13 11:03:29.428: E/AndroidRuntime(29848):     at java.lang.Thread.run(Thread.java:838)
+</code></pre><p>解决：<br>出现Immutable bitmap passed to Canvas constructor错误的原因是如果不用copy的方法，直接引用会对资源文件进行修改，而android是不允许在代码里修改res文件里的图片<br>使用：<br><code>BitmapFactory.decodeResource(getResources(), R.drawable.xiao).copy(Bitmap.Config.ARGB_8888, true);</code><br>替换:<br><code>BitmapFactory.decodeResource(getResources(), R.drawable.xiao);</code></p>
+<h3 id="自定义title出错"><a href="#自定义title出错" class="headerlink" title="自定义title出错"></a>自定义title出错</h3><p>将自定义的titile加入项目中后有时会出错，具体的错误信息如下：</p>
+<pre><code>07-02 16:25:38.518: E/AndroidRuntime(26837): FATAL EXCEPTION: main
+07-02 16:25:38.518: E/AndroidRuntime(26837): java.lang.RuntimeException: Unable to start activity ComponentInfo{com.security.ass.privacy/com.security.ass.otherfunction.OtherFunctionMainActivity}: android.util.AndroidRuntimeException: You cannot combine custom titles with other title features
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2358)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2410)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at android.app.ActivityThread.access$600(ActivityThread.java:168)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1376)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at android.os.Handler.dispatchMessage(Handler.java:107)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at android.os.Looper.loop(Looper.java:194)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at android.app.ActivityThread.main(ActivityThread.java:5398)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at java.lang.reflect.Method.invokeNative(Native Method)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at java.lang.reflect.Method.invoke(Method.java:525)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:836)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:603)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at de.robv.android.xposed.XposedBridge.main(XposedBridge.java:132)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at dalvik.system.NativeStart.main(Native Method)
+07-02 16:25:38.518: E/AndroidRuntime(26837): Caused by: android.util.AndroidRuntimeException: You cannot combine custom titles with other title features
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at com.android.internal.policy.impl.PhoneWindow.requestFeature(PhoneWindow.java:248)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at com.android.internal.policy.impl.PhoneWindow.generateLayout(PhoneWindow.java:2705)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at com.android.internal.policy.impl.PhoneWindow.installDecor(PhoneWindow.java:2953)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at com.android.internal.policy.impl.PhoneWindow.setContentView(PhoneWindow.java:273)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at android.app.Activity.setContentView(Activity.java:1892)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at com.security.ass.otherfunction.OtherFunctionMainActivity.onCreate(OtherFunctionMainActivity.java:22)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at android.app.Activity.performCreate(Activity.java:5168)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1150)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2322)
+07-02 16:25:38.518: E/AndroidRuntime(26837):     ... 12 more
+</code></pre><p>这里错误多数也是自定义的title的Theme和对应acitivy的Theme不相符，可以在manifest中更改activity的style，如何删除该style</p>
+<hr>
+
+      
+    </div>
+
+    <div class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/"> #Android </a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/03/20/DEX文件格式/">Dex文件格式</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/07/18/JNI官方文档-Chapter 1：Introduction/">JNI官方文档-Chapter 1：Introduction</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </div>
+  </div>
+
+
+
+    
+      <div class="comments" id="comments">
+        
+      </div>
+    
+  </div>
+
+
+        </div>
+
+        
+      </div>
+
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview">
+        <div class="site-author motion-element">
+          <img class="site-author-image" src="/images/default_avatar.jpg" alt="GeneBlue" />
+          <p class="site-author-name">GeneBlue</p>
+        </div>
+        <p class="site-description motion-element">Personal Blog</p>
+        <div class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">17</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">0</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </div>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+      </div>
+
+      
+        <div class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#类中方法找不到问题"><span class="nav-number">1.</span> <span class="nav-text">类中方法找不到问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Activity无法启动的错误"><span class="nav-number">2.</span> <span class="nav-text">Activity无法启动的错误</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LinearLayout布局文件出错"><span class="nav-number">3.</span> <span class="nav-text">LinearLayout布局文件出错</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Android-canvas以res下的图片做背景出错"><span class="nav-number">4.</span> <span class="nav-text">Android canvas以res下的图片做背景出错</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义title出错"><span class="nav-number">5.</span> <span class="nav-text">自定义title出错</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </div>
+      
+
+    </div>
+  </div>
+
+
+    </div>
+
+    <div id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; &nbsp; 
+  2017
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author">GeneBlue</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+
+      </div>
+    </div>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js" id="motion.global"></script>
+
+
+
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var $sidebarInner = $('.sidebar-inner');
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.didShow', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+          var self = this;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      $(indicator).velocity('stop').velocity({
+        opacity: action === 'show' ? 0.4 : 0
+      }, { duration: 100 });
+    }
+
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      var $tocContent = $('.post-toc-content');
+      if (isDesktop() && CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    });
+  </script>
+
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+    });
+  </script>
+
+  
+
+  
+  
+  
+
+  
+
+
+
+
+  
+  
+
+</body>
+</html>
