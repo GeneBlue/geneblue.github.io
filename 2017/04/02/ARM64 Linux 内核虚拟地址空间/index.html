@@ -22,7 +22,7 @@
 
 
 
-  <meta name="keywords" content="Android Security," />
+  <meta name="keywords" content="ARM64 Linux," />
 
 
 
@@ -45,7 +45,7 @@
 
 
 
-  <title> Xposed插件编写流程 // GeneBlue's Blog </title>
+  <title> ARM64 Linux 内核虚拟地址空间 // GeneBlue's Blog </title>
 </head>
 
 <body>
@@ -125,7 +125,7 @@
           
           
             
-              Xposed插件编写流程
+              ARM64 Linux 内核虚拟地址空间
             
           
         </h1>
@@ -133,7 +133,7 @@
 
       <div class="post-meta">
         <span class="post-time">
-          发表于 2015-02-27
+          发表于 2017-04-02
         </span>
 
         
@@ -150,23 +150,38 @@
       
 
       
-        <p><strong>Author: GeneBlue</strong></p>
-<p>官方英文介绍：<a href="https://github.com/rovo89/XposedBridge/wiki/Development-tutorial" target="_blank" rel="external">这里</a> </p>
-<p>创建一个XposedModule一般按照以下流程：</p>
-<h4 id="添加meta-data元素"><a href="#添加meta-data元素" class="headerlink" title="添加meta-data元素"></a>添加meta-data元素</h4><p>应该在要编写的程序的Manifest文件的application元素下添加三个 meta-data元素，如下所示：</p>
-<pre><code>&lt;meta-data              //指定这是Xposed Module程序
-    android:name=&quot;xposedmodule&quot;
-    android:value=&quot;true&quot; /&gt;
-&lt;meta-data             //此Module的描述性信息
-    android:name=&quot;xposeddescription&quot;
-    android:value=&quot;makes the status bar clock red and adds a smiley&quot; /&gt;
-&lt;meta-data            //此Module的最低的Xposed api的版本
-    android:name=&quot;xposedminversion&quot;
-    android:value=&quot;30&quot; /&gt;
-</code></pre><a id="more"></a>
-<p>meta-data元素中的值可以定义在资源文件中，metadata的详细信息参见&lt;<android基础>&gt;笔记中的记录。<br>Xposed程序会通过ModuleUtil类对此application的metadata信息进行读取，以判别此应用是否是Xposed Module应用。</android基础></p>
-<h4 id="添加XposedBridge-jar"><a href="#添加XposedBridge-jar" class="headerlink" title="添加XposedBridge.jar"></a>添加XposedBridge.jar</h4><p>项目创建完成后，将XposedBridge.jar 文件添加项目的libs目录中。刷新后，eclipse会自动解析并将其添加到私有库中。此jar包会在app_process启动过程中被加载，Module的开发也是基于该jar包。</p>
-<h4 id="新建xposed-init文件"><a href="#新建xposed-init文件" class="headerlink" title="新建xposed_init文件"></a>新建xposed_init文件</h4><p>在assets目录下创建此文件，这个文件中需要写入要加载的入口类的名称。如：<br>de.robv.android.xposed.examples.redclock.RedClock  这个类是IXposedHookLoadPackage接口的实现。核心的代码一般都在这个类开始实现。</p>
+        <ul>
+<li>原文<a href="http://thinkiii.blogspot.hk/2014/02/arm64-linux-kernel-virtual-address-space.html" target="_blank" rel="external">地址</a></li>
+<li>翻译: GeneBlue</li>
+</ul>
+<p>现在我们来讨论 64 位 ARM CPU 的 Linux 内核虚拟地址空间。在 ARM 官网上也可以找到一些关于 ARMv8 的信息。<a href="http://www.arm.com/products/processors/armv8-architecture.php" target="_blank" rel="external">http://www.arm.com/products/processors/armv8-architecture.php</a></p>
+<a id="more"></a>
+<p>32 位 CPU 的最大问题就是虚拟地址空间只有 4GB 大小。即使一些平台支持 PAE (Physical Address Extension)扩展，该问题仍然存在，因为 PAE 主要关注物理地址的扩展问题，而不是虚拟地址。自从 64 位 CPU 问世后，情况就大为不同。AMD64 和 ARMv8 可以支持 2^64 次方的地址空间，这可是个相当大的数字。</p>
+<p>实际上，2^64 次方太大了，Linux 内核只采用了 64 bits 的一部分（开启 CONFIG_ARM64_64K_PAGES 时使用 42 bits，页大小是 4K 时使用 39 bits），该文假设使用的页大小是 4K（VA_BITS = 39）</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_ARM64_64K_PAGES</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> VA_BITS                 (42)</span></div><div class="line"><span class="meta">#<span class="meta-keyword">else</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> VA_BITS                 (39)</span></div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div></pre></td></tr></table></figure>
+<p>ARM64 上也有足够的虚拟地址了，用户空间和内核空间可以有各自的 2^39 = 512GB 的虚拟地址。</p>
+<p>所有用户虚拟地址前 25 bits 均为 0，所有的内核虚拟地址前 25 bits 均为 1。用户与内核之间的地址不可使用。</p>
+<p><img src="http://7vzu7u.com1.z0.glb.clouddn.com/linux-kernel-arm64source3.png" alt="ARM64 虚拟地址空间布局"></p>
+<p><strong>内核空间</strong></p>
+<p>可以通过源码来了解 ARM64 的内核虚拟地址空间。</p>
+<p>在 arch/arm64/include/asm/memory.h，可以看出一些差异。首先，lowmem 区不存在了，这是因为虚拟地址很大了，可以处理 lowmem 内存，不用再担心虚拟地址问题（但内核地址仍然有一些限制）。其次，不同内核的虚拟地址顺序改变了。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_ARM64_64K_PAGES</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> VA_BITS                 (42)</span></div><div class="line"><span class="meta">#<span class="meta-keyword">else</span>                               </span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> VA_BITS                 (39)</span></div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span>                              </span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> PAGE_OFFSET             (UL(0xffffffffffffffff) &lt;&lt; (VA_BITS - 1))</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MODULES_END             (PAGE_OFFSET)</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MODULES_VADDR           (MODULES_END - SZ_64M)</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> EARLYCON_IOBASE         (MODULES_VADDR - SZ_4M)</span></div></pre></td></tr></table></figure>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">        pr_notice(<span class="string">"Virtual kernel memory layout:\n"</span>                            </div><div class="line">                  <span class="string">"    vmalloc : 0x%16lx - 0x%16lx   (%6ld MB)\n"</span></div><div class="line"><span class="comment">#ifdef CONFIG_SPARSEMEM_VMEMMAP</span></div><div class="line">                  <span class="string">"    vmemmap : 0x%16lx - 0x%16lx   (%6ld MB)\n"</span></div><div class="line"><span class="comment">#endif</span></div><div class="line">                  <span class="string">"    modules : 0x%16lx - 0x%16lx   (%6ld MB)\n"</span></div><div class="line">                  <span class="string">"    memory  : 0x%16lx - 0x%16lx   (%6ld MB)\n"</span></div><div class="line">                  <span class="string">"      .init : 0x%p"</span> <span class="string">" - 0x%p"</span> <span class="string">"   (%6ld kB)\n"</span></div><div class="line">                  <span class="string">"      .text : 0x%p"</span> <span class="string">" - 0x%p"</span> <span class="string">"   (%6ld kB)\n"</span></div><div class="line">                  <span class="string">"      .data : 0x%p"</span> <span class="string">" - 0x%p"</span> <span class="string">"   (%6ld kB)\n"</span>,</div><div class="line">                  MLM(VMALLOC_START, VMALLOC_END),</div><div class="line"><span class="comment">#ifdef CONFIG_SPARSEMEM_VMEMMAP</span></div><div class="line">                  MLM((unsigned long)virt_to_page(PAGE_OFFSET),</div><div class="line">                      (unsigned long)virt_to_page(high_memory)),</div><div class="line"><span class="comment">#endif</span></div><div class="line">                  MLM(MODULES_VADDR, MODULES_END),</div><div class="line">                  MLM(PAGE_OFFSET, (unsigned long)high_memory),</div><div class="line"> </div><div class="line">                  MLK_ROUNDUP(__init_begin, __init_end),</div><div class="line">                  MLK_ROUNDUP(_text, _etext),</div><div class="line">                  MLK_ROUNDUP(_sdata, _edata));</div></pre></td></tr></table></figure>
+<p>也可以看看 arch/arm64/mm/init.c 和 arch/arm64/include/asm/pgtable.h</p>
+<p>pkmap 和 fixmap 不存在了，内核假设所有内存都有有效的内核虚拟地址，所以不再需要创建 pkmap 或者 fixmap。</p>
+<p><img src="http://7vzu7u.com1.z0.glb.clouddn.com/linux-kernel-arm64source4.png" alt="ARM64 虚拟地址空间布局"></p>
+<p><strong>用户空间</strong></p>
+<p>用户空间的虚拟地址布局和 ARM32 类似，因为用户地址空间增大到了 512GB ，所以可以在 64 位 CPU 上运行更大的应用。</p>
+<p>ARMv8 是兼容 ARM 32 位应用的，所有的 32 位 ARM 应用都可以无需修改运行在 ARMv8 上。那在 64 位内核上，32 位应用的地址布局是怎样的呢？</p>
+<p>实际上，64 位内核运行的进程都是 64 位的。为了运行 32 位 ARM 应用，Linux 内核仍然从 init 进程创建出一个 64 位的进程，当将其用户地址空间限制到 4GB。通过这种方式，64 位的 Linux 内核可以同时运行 32 位和 64 位的应用。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_COMPAT</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> TASK_SIZE_32            UL(0x100000000)</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> TASK_SIZE               (test_thread_flag(TIF_32BIT) ? \</span></div><div class="line">                                TASK_SIZE_32 : TASK_SIZE_64)</div><div class="line"><span class="meta">#<span class="meta-keyword">else</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> TASK_SIZE               TASK_SIZE_64</span></div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">/* CONFIG_COMPAT */</span></span></div></pre></td></tr></table></figure>
+<p>64 位 ARM 应用在 64 位 Linux 内核上的情况：</p>
+<p><img src="http://7vzu7u.com1.z0.glb.clouddn.com/linux-kernel-arm64source5.png" alt="ARM64 64 位应用虚拟地址空间布局"></p>
+<p>32 位 ARM 应用在 64 位 Linux 内核上的情况：</p>
+<p><img src="http://7vzu7u.com1.z0.glb.clouddn.com/linux-kernel-arm64source6.png" alt="ARM64 32 位应用虚拟地址空间布局"></p>
+<p>需要注意到，32 位应用仍然拥有 512GB 的内核虚拟地址空间，并且不与内核共享自己的 4GB 空间。但在 ARM32 上，32 位应用只有 3GB 的地址空间。</p>
+<pre><code>| ARM32 Linux | ARM64 Linux
+</code></pre><p> — | — | —<br> 32 位用户虚拟地址空间大小 | 3GB | 4GB<br> 64 位用户虚拟地址空间大小 | N/A | 512GB<br> 内核虚拟地址空间大小 | 1GB | 512GB</p>
 <hr>
 
       
@@ -176,7 +191,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Android-Security/"> #Android Security </a>
+            <a href="/tags/ARM64-Linux/"> #ARM64 Linux </a>
           
         </div>
       
@@ -185,13 +200,11 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/02/21/Xposed翻译文档/">Xposed翻译文档</a>
+              <a href="/2017/03/02/在 OS X 上使用 PGP 发送加密邮件/">在 OS X 上使用 PGP 发送加密邮件</a>
             
           </div>
 
           <div class="post-nav-next post-nav-item">
-            
-              <a href="/2015/03/18/so文件的调试方法/">so文件的调试方法</a>
             
           </div>
         </div>
@@ -289,7 +302,7 @@
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#添加meta-data元素"><span class="nav-number">1.</span> <span class="nav-text">添加meta-data元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加XposedBridge-jar"><span class="nav-number">2.</span> <span class="nav-text">添加XposedBridge.jar</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#新建xposed-init文件"><span class="nav-number">3.</span> <span class="nav-text">新建xposed_init文件</span></a></li></ol></div>
+              <p class="post-toc-empty">此文章未包含目录</p>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
