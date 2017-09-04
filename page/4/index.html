@@ -127,6 +127,82 @@
           
           
             
+              <a class="post-title-link" href="/2015/02/27/Xposed插件编写流程/">
+                Xposed插件编写流程
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于 2015-02-27
+        </span>
+
+        
+
+        
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p><strong>Author: GeneBlue</strong></p>
+<p>官方英文介绍：<a href="https://github.com/rovo89/XposedBridge/wiki/Development-tutorial">这里</a> </p>
+<p>创建一个XposedModule一般按照以下流程：</p>
+<h4 id="添加meta-data元素"><a href="#添加meta-data元素" class="headerlink" title="添加meta-data元素"></a>添加meta-data元素</h4><p>应该在要编写的程序的Manifest文件的application元素下添加三个 meta-data元素，如下所示：</p>
+<pre><code>&lt;meta-data              //指定这是Xposed Module程序
+    android:name=&quot;xposedmodule&quot;
+    android:value=&quot;true&quot; /&gt;
+&lt;meta-data             //此Module的描述性信息
+    android:name=&quot;xposeddescription&quot;
+    android:value=&quot;makes the status bar clock red and adds a smiley&quot; /&gt;
+&lt;meta-data            //此Module的最低的Xposed api的版本
+    android:name=&quot;xposedminversion&quot;
+    android:value=&quot;30&quot; /&gt;
+</code></pre>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/02/27/Xposed插件编写流程/#more">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </div>
+  </div>
+
+
+    
+      
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
               <a class="post-title-link" href="/2015/02/21/Xposed翻译文档/">
                 Xposed翻译文档
               </a>
@@ -358,7 +434,7 @@
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-count">19</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -372,7 +448,7 @@
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">11</span>
+              <span class="site-state-item-count">12</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>

@@ -127,6 +127,71 @@
           
           
             
+              <a class="post-title-link" href="/2015/07/20/JNI官方文档-Chapter 2：Design Overview/">
+                JNI官方文档-Chapter 2：Design Overview
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于 2015-07-20
+        </span>
+
+        
+
+        
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p><strong>Author: GeneBlue</strong></p>
+<p>本篇主要关注JNI设计中的主要问题。这里讲述的大多数问题都与本地方法有关。Invocation API的介绍在Chapter 5中。</p>
+<h3 id="JNI-Interface-Functions-and-Pointers"><a href="#JNI-Interface-Functions-and-Pointers" class="headerlink" title="JNI Interface Functions and Pointers"></a>JNI Interface Functions and Pointers</h3><p>本地代码通过JNI函数可以获取JVM的一些特性。JNI函数可以通过一个接口指针获取。该接口指针是一个双重指针（指向指针的指针）。指针指向了一个指针数组，指针数组中的每一个成员都指向一个接口函数。每一个接口函数都在数组中预定义了一个偏移地址。下图可以表明接口指针的组织关系。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/07/20/JNI官方文档-Chapter 2：Design Overview/#more">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </div>
+  </div>
+
+
+    
+      
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
               <a class="post-title-link" href="/2015/07/18/JNI官方文档-Chapter 1：Introduction/">
                 JNI官方文档-Chapter 1：Introduction
               </a>
@@ -400,82 +465,6 @@ cd /data/local/tmp/
 
 
     
-      
-
-  <div class="post post-type-normal ">
-    <div class="post-header">
-
-      
-      
-        <h1 class="post-title">
-          
-          
-            
-              <a class="post-title-link" href="/2015/02/27/Xposed插件编写流程/">
-                Xposed插件编写流程
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于 2015-02-27
-        </span>
-
-        
-
-        
-          
-        
-      </div>
-    </div>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <p><strong>Author: GeneBlue</strong></p>
-<p>官方英文介绍：<a href="https://github.com/rovo89/XposedBridge/wiki/Development-tutorial">这里</a> </p>
-<p>创建一个XposedModule一般按照以下流程：</p>
-<h4 id="添加meta-data元素"><a href="#添加meta-data元素" class="headerlink" title="添加meta-data元素"></a>添加meta-data元素</h4><p>应该在要编写的程序的Manifest文件的application元素下添加三个 meta-data元素，如下所示：</p>
-<pre><code>&lt;meta-data              //指定这是Xposed Module程序
-    android:name=&quot;xposedmodule&quot;
-    android:value=&quot;true&quot; /&gt;
-&lt;meta-data             //此Module的描述性信息
-    android:name=&quot;xposeddescription&quot;
-    android:value=&quot;makes the status bar clock red and adds a smiley&quot; /&gt;
-&lt;meta-data            //此Module的最低的Xposed api的版本
-    android:name=&quot;xposedminversion&quot;
-    android:value=&quot;30&quot; /&gt;
-</code></pre>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2015/02/27/Xposed插件编写流程/#more">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </div>
-  </div>
-
-
-    
   </div>
 
   
@@ -514,7 +503,7 @@ cd /data/local/tmp/
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-count">19</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -528,7 +517,7 @@ cd /data/local/tmp/
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">11</span>
+              <span class="site-state-item-count">12</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
