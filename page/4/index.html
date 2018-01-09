@@ -127,6 +127,82 @@
           
           
             
+              <a class="post-title-link" href="/2015/03/20/DEX文件格式/">
+                Dex文件格式
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于 2015-03-20
+        </span>
+
+        
+
+        
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p><strong>Author: GeneBlue</strong></p>
+<p>为了更好了解DEX文件格式，写了个java版的DEX解析器，可以打印出一个dex文件中的字符串，字段和类中调用了哪些方法。具体代码见<a href="https://github.com/GeneBlue/DexFunctions">这里</a> </p>
+<h3 id="0X01-准备工作"><a href="#0X01-准备工作" class="headerlink" title="0X01 准备工作"></a>0X01 准备工作</h3><p>java文件为Hello.java:</p>
+<pre><code>public class Hello {
+   public int foo(int a, int b) {
+       return (a + b) * (a - b);
+   }
+
+   public static void main(String[] argc) {
+       Hello hello = new Hello();
+       System.out.println(hello.foo(5, 3));
+   }
+}
+</code></pre>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/03/20/DEX文件格式/#more">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </div>
+  </div>
+
+
+    
+      
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
               <a class="post-title-link" href="/2015/03/18/so文件的调试方法/">
                 so文件的调试方法
               </a>
@@ -345,72 +421,6 @@ cd /data/local/tmp/
           
           
             
-              <a class="post-title-link" href="/2015/02/10/XX公共自行车备件管理系统项目心得/">
-                XX公共自行车备件管理系统项目心得
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于 2015-02-10
-        </span>
-
-        
-
-        
-          
-        
-      </div>
-    </div>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <p><strong>Author: GeneBlue</strong></p>
-<p>这并不是一份正式的项目总结，只是我们在做完自行车备件管理系统后我的一些心得。觉得有必要写一下记录自己在这个项目中犯过的错误。</p>
-<p>这个项目是从大三上学期刚开学的时候接手的。这个备件管理系统相对研究生学长做的道路滑坡预测比较简单，老师就将这个项目交给我们四个啥都不太懂的本科生做。说实话，大家都挺积极的，至少可以明白最简单的商业项目是怎么一回事。</p>
-<p>要做的东西不是很难，这个备件管理系统主要就是完成移动端（Android）应用和后台管理系统的开发。移动端主要是完成备件从采购、入库、使用、维护、维修和报废一系列操作，需要按照操作人员的角色设定操作权限，然后将数据传输到数据库中；后台管理系统主要是使用java和jsp开发网页版程序对数据库中的数据进行管理，差不多也就是数据库的那几种基本操作。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2015/02/10/XX公共自行车备件管理系统项目心得/#more">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </div>
-  </div>
-
-
-    
-      
-
-  <div class="post post-type-normal ">
-    <div class="post-header">
-
-      
-      
-        <h1 class="post-title">
-          
-          
-            
               <a class="post-title-link" href="/2015/02/10/Xposed demo分析/">
                 Xposed demo分析
               </a>
@@ -475,7 +485,7 @@ cd /data/local/tmp/
 
   
   <div class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/">&laquo;</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span>
+    <a class="extend prev" rel="prev" href="/page/3/">&laquo;</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/5/">&raquo;</a>
   </div>
 
 
@@ -509,7 +519,7 @@ cd /data/local/tmp/
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">20</span>
+              <span class="site-state-item-count">21</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

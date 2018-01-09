@@ -127,6 +127,71 @@
           
           
             
+              <a class="post-title-link" href="/2015/07/22/JNI官方文档-Chapter 4：JNI Functions/">
+                JNI官方文档-Chapter 4：JNI Functions
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于 2015-07-22
+        </span>
+
+        
+
+        
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p><strong>Author: GeneBlue</strong></p>
+<p>本章主要作为JNI函数的参考手册。这里提供完整的JNI函数列表，也提供JNI函数表的设计。</p>
+<p>注意“必须”这个词常常描述对JNI开发人员的限制。如，当你看到一个JNI函数“必须”接收一个非空的对象时，你就要确保NULL值不会被传递到该JNI函数。所以，该JNI函数的实现是不需要执行NULL值检查的。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/07/22/JNI官方文档-Chapter 4：JNI Functions/#more">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </div>
+  </div>
+
+
+    
+      
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
               <a class="post-title-link" href="/2015/07/21/JNI官方文档-Chapter 3：JNI Types and Data Structures/">
                 JNI官方文档-Chapter 3：JNI Types and Data Structures
               </a>
@@ -379,87 +444,11 @@
 
 
     
-      
-
-  <div class="post post-type-normal ">
-    <div class="post-header">
-
-      
-      
-        <h1 class="post-title">
-          
-          
-            
-              <a class="post-title-link" href="/2015/03/20/DEX文件格式/">
-                Dex文件格式
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于 2015-03-20
-        </span>
-
-        
-
-        
-          
-        
-      </div>
-    </div>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <p><strong>Author: GeneBlue</strong></p>
-<p>为了更好了解DEX文件格式，写了个java版的DEX解析器，可以打印出一个dex文件中的字符串，字段和类中调用了哪些方法。具体代码见<a href="https://github.com/GeneBlue/DexFunctions">这里</a> </p>
-<h3 id="0X01-准备工作"><a href="#0X01-准备工作" class="headerlink" title="0X01 准备工作"></a>0X01 准备工作</h3><p>java文件为Hello.java:</p>
-<pre><code>public class Hello {
-   public int foo(int a, int b) {
-       return (a + b) * (a - b);
-   }
-
-   public static void main(String[] argc) {
-       Hello hello = new Hello();
-       System.out.println(hello.foo(5, 3));
-   }
-}
-</code></pre>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2015/03/20/DEX文件格式/#more">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </div>
-  </div>
-
-
-    
   </div>
 
   
   <div class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/">&laquo;</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/">&raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/2/">&laquo;</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/">&raquo;</a>
   </div>
 
 
@@ -493,7 +482,7 @@
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">20</span>
+              <span class="site-state-item-count">21</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
