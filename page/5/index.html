@@ -127,6 +127,77 @@
           
           
             
+              <a class="post-title-link" href="/2015/02/10/Xposed demo分析/">
+                Xposed demo分析
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于 2015-02-10
+        </span>
+
+        
+
+        
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p><strong>Author: GeneBlue</strong></p>
+<p>代码下载地址：<a href="https://github.com/GeneBlue/BlueGeneModule">这里</a></p>
+<hr>
+<h4 id="MainActivity类"><a href="#MainActivity类" class="headerlink" title="MainActivity类"></a>MainActivity类</h4><p>下面从主函数MainActivity开始入手分析：</p>
+<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/XposedDemo-Analyse-MainActivity.PNG "  alt="MainActivity" title="MainActivity" /><br></div>
+
+
+<p>MainActivity主要是处理页面上的一些控件。modifyMac()方法是关键，主要是通过调用PrivacyManager类中的setValue（）方法，设置mac值。</p>
+<p>PrivacyManager类没有做任何实际处理，只是调用了PrivacyService中的getSetting()和setValue（）方法。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/02/10/Xposed demo分析/#more">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </div>
+  </div>
+
+
+    
+      
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
               <a class="post-title-link" href="/2015/02/10/XX公共自行车备件管理系统项目心得/">
                 XX公共自行车备件管理系统项目心得
               </a>
@@ -220,7 +291,7 @@
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">21</span>
+              <span class="site-state-item-count">22</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -234,7 +305,7 @@
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-count">13</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
