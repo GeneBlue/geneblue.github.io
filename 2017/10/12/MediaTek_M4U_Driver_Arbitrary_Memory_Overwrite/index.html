@@ -22,7 +22,7 @@
 
 
 
-  <meta name="keywords" content="Android Security," />
+  <meta name="keywords" content="Android Kernel," />
 
 
 
@@ -45,7 +45,7 @@
 
 
 
-  <title> so文件的调试方法 // GeneBlue's Blog </title>
+  <title> MediaTek M4U Driver Arbitrary Memory Overwrite // GeneBlue's Blog </title>
 </head>
 
 <body>
@@ -125,7 +125,7 @@
           
           
             
-              so文件的调试方法
+              MediaTek M4U Driver Arbitrary Memory Overwrite
             
           
         </h1>
@@ -133,7 +133,7 @@
 
       <div class="post-meta">
         <span class="post-time">
-          发表于 2015-03-18
+          发表于 2017-10-12
         </span>
 
         
@@ -151,43 +151,19 @@
 
       
         <p><strong>Author: GeneBlue</strong></p>
-<h3 id="0X01-基本步骤"><a href="#0X01-基本步骤" class="headerlink" title="0X01 基本步骤"></a>0X01 基本步骤</h3><p>这里介绍使用IDA对so文件的动态调试，其他调试工具的使用，以后再做补充。</p>
-<p>IDA从6.1版本开始支持Android原生程序的动态调试。</p>
-<ul>
-<li><p>将ida目录下的android_server拷贝到android的目录中</p>
-<p> adb push android_server /data/local/tmp/</p>
-</li>
-</ul>
-<pre><code>adb shell 进入模拟器
-
-
-cd /data/local/tmp/
-</code></pre><a id="more"></a>
-<pre><code>chmod 755 android_server
-
-
-./android_server  
-
-注意程序的执行必须要在root权限下，不然在attach的时候找不到要附加的so文件
-
-可以看到正在监听端口 23946
-</code></pre><ul>
-<li><p>端口转发</p>
-<p>  adb forward tcp:23946 tcp:23946</p>
-<p>  将pc上端口数据转发到手机的端口</p>
-</li>
-<li><p>调试前配置</p>
-<p> 在debugger中选择attach并选择Remote ARMLinux/Android debugger选项，在出现的配置窗口中填上localhost 并选择端口23946</p>
-</li>
-<li><p>选取so文件</p>
-<p> 配置完毕后，在出现的文件选择列表中，选取要attach的文件即可。</p>
-</li>
-</ul>
-<h3 id="0X02-注意"><a href="#0X02-注意" class="headerlink" title="0X02 注意"></a>0X02 注意</h3><ul>
-<li><p>使用32位的IDA，64位IDA在连接android_server的时候会出现<code>incompatible debugging server</code>的错误哦</p>
-</li>
-<li><p>以root权限运行android_server,不然只能attach上极少的进程</p>
-</li>
+<h3 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h3><figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">金立<span class="selector-tag">f103</span></div><div class="line"><span class="selector-tag">android5</span><span class="selector-class">.0</span><span class="selector-class">.2</span></div><div class="line"><span class="selector-tag">Linux</span> <span class="selector-tag">version</span> <span class="selector-tag">3</span><span class="selector-class">.10</span><span class="selector-class">.65</span>+ (android<span class="variable">@BIANYI-26</span>) (gcc version <span class="number">4.9</span> <span class="number">20140514</span> (mtk-<span class="number">20150408</span>) (GCC) ) <span class="selector-id">#1</span> <span class="selector-tag">SMP</span> <span class="selector-tag">PREEMPT</span> <span class="selector-tag">Wed</span> <span class="selector-tag">May</span> <span class="selector-tag">11</span> <span class="selector-tag">16</span><span class="selector-pseudo">:52</span><span class="selector-pseudo">:18</span> <span class="selector-tag">CST</span> <span class="selector-tag">2016</span></div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">drivers<span class="regexp">/misc/m</span>ediatek<span class="regexp">/m4u/m</span>t6735<span class="regexp">/m4u.c</span></div></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">long</span> <span class="title">MTK_M4U_ioctl</span><span class="params">(<span class="keyword">struct</span> file *filp, <span class="keyword">unsigned</span> <span class="keyword">int</span> cmd, <span class="keyword">unsigned</span> <span class="keyword">long</span> arg)</span></span></div><div class="line">&#123;</div><div class="line">    ...</div><div class="line">    <span class="keyword">switch</span> (cmd)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">case</span> MTK_M4U_T_CONFIG_TF:        </div><div class="line">            &#123;</div><div class="line">                M4U_TF_STRUCT rM4UTF;</div><div class="line">                ret = copy_from_user(&amp;rM4UTF, (<span class="keyword">void</span> *) arg, <span class="keyword">sizeof</span>(M4U_TF_STRUCT));</div><div class="line">                <span class="keyword">if</span> (ret)</div><div class="line">                &#123;</div><div class="line">                    M4UMSG(<span class="string">"MTK_M4U_T_CONFIG_TF,copy_from_user failed:%d\n"</span>, ret);</div><div class="line">                    <span class="keyword">return</span> -EFAULT;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                ret = m4u_enable_tf(rM4UTF.port, rM4UTF.fgEnable);</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        ...</div><div class="line">    &#125;</div><div class="line">    ...</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">m4u_enable_tf</span><span class="params">(<span class="keyword">int</span> port, <span class="keyword">bool</span> fgenable)</span></span></div><div class="line">&#123;</div><div class="line">    gM4uPort[port].enable_tf = fgenable;</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>MediaTek 6735 处理的驱动 <code>/proc/m4u</code> 的 ioctl 接口存在一个任意地址写一字节漏洞，该漏洞通过 <code>MTK_M4U_T_CONFIG_TF</code> 命令即可触发，主要是因为 <code>m4u_enable_tf</code> 函数没有对输入参数做校验。</p>
+<p><code>m4u_enable_tf</code> 对应的汇编代码如下：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">m4u_enable_tf_</div><div class="line"></div><div class="line">var_5= -<span class="number">5</span></div><div class="line">var_4= -<span class="number">4</span></div><div class="line"></div><div class="line"><span class="keyword">SUB </span>            <span class="built_in">SP</span>, <span class="built_in">SP</span>, <span class="comment">#0x10</span></div><div class="line">STR             W0, [<span class="built_in">SP</span>,<span class="comment">#0x10+var_4]</span></div><div class="line">STRB            W1, [<span class="built_in">SP</span>,<span class="comment">#0x10+var_5]</span></div><div class="line">ADRP            X0, <span class="comment">#off_FFFFFFC000D9B4B8@PAGE</span></div><div class="line"><span class="keyword">ADD </span>            X2, X0, <span class="comment">#off_FFFFFFC000D9B4B8@PAGEOFF</span></div><div class="line">LDRSW           X1, [<span class="built_in">SP</span>,<span class="comment">#0x10+var_4]    # X1 有符号 int 值</span></div><div class="line">MOV             X0, X1</div><div class="line">UBFM            X0, X0, <span class="comment">#0x3F, #0x3E</span></div><div class="line"><span class="keyword">ADD </span>            X0, X0, X1</div><div class="line">UBFM            X0, X0, <span class="comment">#0x3C, #0x3B</span></div><div class="line"><span class="keyword">ADD </span>            X0, X2, X0</div><div class="line">LDRB            W1, [<span class="built_in">SP</span>,<span class="comment">#0x10+var_5]</span></div><div class="line">STRB            W1, [X0,<span class="comment">#0xC]     # PC when crash</span></div><div class="line">MOV             W0, <span class="comment">#0</span></div><div class="line"><span class="keyword">ADD </span>            <span class="built_in">SP</span>, <span class="built_in">SP</span>, <span class="comment">#0x10</span></div><div class="line">RET</div></pre></td></tr></table></figure>
+<p>FFFFFFC000D9B4B8 + 0x30 * X0 + 0xc = W1(one byte)</p>
+<p>ptmx_fops = 0xFFFFFFC000EB1380    </p>
+<p>覆盖 ptmx_fops 表地址，覆盖一个字节： 0xee<br>ffffffee00eb1380<br>崩溃日志见 log1.txt</p>
+<p>该任意地址覆盖只能间隔性(0x30)覆盖一个字节， 64位内核暂时找不到好的利用方式。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://labs.mwrinfosecurity.com/assets/BlogFiles/mediatek-kernel-write-m4u.pdf" target="_blank" rel="external">mediatek-kernel-write-m4u.pdf</a></li>
 </ul>
 
       
@@ -197,7 +173,7 @@ cd /data/local/tmp/
       
         <div class="post-tags">
           
-            <a href="/tags/Android-Security/"> #Android Security </a>
+            <a href="/tags/Android-Kernel/"> #Android Kernel </a>
           
         </div>
       
@@ -206,13 +182,11 @@ cd /data/local/tmp/
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/02/27/Xposed插件编写流程/">Xposed插件编写流程</a>
+              <a href="/2017/08/23/Android8.0_Kernel_Hardening/">Android 8.0 内核安全特性</a>
             
           </div>
 
           <div class="post-nav-next post-nav-item">
-            
-              <a href="/2015/03/20/DEX文件格式/">Dex文件格式</a>
             
           </div>
         </div>
@@ -310,7 +284,7 @@ cd /data/local/tmp/
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0X01-基本步骤"><span class="nav-number">1.</span> <span class="nav-text">0X01 基本步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X02-注意"><span class="nav-number">2.</span> <span class="nav-text">0X02 注意</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#环境"><span class="nav-number">1.</span> <span class="nav-text">环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析"><span class="nav-number">2.</span> <span class="nav-text">分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
