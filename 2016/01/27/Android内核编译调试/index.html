@@ -172,35 +172,35 @@ CONFIG_KGDB_SERIAL_CONSOLE=y
 关闭CONFIG_DEBUG_RODATA选项
 </code></pre><h3 id="0X04-编译"><a href="#0X04-编译" class="headerlink" title="0X04 编译"></a>0X04 编译</h3><p>编译一开始会有提示让选择配置选项，相关的配置全部选Y， 编译完成后内核在goldfish/arch/arm/boot/zImage 处</p>
 <pre><code>make ARCH=arm CROSS_COMPILE=/home/geneblue/Android/Source/android-4.4.4_r1/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.7/bin/arm-linux-androideabi- all
-</code></pre><div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/android-kernel-debug-1.png " alt="Android内核编译" style="width: 454.82px; height: 224.43px; margin-left: -0.00px; margin-top: -0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="Android内核编译"><br></div>
+</code></pre><div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB92212792d734b7d979555c33969d751a?method=download&shareKey=e0bfac574d2bead588f22b54dc1ffda3" alt="Android内核编译" style="width: 454.82px; height: 224.43px; margin-left: -0.00px; margin-top: -0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="Android内核编译"><br></div>
 
 <h3 id="0X05-内核调试"><a href="#0X05-内核调试" class="headerlink" title="0X05 内核调试"></a>0X05 内核调试</h3><p>内核镜像编译成功后，可以在Android emulator中创建AVD并加载内核镜像。</p>
 <p>首先，需要建立一个用于调试内核的AVD：</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/android-kernel-debug-2.png " alt="创建模拟器" style="width: 253.40px; height: 422.67px; margin-left: -0.00px; margin-top: -0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="创建模拟器"><br> </div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB2510ece419bf4017825572f9f0c16bc2?method=download&shareKey=dcdb1a8310ab0f6ff5e2e7627036fa68" alt="创建模拟器" style="width: 253.40px; height: 422.67px; margin-left: -0.00px; margin-top: -0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="创建模拟器"><br> </div>
 
 <p>注意勾选“Use Host GPU”，该选项可以显著加快模拟器的启动速度。</p>
 <p>启动模拟器，检查新建的模拟器是否能正常启动：</p>
 <pre><code>emulator -list-avds  
 emulator -avd Debug_Kernel -gpu mesa
 </code></pre><p>启动完毕后，可以在模拟器中查看Android Kernel version：</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/android-kernel-debug-3.png" alt="原内核" style="width: 187.96px; height: 118.00px; margin-left: -0.00px; margin-top: -0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="原内核"><br> </div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB62db2e9e2dd6068ed4a8dbbd558e4fea?method=download&shareKey=7ec7e97c202e772a77f15fd66b05d7cb" alt="原内核" style="width: 187.96px; height: 118.00px; margin-left: -0.00px; margin-top: -0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="原内核"><br> </div>
 
 
 <p>在此基础上指定编译好的内核镜像来启动模拟器：</p>
 <pre><code>emulator -kernel ./goldfish/arch/arm/boot/zImage -avd Debug_Kernel -gpu mesa
-</code></pre><div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/android-kernel-debug-4.png " alt="编译内核" style="width: 190.98px; height: 122.70px; margin-left: -0.00px; margin-top: -0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="编译内核"><br> </div>
+</code></pre><div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB7ca2d29c90f97bc06fdbd9bd7eca8d37?method=download&shareKey=3759b78fa12f055b9be8562d2dd35da3" alt="编译内核" style="width: 190.98px; height: 122.70px; margin-left: -0.00px; margin-top: -0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="编译内核"><br> </div>
 
 
 <p>调试内核，需要在其启动的一开始就暂停下来，等待调试器的连接，使用如下命令：</p>
 <pre><code>emulator -verbose -netfast -show-kernel -kernel ./arch/arm/boot/zImage -avd Debug_Kernel -gpu mesa -qemu -s -S 
 </code></pre><p>-verbose -show-kernel选项可以看到内核的详细输出，-no-window -no-audio选项可以不启动界面，-qumu -s -S选项可以启动调试监听让内核启动时在端口1234等待。</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/android-kernel-debug-5.png" alt="模拟器暂停" style="width: 370.77px; height: 235.67px; margin-left: -0.00px; margin-top: -0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="模拟器暂停"><br> </div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB57d5dbafd30d85743538264528c7a986?method=download&shareKey=cf51703fd34af0685743796da91cd247" alt="模拟器暂停" style="width: 370.77px; height: 235.67px; margin-left: -0.00px; margin-top: -0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="模拟器暂停"><br> </div>
 
 <p>模拟器停止，等待gdb连接：</p>
 <pre><code>arm-linux-androideabi-gdb vmlinux  
 target remote :1234  
 </code></pre><p>前述配置config选项时设置CONFIG_DEBUG_INFO=y，所以vmlinux中包含了内核符号信息，在gdb中可以做到源码级调试：</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/android-kernel-debug-6.png" alt="内核调试" style="width: 403.06px; height: 260.33px; margin-left: -0.00px; margin-top: -0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="内核调试"><br> </div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBb47cda2cf42a4840577fec1551b64e58?method=download&shareKey=1673f5e5a058b988362fe0effec3815b" alt="内核调试" style="width: 403.06px; height: 260.33px; margin-left: -0.00px; margin-top: -0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="内核调试"><br> </div>
 
 <p>至此，已经能够调试内核源码</p>
 <h3 id="0X06-内核漏洞调试"><a href="#0X06-内核漏洞调试" class="headerlink" title="0X06 内核漏洞调试"></a>0X06 内核漏洞调试</h3><p>在能够调试内核源码的基础上，内核漏洞的调试则要求更多的调试技巧。拿到一个内核漏洞时，首先定位该漏洞发生的源码位置，熟悉该部分代码的功能和简单使用；如果有POC就验证一下，看看效果……</p>
@@ -288,7 +288,7 @@ target remote :1234
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">22</span>
+              <span class="site-state-item-count">23</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -302,7 +302,7 @@ target remote :1234
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">13</span>
+              <span class="site-state-item-count">14</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
@@ -344,7 +344,7 @@ target remote :1234
         <div class="copyright">
   
   &copy; &nbsp; 
-  2018
+  2019
   <span class="with-love">
     <i class="icon-heart"></i>
   </span>

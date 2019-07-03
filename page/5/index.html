@@ -127,8 +127,8 @@
           
           
             
-              <a class="post-title-link" href="/2015/02/10/Xposed demo分析/">
-                Xposed demo分析
+              <a class="post-title-link" href="/2015/02/21/Xposed翻译文档/">
+                Xposed翻译文档
               </a>
             
           
@@ -137,7 +137,7 @@
 
       <div class="post-meta">
         <span class="post-time">
-          发表于 2015-02-10
+          发表于 2015-02-21
         </span>
 
         
@@ -156,16 +156,12 @@
       
         
           <p><strong>Author: GeneBlue</strong></p>
-<p>代码下载地址：<a href="https://github.com/GeneBlue/BlueGeneModule">这里</a></p>
+<p>英文原版地址：<a href="https://github.com/rovo89/XposedBridge/wiki/Development-tutorial">这里</a> </p>
+<p>注：文档去掉了Xposed Module建立的过程，上述地址介绍的比较详细且容易看懂。有些地方翻译的比较生硬，还是查看对应的英文文档比较好。</p>
 <hr>
-<h4 id="MainActivity类"><a href="#MainActivity类" class="headerlink" title="MainActivity类"></a>MainActivity类</h4><p>下面从主函数MainActivity开始入手分析：</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/XposedDemo-Analyse-MainActivity.PNG "  alt="MainActivity" title="MainActivity" /><br></div>
-
-
-<p>MainActivity主要是处理页面上的一些控件。modifyMac()方法是关键，主要是通过调用PrivacyManager类中的setValue（）方法，设置mac值。</p>
-<p>PrivacyManager类没有做任何实际处理，只是调用了PrivacyService中的getSetting()和setValue（）方法。<br>
+<h3 id="Development-tutorial"><a href="#Development-tutorial" class="headerlink" title="Development tutorial"></a>Development tutorial</h3><h4 id="Xposed原理"><a href="#Xposed原理" class="headerlink" title="Xposed原理"></a>Xposed原理</h4><p>在Android运行时空间里（Android runtime)有一个非常重要的进程是“Zygote”。每个Android应用程序的启动都是由Zygote进程fork而出的。当手机启动的时候，Zygote进程就会由/init.rc脚本启动。最终由/system/bin/app_process进程完成Zygote进程的启动，app_process进程会加载一些必要的类库并初始化一些方法。</p>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2015/02/10/Xposed demo分析/#more">
+            <a class="btn" href="/2015/02/21/Xposed翻译文档/#more">
               阅读全文 &raquo;
             </a>
           </div>
@@ -253,6 +249,77 @@
 
 
     
+      
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              <a class="post-title-link" href="/2015/02/10/Xposed demo分析/">
+                Xposed demo分析
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于 2015-02-10
+        </span>
+
+        
+
+        
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p><strong>Author: GeneBlue</strong></p>
+<p>代码下载地址：<a href="https://github.com/GeneBlue/BlueGeneModule">这里</a></p>
+<hr>
+<h4 id="MainActivity类"><a href="#MainActivity类" class="headerlink" title="MainActivity类"></a>MainActivity类</h4><p>下面从主函数MainActivity开始入手分析：</p>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB8fde0ad79a859ed673bd2c63640ad04c?method=download&shareKey=e5939775d200de68fc1a06b827831edd"  alt="MainActivity" title="MainActivity" /><br></div>
+
+
+<p>MainActivity主要是处理页面上的一些控件。modifyMac()方法是关键，主要是通过调用PrivacyManager类中的setValue（）方法，设置mac值。</p>
+<p>PrivacyManager类没有做任何实际处理，只是调用了PrivacyService中的getSetting()和setValue（）方法。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/02/10/Xposed demo分析/#more">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </div>
+  </div>
+
+
+    
   </div>
 
   
@@ -291,7 +358,7 @@
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">22</span>
+              <span class="site-state-item-count">23</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -305,7 +372,7 @@
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">13</span>
+              <span class="site-state-item-count">14</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
@@ -336,7 +403,7 @@
         <div class="copyright">
   
   &copy; &nbsp; 
-  2018
+  2019
   <span class="with-love">
     <i class="icon-heart"></i>
   </span>

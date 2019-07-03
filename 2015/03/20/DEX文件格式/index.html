@@ -168,13 +168,13 @@
 <p>javac -source 1.6 -target 1.6 Hello.java  //这里需要指定JDK的版本号，不然会出错</p>
 <p>dx.bat  –dex –output=Hello.dex Hello.class </p>
 <h3 id="0X02-整体分析"><a href="#0X02-整体分析" class="headerlink" title="0X02 整体分析"></a>0X02 整体分析</h3><p>DEX文件的结构图如下：</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/dex-file-structure.png " alt="dex"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB0ef986a25d4c34b9666ebfd549e0eb19?method=download&shareKey=a75f054483173cc3e79f8d7a28fa0f15" alt="dex"><br></div>
 
 <p>从上图可以看出DEX文件结构共包含9个部分，MapSection是包含在DataSection中的。</p>
 <p>将生成的Hello.dex文件用任意的16进制编辑器打开后就会得到如下的编码：</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/dex-data-1.png " alt="dex"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB5e6bbac67f4de9380f411497f9fc0036?method=download&shareKey=3f12c8b18a053e6d50e9fc19cbd7dc33" alt="dex"><br></div>
 
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/dex-data-2.png " alt="dex"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBd14193fefc50e5b33038d27d78964942?method=download&shareKey=979eba13601aee56eae6c2f52f18112a" alt="dex"><br></div>
 
 
 <h3 id="0X03-详细分析"><a href="#0X03-详细分析" class="headerlink" title="0X03 详细分析"></a>0X03 详细分析</h3><h4 id="DexHeader"><a href="#DexHeader" class="headerlink" title="DexHeader"></a>DexHeader</h4><table><br><tbody><br><tr><td><em>字段名称</em></td><td><em>偏移值</em></td><td><em>长度</em></td><td><em>描述</em></td></tr><br><tr><td>magic</td><td>0x0</td><td>8</td><td>魔数字段，值为“dex/n035/0”标识文件类型 目前android dex文件版本为035</td></tr><br><tr><td>signature</td><td>0xC</td><td>20</td><td>SHA-1签名值</td></tr><br><tr><td>file_size</td><td>0x20</td><td>4</td><td>此dex文件的大小</td></tr><br><tr><td>header_size</td><td>0x24</td><td>4</td><td>dex文件头长度，035版本是0x70个字节</td></tr><br><tr><td>endian_tag</td><td>0x28</td><td>4</td><td>表明数据存储方式是大端还是小端，默认值为0x78563412</td></tr><br><tr><td>link_size</td><td>0x2C</td><td>4</td><td>连接段的大小，如果为0就表示是静态连接。</td></tr><br><tr><td>link_of</td><td>0x30</td><td>4</td><td>连接段的开始位置，从本文件头开始算起。如果连接段的大小为0，这里也是0</td></tr><br><tr><td>map_off</td><td>0x34</td><td>4</td><td>map数据基地址</td></tr><br><tr><td>string_ids_size</td><td>0x38</td><td>4</td><td>字符串列表的字符串个数。</td></tr><br><tr><td>string_ids_off</td><td>0x3C</td><td>4</td><td>字符串列表表基地址。</td></tr><br><tr><td>type_ids_size</td><td>0x40</td><td>4</td><td>类型列表里类型个数。</td></tr><br><tr><td>type_ids_off</td><td>0x44</td><td>4</td><td>类型列表基地址。</td></tr><br><tr><td>proto_ids_size</td><td>0x48</td><td>4</td><td>原型列表里原型个数。</td></tr><br><tr><td>proto_ids_off</td><td>0x4C</td><td>4</td><td>原型列表基地址。</td></tr><br><tr><td>field_ids_size</td><td>0x50</td><td>4</td><td>字段列表里字段个数。</td></tr><br><tr><td>field_ids_off</td><td>0x54</td><td>4</td><td>字段列表基地址。</td></tr><br><tr><td>method_ids_size</td><td>0x58</td><td>4</td><td>方法列表里方法个数。</td></tr><br><tr><td>method_ids_off</td><td>0x5C</td><td>4</td><td>方法列表基地址。</td></tr><br><tr><td>class_defs_size</td><td>0x60</td><td>4</td><td>类定义类表中类的个数。</td></tr><br><tr><td>class_defs_off</td><td>0x64</td><td>4</td><td>类定义列表基地址。</td></tr><br><tr><td>data_size</td><td>0x68</td><td>4</td><td>数据段的大小，必须以4字节对齐。</td></tr><br><tr><td>data_off<br></td><td>0x6C</td><td>4</td><td>数据段基地址。</td></tr><br><br></tbody><br></table>
@@ -388,7 +388,7 @@ DexTypeItem list[1];   //这是个结构
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">22</span>
+              <span class="site-state-item-count">23</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -402,7 +402,7 @@ DexTypeItem list[1];   //这是个结构
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">13</span>
+              <span class="site-state-item-count">14</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
@@ -444,7 +444,7 @@ DexTypeItem list[1];   //这是个结构
         <div class="copyright">
   
   &copy; &nbsp; 
-  2018
+  2019
   <span class="with-love">
     <i class="icon-heart"></i>
   </span>

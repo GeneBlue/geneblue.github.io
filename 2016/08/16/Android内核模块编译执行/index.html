@@ -219,11 +219,11 @@ module_exit(hello_exit);  //模块卸载函数
 <p>有的时候，我们需要在手机中编写可动态加载的驱动模块，可动态加载模块非常便于调试，在kmsg中可直接看到调试信息，这个时候需要重新编译手机内核，开启内核的动态加载属性。在编译的内核的时候，使用</p>
 <pre><code>make menuconfig
 </code></pre><p>命令，并在menuconfig中做如下配置：</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/Android-kernel-module.png " alt="menuconfig" style="width: 371.65px; height: 237.22px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="menuconfig"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBe99d9a8dd62d82945248509c53de2457?method=download&shareKey=f1d12e47967eadbdfab2d57de501c66a" alt="menuconfig" style="width: 371.65px; height: 237.22px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="menuconfig"><br></div>
 
 
 
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/Android-kernel-module3.png " alt="menuconfig" style="width: 382.15px; height: 243.28px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="menuconfig"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB1c479a4901be686bdfcb98d0b8fb0482?method=download&shareKey=ae2570ee09dd8634f3b153d5171b3f37" alt="menuconfig" style="width: 382.15px; height: 243.28px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="menuconfig"><br></div>
 
 <p>如果不开启该选项就直接insmod加载hello.ko，一般情况下都会报如下错误：</p>
 <pre><code>insmod: init_module &apos;hello.ko&apos; failed (Function not implemented)
@@ -251,11 +251,11 @@ kmsg:
 &lt;3&gt;[ 1646.589131] hello: unknown relocation: 27  
 </code></pre><p>最后，使用make命令即可编译正确的hello.ko文件。</p>
 <h3 id="0X04-运行"><a href="#0X04-运行" class="headerlink" title="0X04 运行"></a>0X04 运行</h3><p>使用模拟器来加载新编好的内核，并在adb shell中查看新编的驱动：</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/Android-kernel-module1.png " alt="内建编译" style="width: 436.22px; height: 76.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="内建编译"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBf896d212e421403249737c0c1d2c9f36?method=download&shareKey=fca1e727ad7a30336d420cdad28450a7" alt="内建编译" style="width: 436.22px; height: 76.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="内建编译"><br></div>
 
 <p>这样，一个最简单的设备驱动已经可以正确运行了。</p>
 <p>将hello.ko文件push的手机中，用insmod来加载即可。</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/Android-kernel-module2.png " alt="模块编译" style="width: 437.65px; height: 52.08px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="模块编译"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBcf2732e1fb0cc0cc3562a0432cd9d516?method=download&shareKey=9f7f9bf4f83ecdaed0dbb6e2f5456349" alt="模块编译" style="width: 437.65px; height: 52.08px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="模块编译"><br></div>
 
 <h3 id="0X05-参考"><a href="#0X05-参考" class="headerlink" title="0X05 参考"></a>0X05 参考</h3><ul>
 <li><a href="http://blog.csdn.net/pillarbuaa/article/details/40340165" target="_blank" rel="external">在Ubuntu上为Android系统编写Linux内核驱动程序</a></li>
@@ -344,7 +344,7 @@ kmsg:
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">22</span>
+              <span class="site-state-item-count">23</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -358,7 +358,7 @@ kmsg:
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">13</span>
+              <span class="site-state-item-count">14</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
@@ -400,7 +400,7 @@ kmsg:
         <div class="copyright">
   
   &copy; &nbsp; 
-  2018
+  2019
   <span class="with-love">
     <i class="icon-heart"></i>
   </span>

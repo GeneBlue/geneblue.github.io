@@ -160,34 +160,34 @@ su
 cd /dev/block/platform/msm_sdcc.1/by-name
 ls -l boot
 </code></pre><a id="more"></a>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/get-android-kernel01.png " alt="get boot" style="width: 601.70px; height: 26.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="get boot"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBef5d993171f97cd22f78fa0bbdd5f0fd?method=download&shareKey=3ac977c4eefa79dc83ab929e7f1af87b" alt="get boot" style="width: 601.70px; height: 26.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="get boot"><br></div>
 
 <p>这个boot文件是个软链接，/dev/block/mmcblk0p19 即是boot分区</p>
 <p>用dd将其dump出来</p>
 <pre><code>dd if=/dev/block/mmcblk0p19 of=/sdcard/boot.img
 </code></pre><p>用binwalk分析boot.img</p>
 <pre><code>sudo binwalk boot.img
-</code></pre><div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/get-android-kernel02.png " alt="binwalk" style="width: 601.70px; height: 138.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="binwalk"><br></div>
+</code></pre><div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB6eba27912a87208dbb484b60d72ee655?method=download&shareKey=04bff9f0498a29c7ced7f976fa3e697a" alt="binwalk" style="width: 601.70px; height: 138.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="binwalk"><br></div>
 
 <p>从boot.img中提取出压缩的内核文件：</p>
 <pre><code>dd if=boot.img of=kernel.gz bs=1 skip=20660
-</code></pre><div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/get-android-kernel03.png " alt="dd kernel" style="width: 601.70px; height: 65.33px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="dd kernel"><br></div>
+</code></pre><div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBff15ec162d278664e811d8d89ddf6d5d?method=download&shareKey=bd3f114654329157e14ab7123321343b" alt="dd kernel" style="width: 601.70px; height: 65.33px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="dd kernel"><br></div>
 
 <p>解压：</p>
 <pre><code>gzip -d kernel.gz 
 sudo binwalk kernel
 </code></pre><p>这个kernel中不包含符号信息，所以还要从设备中提取符号信息：<br>/proc/kallsyms文件中存储了所有内核符号，但文件中存储的地址值都是0,这是为了防止内核地址泄露</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/get-android-kernel04.png " alt="kallsyms" style="width: 521.50px; height: 326.05px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="kallsyms"><br></div><br>要获取地址，可以修改　/proc/sys/kernel/kptr_restrict　值，要以root权限<br><br>    echo 1 &gt; /proc/sys/kernel/kptr_restrict<br><br><div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/get-android-kernel05.png " alt="kallsyms" style="width: 520.67px; height: 310.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="kallsyms"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBf8ec12060727deb350205b6733a60e74?method=download&shareKey=a8632f5f9b3ec9c9e1d0fdb2d70ea8d6" alt="kallsyms" style="width: 521.50px; height: 326.05px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="kallsyms"><br></div><br>要获取地址，可以修改　/proc/sys/kernel/kptr_restrict　值，要以root权限<br><br>    echo 1 &gt; /proc/sys/kernel/kptr_restrict<br><br><div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBfd7bf04931da2459a4f1f96d26232204?method=download&shareKey=dee63bdd3f728ddaf2cef62fdc65ce19" alt="kallsyms" style="width: 520.67px; height: 310.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="kallsyms"><br></div>
 
 <p>之后便可以拿到内核符号。</p>
 <h3 id="0X03-IDA分析"><a href="#0X03-IDA分析" class="headerlink" title="0X03 IDA分析"></a>0X03 IDA分析</h3><p>对于提取出来的kernel文件，可以直接放到ida中分析</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/get-android-kernel06.png " alt="IDA" style="width: 476.76px; height: 361.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="IDA"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBcdba3c7323255f41edfa43eabc4f6bd1?method=download&shareKey=a738088653aa0e7c96e076f38bd916eb" alt="IDA" style="width: 476.76px; height: 361.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="IDA"><br></div>
 
 <p>注意处理器类型选择ARM小端，然后设置内核起始地址为0xC0008000</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/get-android-kernel07.png " alt="IDA" style="width: 361.19px; height: 420.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="IDA"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB7ab5abed02898b8298e428180ba6ffb0?method=download&shareKey=2bf754e7ef1965f1ca515c6b9b7c46ef" alt="IDA" style="width: 361.19px; height: 420.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="IDA"><br></div>
 
 <p>随后，就可以在IDA中查看感兴趣的汇编代码了</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/get-android-kernel08.png " alt="IDA Analysis" style="width: 521.15px; height: 293.66px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="IDA Analysis"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB34ddd9f5a21103805926f4eaeaaba0d1?method=download&shareKey=78a321fb14c91e7767c50c5732b65cad" alt="IDA Analysis" style="width: 521.15px; height: 293.66px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="IDA Analysis"><br></div>
 
 <p>这时的函数名不太友好，向IDA中导入之前提取出来的符号信息就可以看到对应的函数名。</p>
 <pre><code>ksyms = open(&quot;C:\Users\Mr\Desktop\GetKernel\syms.txt&quot;)
@@ -198,7 +198,7 @@ for line in ksyms:
     MakeNameEx(addr,name,SN_NOWARN)
     Message(&quot;%08X:%sn&quot;%(addr,name))
 </code></pre><p>在IDA的File-&gt;Script Command中运行上述python脚本，之后就可以在IDA中成功添加符号信息</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/get-android-kernel09.png " alt="IDA　Analysis" style="width: 556.51px; height: 314.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="IDA Analysis"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBb732fa45fde6e272b77b16b369a58b2a?method=download&shareKey=e361704d4e438bd2e59034e5e5a6b538" alt="IDA　Analysis" style="width: 556.51px; height: 314.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="IDA Analysis"><br></div>
 
 <p>之后就可以具体分析内核代码了</p>
 <hr>
@@ -285,7 +285,7 @@ for line in ksyms:
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">22</span>
+              <span class="site-state-item-count">23</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -299,7 +299,7 @@ for line in ksyms:
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">13</span>
+              <span class="site-state-item-count">14</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
@@ -341,7 +341,7 @@ for line in ksyms:
         <div class="copyright">
   
   &copy; &nbsp; 
-  2018
+  2019
   <span class="with-love">
     <i class="icon-heart"></i>
   </span>

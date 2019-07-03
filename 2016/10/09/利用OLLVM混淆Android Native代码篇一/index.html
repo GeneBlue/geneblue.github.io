@@ -154,10 +154,10 @@
 <p>这里将会用两篇文章解释OLLVM混淆Android Native代码的方法和原理。篇一主要聚焦NDK中OLLVM的编译构建和主要混淆模式的使用，并简要解释各混淆模式的效果；篇二主要研究默认混淆模式的实现并尝试编写调试自定义Pass。<br><a id="more"></a></p>
 <h3 id="0X01-OLLVM简介"><a href="#0X01-OLLVM简介" class="headerlink" title="0X01 OLLVM简介"></a>0X01 OLLVM简介</h3><p>OLLVM（Obfuscator-LLVM）是瑞士西北应用科技大学安全实验室于2010年6月份发起的一个项目，该项目旨在提供一套开源的针对LLVM的代码混淆工具，以增加对逆向工程的难度。目前，OLLVM已经支持LLVM-3.6.1版本。</p>
 <p>LLVM是一个优秀的编译器框架，它也采用经典的三段式设计。前端可以使用不同的编译工具对代码文件做词法分析以形成抽象语法树AST，然后将分析好的代码转换成LLVM的中间表示IR（intermediate representation）；中间部分的优化器只对中间表示IR操作，通过一系列的Pass对IR做优化；后端负责将优化好的IR解释成对应平台的机器码。LLVM的优点在于，中间表示IR代码编写良好，而且不同的前端语言最终都转换成同一种的IR。</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-1.png " alt="LLVM架构" style="width: 299.87px; height: 131.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="LLVM架构"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBe7d4bdaca22d904105ea6276774e800f?method=download&shareKey=7eb6434b2ec3f2a3b5b050f67759a27f" alt="LLVM架构" style="width: 299.87px; height: 131.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="LLVM架构"><br></div>
 
 <p>LLVM IR是LLVM的中间表示，优化器就是对IR进行操作的，具体的优化操作由一些列的Pass来完成，当前端生成初级IR后，Pass会依次对IR进行处理，最终生成后端可用的IR。下图可以说明这个过程。</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-2.png " alt="Passes" style="width: 448.00px; height: 97.58px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="Passes"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB5c6f58ac0d559a7394aa08a908423dca?method=download&shareKey=98002ff6cd5d0dd4641e45e4973c8c92" alt="Passes" style="width: 448.00px; height: 97.58px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="Passes"><br></div>
 
 <p>OLLVM的混淆操作就是在中间表示IR层，通过编写Pass来混淆IR，然后后端依据IR来生成的目标代码也就被混淆了。得益于LLVM的设计，OLLVM适用LLVM支持的所有语言（C, C++, Objective-C, Ada 和 Fortran）和目标平台（x86, x86-64, PowerPC, PowerPC-64, ARM, Thumb, SPARC, Alpha, CellSPU, MIPS, MSP430, SystemZ, 和 XCore）。</p>
 <h3 id="0X02-OLLVM-Android编译环境搭建"><a href="#0X02-OLLVM-Android编译环境搭建" class="headerlink" title="0X02 OLLVM Android编译环境搭建"></a>0X02 OLLVM Android编译环境搭建</h3><p>以下，介绍OLLVM Android编译环境的搭建过程。环境信息：ndk（android-ndk-r10e）、LLVM（llvm-3.6.1）</p>
@@ -179,11 +179,11 @@ make -j5
 </code></pre><p>在Android.mk中设置混淆参数：</p>
 <pre><code>LOCAL_CFLAGS += -mllvm -sub -mllvm -bcf -mllvm -fla
 </code></pre><p>这样配置完成后，使用ndk-build命令即可编译出混淆代码。代码在64位机器上执行正常，内容仅仅是一条if-else语句，混淆的效果确实不错。</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-3.png " alt="编译" style="width: 378.99px; height: 125.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="编译"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB538c271cfa50fd4dc9a5a54d4e8a7712?method=download&shareKey=e2fa67ea471a04a682bca964862e4ab2" alt="编译" style="width: 378.99px; height: 125.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="编译"><br></div>
 
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-4.png " alt="执行" style="width: 362.15px; height: 66.95px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="执行"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB44aafcea6b54c0b07b453b56eec61f97?method=download&shareKey=f854a75e95dea74051eef5aaab6fede7" alt="执行" style="width: 362.15px; height: 66.95px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="执行"><br></div>
 
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-5.png " alt="混淆效果" style="width: 337.40px; height: 494.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="混淆效果"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB7ed39c44d87818979e235e4aec17a326?method=download&shareKey=733bc4a75bf60891dab90639e8b0a516" alt="混淆效果" style="width: 337.40px; height: 494.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="混淆效果"><br></div>
 
 <h3 id="0X03-OLLVM混淆使用"><a href="#0X03-OLLVM混淆使用" class="headerlink" title="0X03 OLLVM混淆使用"></a>0X03 OLLVM混淆使用</h3><p>通过简单的demo可以看出OLLVM的混淆功能确实强大。本小节将介绍混淆功能的具体使用。</p>
 <p>OLLVM默认支持 -fla -sub -bcf 三个混淆参数，这三个参数可以单独使用，也可以配合着使用。-fla 参数表示使用控制流平展（Control Flow Flattening）模式，-sub参数表示使用指令替换（Instructions Substitution）模式，-bcf参数表示使用控制流伪造（Bogus Control Flow）模式。下述if-else分支代码用于验证各混淆模式的效果。</p>
@@ -210,9 +210,9 @@ make -j5
     return 0;
 }
 </code></pre><h5 id="Control-Flow-Flattening"><a href="#Control-Flow-Flattening" class="headerlink" title="Control Flow Flattening"></a>Control Flow Flattening</h5><p>控制流平展模式可以完全改变程序原本的控制流图。如下示例代码是简单的if-else分支语句，正常编译后其控制流图在IDA中如图6所示￼，是正常的if-else分支，使用 -mllvm -fla 参数混淆后，在IDA中显示的控制流图如图7所示。</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-6.png " alt="FLA混淆前" style="width: 248.90px; height: 441.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="FLA混淆前"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB647ae23f791e1821bcacd3d795457db4?method=download&shareKey=cb4e976b05f1e6944dc28fffd1b1ab35" alt="FLA混淆前" style="width: 248.90px; height: 441.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="FLA混淆前"><br></div>
 
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-7.png " alt="FLA混淆后" style="width: 216.77px; height: 471.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="FLA混淆后"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB8dc3ab94cd5ab526c42805aa2999365f?method=download&shareKey=ed6c415dcc52d3c902ac18eef2514181" alt="FLA混淆后" style="width: 216.77px; height: 471.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="FLA混淆后"><br></div>
 
 <p>经FLA模式混淆后，程序的执行流程已经被打乱，出现许多代码分支。通过仔细对比程序混淆前后，可以发现上图着色区域是相对应的，也就是说，FLA模式只会去更改代码分支，而不会对单个代码块做处理。用IDA反编译的混淆后的伪码如下：</p>
 <pre><code>int __cdecl main(int argc, const char **argv, const char **envp)
@@ -253,15 +253,15 @@ make -j5
 }
 </code></pre><p>原程序中，if-else的代码块是顺序执行的，混淆后代码块的执行由while循环和变量v4动态计算而得。</p>
 <h5 id="Instructions-Substitution"><a href="#Instructions-Substitution" class="headerlink" title="Instructions Substitution"></a>Instructions Substitution</h5><p>指令替换模式主要是将正常的运算操作（+，-，&amp;，|等）替换成功能相等但表述更复杂的形式。比如，对于表达式 a = b + c，它的等价式可以有 a = - ( -b - c), a = b - (-c) 或 a = -(-b) + c 等，原表达式可以替换成任意相等式，或者通过随机数在多个相等式中做选择。SUB模式目前只支持整数运算操作，支持 + , - , &amp; , | 和 ^ 操作，还是比较局限的。编译时，使用 -mllvm -sub 参数即可。</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-8.png " alt="SUB混淆前" style="width: 254.15px; height: 236.19px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="SUB混淆前"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB0f669e8cdffdb106e951004788deb0dc?method=download&shareKey=e80d829d1eb56a20078dce8f8ed8c0c1" alt="SUB混淆前" style="width: 254.15px; height: 236.19px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="SUB混淆前"><br></div>
 
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-9.png " alt="SUB混淆后" style="width: 264.60px; height: 525.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="SUB混淆后"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBcacddad3f2412d4f02241bc685a15817?method=download&shareKey=a40dbd7a690261c1c221e9f7214beb92" alt="SUB混淆后" style="width: 264.60px; height: 525.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="SUB混淆后"><br></div>
 
 <h5 id="Bogus-Control-Flow"><a href="#Bogus-Control-Flow" class="headerlink" title="Bogus Control Flow"></a>Bogus Control Flow</h5><p>控制流伪造模式也是对程序的控制流做操作，不同的是，BCF模式会在原代码块的前后随机插入新的代码块，新插入的代码块不是确定的，然后新代码块再通过条件判断跳转到原代码块中。更要命地是，原代码块可能会被克隆并插入随机的垃圾指令。这么多不确定性，就导致对同一份代码多次做BCF模式的混淆时，得到的是不同的混淆效果。可见，BCF混淆模式还是很强大的，不同于FLA那种较确定的混淆模式。使用BCF模式编译时配置参数 -mllvm -bcf 即可，此外，BCF模式还支持其它几个参数，下面参数与 -mllvm -bcf 参数配合使用。</p>
 <pre><code>-mllvm -perBCF=20: 对所有函数都混淆的概率是20%，默认100%
 -mllvm -boguscf-loop=3: 对函数做3次混淆，默认1次
 -mllvm -boguscf-prob=40: 代码块被混淆的概率是40%，默认30%
-</code></pre><div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-10.png " alt="BCF混淆后" style="width: 126.68px; height: 403.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="BCF混淆后"><br></div>
+</code></pre><div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB1a5484d34d1e3512f9068e86f298be46?method=download&shareKey=c89aaee308011754fe593b71eefd230c" alt="BCF混淆后" style="width: 126.68px; height: 403.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="BCF混淆后"><br></div>
 
 <p>如上图，下面两个着色的代码块就是有上面两个代码块克隆而来，而且其中被插入了一些垃圾指令，类似于这样：</p>
 <pre><code>mov     ecx, ds:x
@@ -277,7 +277,7 @@ setl    r9b
 or      r8b, r9b
 test    r8b, 1
 </code></pre><p>当然，上述介绍的三种混淆模式可以搭配使用，同时使用三个参数混淆后，原本简单的if-else分支代码将会变得异常复杂，这无疑给逆向分析增加巨大的难度。</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/OLLVM-1-11.png " alt="三种模式混淆" style="width: 207.65px; height: 376.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="三种模式混淆"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBf0b93097fb27022a763528da4a235d71?method=download&shareKey=547a4041f9e092455398f59c931dd2ea" alt="三种模式混淆" style="width: 207.65px; height: 376.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="三种模式混淆"><br></div>
 
 <h5 id="Functions-annotations"><a href="#Functions-annotations" class="headerlink" title="Functions annotations"></a>Functions annotations</h5><p>有的时候，由于效率或其它原因的考虑，我们只想给指定的函数混淆，OLLVM也提供了对这一特性的支持。比如，想对函数func()使用bcf混淆，只需要给函数func()增加bcf属性即可。</p>
 <pre><code>int func() __attribute((__annotate__((&quot;bcf&quot;))));
@@ -371,7 +371,7 @@ test    r8b, 1
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">22</span>
+              <span class="site-state-item-count">23</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -385,7 +385,7 @@ test    r8b, 1
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">13</span>
+              <span class="site-state-item-count">14</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
@@ -427,7 +427,7 @@ test    r8b, 1
         <div class="copyright">
   
   &copy; &nbsp; 
-  2018
+  2019
   <span class="with-love">
     <i class="icon-heart"></i>
   </span>

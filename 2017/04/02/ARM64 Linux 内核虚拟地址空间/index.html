@@ -161,7 +161,7 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_ARM64_64K_PAGES</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> VA_BITS                 (42)</span></div><div class="line"><span class="meta">#<span class="meta-keyword">else</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> VA_BITS                 (39)</span></div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div></pre></td></tr></table></figure>
 <p>ARM64 上也有足够的虚拟地址了，用户空间和内核空间可以有各自的 2^39 = 512GB 的虚拟地址。</p>
 <p>所有用户虚拟地址前 25 bits 均为 0，所有的内核虚拟地址前 25 bits 均为 1。用户与内核之间的地址不可使用。</p>
-<p><img src="http://7vzu7u.com1.z0.glb.clouddn.com/linux-kernel-arm64source3.png" alt="ARM64 虚拟地址空间布局"></p>
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB26795b60ad956304de854b9eb4877ef9?method=download&amp;shareKey=f98443eea1bda99312b909ec6108372f" alt="ARM64 虚拟地址空间布局"></p>
 <p><strong>内核空间</strong></p>
 <p>可以通过源码来了解 ARM64 的内核虚拟地址空间。</p>
 <p>在 arch/arm64/include/asm/memory.h，可以看出一些差异。首先，lowmem 区不存在了，这是因为虚拟地址很大了，可以处理 lowmem 内存，不用再担心虚拟地址问题（但内核地址仍然有一些限制）。其次，不同内核的虚拟地址顺序改变了。</p>
@@ -169,16 +169,16 @@
 <figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">        pr_notice(<span class="string">"Virtual kernel memory layout:\n"</span>                            </div><div class="line">                  <span class="string">"    vmalloc : 0x%16lx - 0x%16lx   (%6ld MB)\n"</span></div><div class="line"><span class="comment">#ifdef CONFIG_SPARSEMEM_VMEMMAP</span></div><div class="line">                  <span class="string">"    vmemmap : 0x%16lx - 0x%16lx   (%6ld MB)\n"</span></div><div class="line"><span class="comment">#endif</span></div><div class="line">                  <span class="string">"    modules : 0x%16lx - 0x%16lx   (%6ld MB)\n"</span></div><div class="line">                  <span class="string">"    memory  : 0x%16lx - 0x%16lx   (%6ld MB)\n"</span></div><div class="line">                  <span class="string">"      .init : 0x%p"</span> <span class="string">" - 0x%p"</span> <span class="string">"   (%6ld kB)\n"</span></div><div class="line">                  <span class="string">"      .text : 0x%p"</span> <span class="string">" - 0x%p"</span> <span class="string">"   (%6ld kB)\n"</span></div><div class="line">                  <span class="string">"      .data : 0x%p"</span> <span class="string">" - 0x%p"</span> <span class="string">"   (%6ld kB)\n"</span>,</div><div class="line">                  MLM(VMALLOC_START, VMALLOC_END),</div><div class="line"><span class="comment">#ifdef CONFIG_SPARSEMEM_VMEMMAP</span></div><div class="line">                  MLM((unsigned long)virt_to_page(PAGE_OFFSET),</div><div class="line">                      (unsigned long)virt_to_page(high_memory)),</div><div class="line"><span class="comment">#endif</span></div><div class="line">                  MLM(MODULES_VADDR, MODULES_END),</div><div class="line">                  MLM(PAGE_OFFSET, (unsigned long)high_memory),</div><div class="line"> </div><div class="line">                  MLK_ROUNDUP(__init_begin, __init_end),</div><div class="line">                  MLK_ROUNDUP(_text, _etext),</div><div class="line">                  MLK_ROUNDUP(_sdata, _edata));</div></pre></td></tr></table></figure>
 <p>也可以看看 arch/arm64/mm/init.c 和 arch/arm64/include/asm/pgtable.h</p>
 <p>pkmap 和 fixmap 不存在了，内核假设所有内存都有有效的内核虚拟地址，所以不再需要创建 pkmap 或者 fixmap。</p>
-<p><img src="http://7vzu7u.com1.z0.glb.clouddn.com/linux-kernel-arm64source4.png" alt="ARM64 虚拟地址空间布局"></p>
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB5729b216e4eb58a5052e53156fdb93a8?method=download&amp;shareKey=c2e6a3c69b896ee59bd45c02c61b5a95" alt="ARM64 虚拟地址空间布局"></p>
 <p><strong>用户空间</strong></p>
 <p>用户空间的虚拟地址布局和 ARM32 类似，因为用户地址空间增大到了 512GB ，所以可以在 64 位 CPU 上运行更大的应用。</p>
 <p>ARMv8 是兼容 ARM 32 位应用的，所有的 32 位 ARM 应用都可以无需修改运行在 ARMv8 上。那在 64 位内核上，32 位应用的地址布局是怎样的呢？</p>
 <p>实际上，64 位内核运行的进程都是 64 位的。为了运行 32 位 ARM 应用，Linux 内核仍然从 init 进程创建出一个 64 位的进程，当将其用户地址空间限制到 4GB。通过这种方式，64 位的 Linux 内核可以同时运行 32 位和 64 位的应用。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_COMPAT</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> TASK_SIZE_32            UL(0x100000000)</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> TASK_SIZE               (test_thread_flag(TIF_32BIT) ? \</span></div><div class="line">                                TASK_SIZE_32 : TASK_SIZE_64)</div><div class="line"><span class="meta">#<span class="meta-keyword">else</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> TASK_SIZE               TASK_SIZE_64</span></div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">/* CONFIG_COMPAT */</span></span></div></pre></td></tr></table></figure>
 <p>64 位 ARM 应用在 64 位 Linux 内核上的情况：</p>
-<p><img src="http://7vzu7u.com1.z0.glb.clouddn.com/linux-kernel-arm64source5.png" alt="ARM64 64 位应用虚拟地址空间布局"></p>
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB0ef7a3a4f0d1fc79eea763b221884e5d?method=download&amp;shareKey=7ab46cf9ab4d5b208c97e7e65cf48e55" alt="ARM64 64 位应用虚拟地址空间布局"></p>
 <p>32 位 ARM 应用在 64 位 Linux 内核上的情况：</p>
-<p><img src="http://7vzu7u.com1.z0.glb.clouddn.com/linux-kernel-arm64source6.png" alt="ARM64 32 位应用虚拟地址空间布局"></p>
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB5889989e3121a92cab983d663c2fc83c?method=download&amp;shareKey=7ef378a9672536906971474e79bf6fbf" alt="ARM64 32 位应用虚拟地址空间布局"></p>
 <p>需要注意到，32 位应用仍然拥有 512GB 的内核虚拟地址空间，并且不与内核共享自己的 4GB 空间。但在 ARM32 上，32 位应用只有 3GB 的地址空间。</p>
 <pre><code>| ARM32 Linux | ARM64 Linux
 </code></pre><p> — | — | —<br> 32 位用户虚拟地址空间大小 | 3GB | 4GB<br> 64 位用户虚拟地址空间大小 | N/A | 512GB<br> 内核虚拟地址空间大小 | 1GB | 512GB</p>
@@ -266,7 +266,7 @@
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">22</span>
+              <span class="site-state-item-count">23</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -280,7 +280,7 @@
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">13</span>
+              <span class="site-state-item-count">14</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
@@ -322,7 +322,7 @@
         <div class="copyright">
   
   &copy; &nbsp; 
-  2018
+  2019
   <span class="with-love">
     <i class="icon-heart"></i>
   </span>

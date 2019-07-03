@@ -159,11 +159,11 @@
 <h4 id="数据库的设计"><a href="#数据库的设计" class="headerlink" title="数据库的设计"></a>数据库的设计</h4><p>不知怎么回事，我们专业在大三下才开数据库相关的课程，本身对数据库的认识也比较少，使用到的时候只能从google上找一些示例来看一看，然后就上手设计数据库了。到项目中后期的时候，才发现数据库的设计太不符合基本规范了，没办法只能将数据库大整改并将与数据库交互部分的代码重新改写。唉，在做一件事情之前花点时间了解一些基本原则真的是很有必要的。本学期开了“数据库及安全”这门课，看来是不能怠慢了。这里顺手贴个数据库设计的基本原则，方便自己查看，等学了数据库及安全这门课再深究。</p>
 <p><a href="http://www.cnblogs.com/happylsc/archive/2010/09/01/1814682.html" target="_blank" rel="external">数据库设计原则</a></p>
 <h4 id="整体框架设计"><a href="#整体框架设计" class="headerlink" title="整体框架设计"></a>整体框架设计</h4><p>整体的框架设计是和另一个小伙伴的争论中确定的，结果采用这样的设计是注定要造成代码冗余的，但当时没考虑太多，怎样简单怎样顺手就怎样来了。基本的架构图如下所示：</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/bicycle_original_structure.png " alt="bicycle_original_structure" title="bicycle_original_structure"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB4ca9bb16aa3a415793302dfff0181863?method=download&shareKey=89ddca8b04f3f7f6776ef4c9c4914149" alt="bicycle_original_structure" title="bicycle_original_structure"><br></div>
 
 
 <p>也就是说移动端和后台web管理端都实现了与数据库交互的部分，当时的理由是各自写各自的比较省心，一直保持数据库DB一样就行。我一直觉得稍微合理一点的设计应该是：</p>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/bicycle_except_structure.png " alt="bicycle_except_structure" title="bicycle_except_structure"><br></div>
+<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB6f3021afbebd5deeae211fa8fbd292af?method=download&shareKey=e1c0505a4e3def032c99ba2cdd8a6f51" alt="bicycle_except_structure" title="bicycle_except_structure"><br></div>
 
 <p>将与数据库的交互部分单独写出来，这样在更改代码的时候也会方便快捷一点。</p>
 <h4 id="代码冗余"><a href="#代码冗余" class="headerlink" title="代码冗余"></a>代码冗余</h4><p>整体系统的设计就已经决定了代码冗余是必然存在的，各自实现的一套数据库交互在后期也带来了重复性的修改工作。自己埋下的苦果自己吃呗！而且在web管理端，我也没注意将相似性的代码写成父类，使用子类去完成不同的工作。现在看看写的代码，真觉得自己是路漫漫呀！</p>
@@ -187,13 +187,11 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/02/10/Xposed demo分析/">Xposed demo分析</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/02/21/Xposed翻译文档/">Xposed翻译文档</a>
+              <a href="/2015/02/10/Xposed demo分析/">Xposed demo分析</a>
             
           </div>
         </div>
@@ -253,7 +251,7 @@
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">22</span>
+              <span class="site-state-item-count">23</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -267,7 +265,7 @@
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">13</span>
+              <span class="site-state-item-count">14</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
@@ -309,7 +307,7 @@
         <div class="copyright">
   
   &copy; &nbsp; 
-  2018
+  2019
   <span class="with-love">
     <i class="icon-heart"></i>
   </span>
