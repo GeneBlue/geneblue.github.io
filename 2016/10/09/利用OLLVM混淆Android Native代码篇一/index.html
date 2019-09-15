@@ -150,7 +150,7 @@
       
 
       
-        <p><strong>Author: GeneBlue</strong></p>
+        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong></p>
 <p>这里将会用两篇文章解释OLLVM混淆Android Native代码的方法和原理。篇一主要聚焦NDK中OLLVM的编译构建和主要混淆模式的使用，并简要解释各混淆模式的效果；篇二主要研究默认混淆模式的实现并尝试编写调试自定义Pass。<br><a id="more"></a></p>
 <h3 id="0X01-OLLVM简介"><a href="#0X01-OLLVM简介" class="headerlink" title="0X01 OLLVM简介"></a>0X01 OLLVM简介</h3><p>OLLVM（Obfuscator-LLVM）是瑞士西北应用科技大学安全实验室于2010年6月份发起的一个项目，该项目旨在提供一套开源的针对LLVM的代码混淆工具，以增加对逆向工程的难度。目前，OLLVM已经支持LLVM-3.6.1版本。</p>
 <p>LLVM是一个优秀的编译器框架，它也采用经典的三段式设计。前端可以使用不同的编译工具对代码文件做词法分析以形成抽象语法树AST，然后将分析好的代码转换成LLVM的中间表示IR（intermediate representation）；中间部分的优化器只对中间表示IR操作，通过一系列的Pass对IR做优化；后端负责将优化好的IR解释成对应平台的机器码。LLVM的优点在于，中间表示IR代码编写良好，而且不同的前端语言最终都转换成同一种的IR。</p>
