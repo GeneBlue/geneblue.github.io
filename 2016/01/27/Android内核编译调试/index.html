@@ -26,6 +26,18 @@
 
 
 
+<script>
+    (function(){
+        if('whoami'){
+            if (prompt('请输入文章密码') !== 'whoami'){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
 
 
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
@@ -150,7 +162,7 @@
       
 
       
-        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong></p>
+        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong><br><strong>文章访问密码：whoami</strong></p>
 <h3 id="0X01-前言"><a href="#0X01-前言" class="headerlink" title="0X01 前言"></a>0X01 前言</h3><p>研究Android底层或漏洞方面的知识，编译调试内核源码是必不可少的。这篇文章介绍内核编译调试的基本步骤。</p>
 <h3 id="0X02-环境"><a href="#0X02-环境" class="headerlink" title="0X02 环境"></a>0X02 环境</h3><pre><code>Android开发环境：SDK，NDK
 PC OS：Ubuntu 14.04 LTS 64bit

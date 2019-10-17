@@ -26,6 +26,18 @@
 
 
 
+<script>
+    (function(){
+        if('whoami'){
+            if (prompt('请输入文章密码') !== 'whoami'){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
 
 
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
@@ -150,7 +162,7 @@
       
 
       
-        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong></p>
+        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong><br><strong>文章访问密码：whoami</strong></p>
 <p>在使用NDK的时候，发现自己对jNI机制并不是很了解，就把官方文档拿来看了看并翻译了一下。官方文档地址看<a href="http://docs.oracle.com/javase/6/docs/technotes/guides/jni/spec/jniTOC.html" target="_blank" rel="external">这里</a>。自己也是首次翻译英文资料，有翻译不妥的地方请联系我，我将及时更改。</p>
 <hr>
 <p>本篇开始介绍JNI（Java Native Interface）技术。JNI是一种本地编程接口。它允许运行在java VM 中的java代码与使用C/C++或汇编等其它编程语言写成的应用或者库进行交互操作。</p>

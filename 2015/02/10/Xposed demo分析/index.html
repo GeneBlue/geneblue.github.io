@@ -26,6 +26,18 @@
 
 
 
+<script>
+    (function(){
+        if('whoami'){
+            if (prompt('请输入文章密码') !== 'whoami'){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
 
 
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
@@ -150,7 +162,7 @@
       
 
       
-        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong></p>
+        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong><br><strong>文章访问密码：whoami</strong></p>
 <p>代码下载地址：<a href="https://github.com/GeneBlue/BlueGeneModule" target="_blank" rel="external">这里</a></p>
 <hr>
 <h4 id="MainActivity类"><a href="#MainActivity类" class="headerlink" title="MainActivity类"></a>MainActivity类</h4><p>下面从主函数MainActivity开始入手分析：</p>

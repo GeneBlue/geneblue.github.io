@@ -26,6 +26,18 @@
 
 
 
+<script>
+    (function(){
+        if('whoami'){
+            if (prompt('请输入文章密码') !== 'whoami'){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
 
 
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
@@ -150,7 +162,7 @@
       
 
       
-        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong></p>
+        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong><br><strong>文章访问密码：whoami</strong></p>
 <p>官方英文介绍：<a href="https://github.com/rovo89/XposedBridge/wiki/Development-tutorial" target="_blank" rel="external">这里</a> </p>
 <p>创建一个XposedModule一般按照以下流程：</p>
 <h4 id="添加meta-data元素"><a href="#添加meta-data元素" class="headerlink" title="添加meta-data元素"></a>添加meta-data元素</h4><p>应该在要编写的程序的Manifest文件的application元素下添加三个 meta-data元素，如下所示：</p>

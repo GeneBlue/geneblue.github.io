@@ -26,6 +26,18 @@
 
 
 
+<script>
+    (function(){
+        if('whoami'){
+            if (prompt('请输入文章密码') !== 'whoami'){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
 
 
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
@@ -150,7 +162,7 @@
       
 
       
-        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong></p>
+        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong><br><strong>文章访问密码：whoami</strong></p>
 <p>2018 年 <code>blackhat asia</code> 会议上，阿里巴巴的安全研究员 <code>ThomasKing</code> 做了 <code>Android Root</code> 方面的主题演讲，题为<code>《KSMA-Breaking-Android-kernel-isolation-and-Rooting-with-ARM-MMU-features》</code>。笔者对这样的通用 Root 方式是比较感兴趣的，便着手复现了一下。</p>
 <a id="more"></a>
 <p>ThomasKing 为这种通用 root 方式起了个不错的名字 <code>KSMA(Kernel Space Mirroring Attack)</code>，意为内核空间镜像攻击。简单的说，在内核的一级页表中伪造一个 <code>d_block</code> 类型的 <code>descriptor</code> (内存描述符)，将内核镜像所在的 <code>PA</code> (物理地址) 映射到 descriptor 所对应的 <code>VA</code> (虚拟地址) 处。通过修改 <code>d_block</code> 中的一些内存属性，就可以做到对 VA 处映射的内核镜像做读写操作，从而可以任意修改内核代码。</p>

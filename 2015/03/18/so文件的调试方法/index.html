@@ -26,6 +26,18 @@
 
 
 
+<script>
+    (function(){
+        if('whoami'){
+            if (prompt('请输入文章密码') !== 'whoami'){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
 
 
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
@@ -150,7 +162,7 @@
       
 
       
-        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong></p>
+        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong><br><strong>文章访问密码：whoami</strong></p>
 <h3 id="0X01-基本步骤"><a href="#0X01-基本步骤" class="headerlink" title="0X01 基本步骤"></a>0X01 基本步骤</h3><p>这里介绍使用IDA对so文件的动态调试，其他调试工具的使用，以后再做补充。</p>
 <p>IDA从6.1版本开始支持Android原生程序的动态调试。</p>
 <ul>
