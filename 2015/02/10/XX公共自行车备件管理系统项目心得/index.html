@@ -1,181 +1,264 @@
-<!doctype html>
-<html class="theme-next use-motion ">
+<!DOCTYPE html>
+<html lang="zh-Hans">
 <head>
-  
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-<meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-
-
-
-
-
-
-  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+<link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.3"/>
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 
-    <meta name="description" content="Personal Blog" />
-
-
-
-  <meta name="keywords" content="Project Summarize," />
-
-
-
-<script>
-    (function(){
-        if('whoami'){
-            if (prompt('请输入文章密码') !== 'whoami'){
-                alert('密码错误！');
-                history.back();
-            }
-        }
-    })();
-</script>
-
-
-
-
-  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
-
-
-
-<script type="text/javascript" id="hexo.configuration">
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
   var CONFIG = {
-    scheme: '',
-    analytics: {
-      google: ''
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
     },
-    sidebar: 'post'
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
   };
 </script>
 
+  <meta name="description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 这并不是一份正式的项目总结，只是我们在做完自行车备件管理系统后我的一些心得。觉得有必要写一下记录自己在这个项目中犯过的错误。 这个项目是从大三上学期刚开学的时候接手的。这个备件管理系统相对研究生学长做的道路滑坡预测比较简单，老师就将这个项目交给我们四个啥都不太懂的本科生做。说实话，大家都挺积极的，至">
+<meta name="keywords" content="Project Summarize">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XX公共自行车备件管理系统项目心得">
+<meta property="og:url" content="http://yoursite.com/2015/02/10/XX公共自行车备件管理系统项目心得/index.html">
+<meta property="og:site_name" content="GeneBlue&#39;s Blog">
+<meta property="og:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 这并不是一份正式的项目总结，只是我们在做完自行车备件管理系统后我的一些心得。觉得有必要写一下记录自己在这个项目中犯过的错误。 这个项目是从大三上学期刚开学的时候接手的。这个备件管理系统相对研究生学长做的道路滑坡预测比较简单，老师就将这个项目交给我们四个啥都不太懂的本科生做。说实话，大家都挺积极的，至">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB4ca9bb16aa3a415793302dfff0181863?method=download&shareKey=89ddca8b04f3f7f6776ef4c9c4914149">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB6f3021afbebd5deeae211fa8fbd292af?method=download&shareKey=e1c0505a4e3def032c99ba2cdd8a6f51">
+<meta property="og:updated_time" content="2019-11-11T06:52:09.837Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="XX公共自行车备件管理系统项目心得">
+<meta name="twitter:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 这并不是一份正式的项目总结，只是我们在做完自行车备件管理系统后我的一些心得。觉得有必要写一下记录自己在这个项目中犯过的错误。 这个项目是从大三上学期刚开学的时候接手的。这个备件管理系统相对研究生学长做的道路滑坡预测比较简单，老师就将这个项目交给我们四个啥都不太懂的本科生做。说实话，大家都挺积极的，至">
+<meta name="twitter:image" content="https://note.youdao.com/yws/api/personal/file/WEB4ca9bb16aa3a415793302dfff0181863?method=download&shareKey=89ddca8b04f3f7f6776ef4c9c4914149">
+
+<link rel="canonical" href="http://yoursite.com/2015/02/10/XX公共自行车备件管理系统项目心得/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>XX公共自行车备件管理系统项目心得 | GeneBlue's Blog</title>
+  
 
 
 
-  <title> XX公共自行车备件管理系统项目心得 // GeneBlue's Blog </title>
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
 </head>
 
-<body>
-<!--[if lte IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari." style='margin-left:auto;margin-right:auto;display: block;'/></a></div> <![endif]-->
-  <div class="container one-column page-post-detail">
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
     <div class="headband"></div>
 
-    <div id="header" class="header">
-      <div class="header-inner">
-        <h1 class="site-meta">
-  <span class="logo-line-before"><i></i></span>
-  <a href="/" class="brand">
-      <span class="logo">
-        <i class="icon-logo"></i>
-      </span>
-      <span class="site-title">GeneBlue's Blog</span>
-  </a>
-  <span class="logo-line-after"><i></i></span>
-</h1>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">GeneBlue's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">The quiter you become,the more you are able to hear!</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
 
 
+<nav class="site-nav">
+  
   <ul id="menu" class="menu">
-     
-    
-      
-      <li class="menu-item menu-item-home">
-        <a href="/">
-          <i class="menu-item-icon icon-home"></i> <br />
-          首页
-        </a>
-      </li>
-    
-      
-      <li class="menu-item menu-item-about">
-        <a href="/about">
-          <i class="menu-item-icon icon-about"></i> <br />
-          关于
-        </a>
-      </li>
-    
-      
-      <li class="menu-item menu-item-archives">
-        <a href="/archives">
-          <i class="menu-item-icon icon-archives"></i> <br />
-          归档
-        </a>
-      </li>
-    
-      
-      <li class="menu-item menu-item-tags">
-        <a href="/tags">
-          <i class="menu-item-icon icon-tags"></i> <br />
-          标签
-        </a>
-      </li>
-    
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>Sitemap</a>
+
+  </li>
   </ul>
 
+</nav>
+</div>
+    </header>
 
-      </div>
-    </div>
-
-    <div id="main" class="main">
-      <div class="main-inner">
-        <div id="content" class="content">
-          
-
-  <div id="posts" class="posts-expand">
     
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
 
-  <div class="post post-type-normal ">
-    <div class="post-header">
 
-      
-      
-        <h1 class="post-title">
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
           
-          
+
+          <div class="content">
             
-              XX公共自行车备件管理系统项目心得
-            
-          
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/02/10/XX公共自行车备件管理系统项目心得/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GeneBlue's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          XX公共自行车备件管理系统项目心得
         </h1>
-      
 
-      <div class="post-meta">
-        <span class="post-time">
-          发表于 2015-02-10
-        </span>
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
 
-        
+              <time title="Created: 2015-02-10 12:46:08" itemprop="dateCreated datePublished" datetime="2015-02-10T12:46:08+08:00">2015-02-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-11 14:52:09" itemprop="dateModified" datetime="2019-11-11T14:52:09+08:00">2019-11-11</time>
+              </span>
 
-        
           
-        
-      </div>
-    </div>
 
-    <div class="post-body">
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-      
-
-      
-        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong><br><strong>文章访问密码：whoami</strong></p>
+        <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
 <p>这并不是一份正式的项目总结，只是我们在做完自行车备件管理系统后我的一些心得。觉得有必要写一下记录自己在这个项目中犯过的错误。</p>
 <p>这个项目是从大三上学期刚开学的时候接手的。这个备件管理系统相对研究生学长做的道路滑坡预测比较简单，老师就将这个项目交给我们四个啥都不太懂的本科生做。说实话，大家都挺积极的，至少可以明白最简单的商业项目是怎么一回事。</p>
 <p>要做的东西不是很难，这个备件管理系统主要就是完成移动端（Android）应用和后台管理系统的开发。移动端主要是完成备件从采购、入库、使用、维护、维修和报废一系列操作，需要按照操作人员的角色设定操作权限，然后将数据传输到数据库中；后台管理系统主要是使用java和jsp开发网页版程序对数据库中的数据进行管理，差不多也就是数据库的那几种基本操作。</p>
 <a id="more"></a>
+
 <p>在项目前期，对方让我们写一个可以使用的手机端的应用，没有考虑让我们做全部的工作。我们有java和Android的一些基础，所以手机端的应用很快就赶出来了，后台就是一个简单的接收手机端数据并存储在数据库中的一个小程序，对方的技术员说使用手机端应用的人员也不多，后台数据接收不用考虑多线程并发了，简单一点就好。于是我们相信了鬼话，在第一次和对方的经理的见面沟通后，对方觉得我们做的还不行，后台管理系统还是要完善地做出来，移动端应用太单一了。让我们照着计划书实现所有的功能。好吧，于是小伙伴们加班加点地边学边做，直至现在基本把这个项目完成。这里，我就不详细介绍项目的实现过程了。无非也就是根据要求整改，整改后让对方经理看看行不，再根据新要求整改。在整个项目过程中，我自己对开发工作有了一些认识，也认识到自己的代码功底还是很low的。以下总结认识到的几点问题。</p>
 <h4 id="数据库的设计"><a href="#数据库的设计" class="headerlink" title="数据库的设计"></a>数据库的设计</h4><p>不知怎么回事，我们专业在大三下才开数据库相关的课程，本身对数据库的认识也比较少，使用到的时候只能从google上找一些示例来看一看，然后就上手设计数据库了。到项目中后期的时候，才发现数据库的设计太不符合基本规范了，没办法只能将数据库大整改并将与数据库交互部分的代码重新改写。唉，在做一件事情之前花点时间了解一些基本原则真的是很有必要的。本学期开了“数据库及安全”这门课，看来是不能怠慢了。这里顺手贴个数据库设计的基本原则，方便自己查看，等学了数据库及安全这门课再深究。</p>
-<p><a href="http://www.cnblogs.com/happylsc/archive/2010/09/01/1814682.html" target="_blank" rel="external">数据库设计原则</a></p>
+<p><a href="http://www.cnblogs.com/happylsc/archive/2010/09/01/1814682.html" target="_blank" rel="noopener">数据库设计原则</a></p>
 <h4 id="整体框架设计"><a href="#整体框架设计" class="headerlink" title="整体框架设计"></a>整体框架设计</h4><p>整体的框架设计是和另一个小伙伴的争论中确定的，结果采用这样的设计是注定要造成代码冗余的，但当时没考虑太多，怎样简单怎样顺手就怎样来了。基本的架构图如下所示：</p>
-<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB4ca9bb16aa3a415793302dfff0181863?method=download&shareKey=89ddca8b04f3f7f6776ef4c9c4914149" alt="bicycle_original_structure" title="bicycle_original_structure"><br></div>
+<div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEB4ca9bb16aa3a415793302dfff0181863?method=download&shareKey=89ddca8b04f3f7f6776ef4c9c4914149" alt="bicycle_original_structure" title="bicycle_original_structure">
+</div>
 
 
 <p>也就是说移动端和后台web管理端都实现了与数据库交互的部分，当时的理由是各自写各自的比较省心，一直保持数据库DB一样就行。我一直觉得稍微合理一点的设计应该是：</p>
-<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB6f3021afbebd5deeae211fa8fbd292af?method=download&shareKey=e1c0505a4e3def032c99ba2cdd8a6f51" alt="bicycle_except_structure" title="bicycle_except_structure"><br></div>
+<div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEB6f3021afbebd5deeae211fa8fbd292af?method=download&shareKey=e1c0505a4e3def032c99ba2cdd8a6f51" alt="bicycle_except_structure" title="bicycle_except_structure">
+</div>
 
 <p>将与数据库的交互部分单独写出来，这样在更改代码的时候也会方便快捷一点。</p>
 <h4 id="代码冗余"><a href="#代码冗余" class="headerlink" title="代码冗余"></a>代码冗余</h4><p>整体系统的设计就已经决定了代码冗余是必然存在的，各自实现的一套数据库交互在后期也带来了重复性的修改工作。自己埋下的苦果自己吃呗！而且在web管理端，我也没注意将相似性的代码写成父类，使用子类去完成不同的工作。现在看看写的代码，真觉得自己是路漫漫呀！</p>
@@ -183,351 +266,207 @@
 <h4 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h4><p>在工程项目中，重要的真不是代码，而是在整个项目开始实现前的构思和设计。稳健的项目设计真的会让整体项目工程事半功倍。好像还有点什么，嗯，等以后想到了再写吧！</p>
 <hr>
 
-      
     </div>
 
-    <div class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/Project-Summarize/"> #Project Summarize </a>
-          
-        </div>
-      
+    
+    
+    
 
-      
-        <div class="post-nav">
-          <div class="post-nav-prev post-nav-item">
-            
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Project-Summarize/" rel="tag"># Project Summarize</a>
           </div>
 
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2015/02/10/Xposed demo分析/">Xposed demo分析</a>
-            
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2015/02/10/Xposed demo分析/" rel="next" title="Xposed demo分析">
+                  <i class="fa fa-chevron-left"></i> Xposed demo分析
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2015/02/21/Xposed翻译文档/" rel="prev" title="Xposed翻译文档">
+                  Xposed翻译文档 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-        </div>
-      
-
-      
-      
-    </div>
-  </div>
-
-
-
+      </footer>
     
-      <div class="comments" id="comments">
-        
-      </div>
-    
-  </div>
-
-
-        </div>
-
-        
-      </div>
-
-
-      
+  </article>
   
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
+  
+  
+
   </div>
 
-  <div id="sidebar" class="sidebar">
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
     <div class="sidebar-inner">
 
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
 
-      <div class="site-overview">
-        <div class="site-author motion-element">
-          <img class="site-author-image" src="/images/default_avatar.jpg" alt="GeneBlue" />
-          <p class="site-author-name">GeneBlue</p>
-        </div>
-        <p class="site-description motion-element">Personal Blog</p>
-        <div class="site-state motion-element">
-          <div class="site-state-item site-state-posts">
-            <a href="/archives">
-              <span class="site-state-item-count">24</span>
-              <span class="site-state-item-name">日志</span>
-            </a>
-          </div>
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#数据库的设计"><span class="nav-number">1.</span> <span class="nav-text">数据库的设计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#整体框架设计"><span class="nav-number">2.</span> <span class="nav-text">整体框架设计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码冗余"><span class="nav-number">3.</span> <span class="nav-text">代码冗余</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设计模式"><span class="nav-number">4.</span> <span class="nav-text">设计模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结语"><span class="nav-number">5.</span> <span class="nav-text">结语</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
 
-          <div class="site-state-item site-state-categories">
-            
-              <span class="site-state-item-count">0</span>
-              <span class="site-state-item-name">分类</span>
-              
-          </div>
-
-          <div class="site-state-item site-state-tags">
-            <a href="/tags">
-              <span class="site-state-item-count">15</span>
-              <span class="site-state-item-name">标签</span>
-              </a>
-          </div>
-
-        </div>
-
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="GeneBlue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">GeneBlue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
         
-
-        <div class="links-of-author motion-element">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
           
-        </div>
-
-        
-        
-
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">tags</span></a>
       </div>
-
-      
-        <div class="post-toc-wrap sidebar-panel-active">
-          <div class="post-toc-indicator-top post-toc-indicator"></div>
-          <div class="post-toc">
-            
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#数据库的设计"><span class="nav-number">1.</span> <span class="nav-text">数据库的设计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#整体框架设计"><span class="nav-number">2.</span> <span class="nav-text">整体框架设计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码冗余"><span class="nav-number">3.</span> <span class="nav-text">代码冗余</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设计模式"><span class="nav-number">4.</span> <span class="nav-text">设计模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结语"><span class="nav-number">5.</span> <span class="nav-text">结语</span></a></li></ol></div>
-            
-          </div>
-          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
-        </div>
-      
-
-    </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
   </div>
 
 
-    </div>
 
-    <div id="footer" class="footer">
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
       <div class="footer-inner">
-        <div class="copyright">
+        
+
+<div class="copyright">
   
-  &copy; &nbsp; 
-  2019
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
-    <i class="icon-heart"></i>
+    <i class="fa fa-user"></i>
   </span>
-  <span class="author">GeneBlue</span>
+  <span class="author" itemprop="copyrightHolder">GeneBlue</span>
 </div>
-
-<div class="powered-by">
-  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
-</div>
-
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT
-  </a>
-</div>
-
-
-
-      </div>
-    </div>
-
-    <div class="back-to-top"></div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.5.0
   </div>
 
-  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
 
   
-  
-
-  
-  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
-  <script type="text/javascript" src="/js/fancy-box.js"></script>
-
-
-  <script type="text/javascript" src="/js/helpers.js"></script>
-  
-
-  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
-  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
-
-  <script type="text/javascript" src="/js/motion_global.js" id="motion.global"></script>
-
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
 
 
 
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
-<script type="text/javascript" src="/js/bootstrap.scrollspy.js" id="bootstrap.scrollspy.custom"></script>
 
+  
 
-<script type="text/javascript" id="sidebar.toc.highlight">
-  $(document).ready(function () {
-    var tocSelector = '.post-toc';
-    var $tocSelector = $(tocSelector);
-    var activeCurrentSelector = '.active-current';
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
 
-    $tocSelector
-      .on('activate.bs.scrollspy', function () {
-        var $currentActiveElement = $(tocSelector + ' .active').last();
-
-        removeCurrentActiveClass();
-        $currentActiveElement.addClass('active-current');
-
-        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
-      })
-      .on('clear.bs.scrollspy', function () {
-        removeCurrentActiveClass();
-      });
-
-    function removeCurrentActiveClass () {
-      $(tocSelector + ' ' + activeCurrentSelector)
-        .removeClass(activeCurrentSelector.substring(1));
-    }
-
-    function processTOC () {
-      getTOCMaxHeight();
-      toggleTOCOverflowIndicators();
-    }
-
-    function getTOCMaxHeight () {
-      var $sidebarInner = $('.sidebar-inner');
-      var height = $('.sidebar').height() -
-                   $tocSelector.position().top -
-                   $('.post-toc-indicator-bottom').height();
-
-      $tocSelector.css('height', height);
-
-      return height;
-    }
-
-    function toggleTOCOverflowIndicators () {
-      tocOverflowIndicator(
-        '.post-toc-indicator-top',
-        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
-      );
-
-      tocOverflowIndicator(
-        '.post-toc-indicator-bottom',
-        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
-      )
-    }
-
-    $(document).on('sidebar.didShow', function () {
-      processTOC();
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '1d44761390eeb9904aab',
+      clientSecret: '517694b3ef78c87a290d8bf2dfc16f3f34ae9606b',
+      repo: 'geneblue.github.io',
+      owner: 'GeneBlue',
+      admin: ['GeneBlue'],
+      id: '56ccf32927a8fa61543974394e58b3d0',
+        language: '',
+      distractionFreeMode: 'true'
     });
-
-    $('body').scrollspy({ target: tocSelector });
-    $(window).on('resize', function () {
-      if ( $('.sidebar').hasClass('sidebar-active') ) {
-        processTOC();
-      }
-    });
-
-    onScroll($tocSelector);
-
-    function onScroll (element) {
-      element.on('mousewheel DOMMouseScroll', function (event) {
-          var oe = event.originalEvent;
-          var delta = oe.wheelDelta || -oe.detail;
-          var self = this;
-
-          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
-          event.preventDefault();
-
-          toggleTOCOverflowIndicators();
-      });
-    }
-
-    function tocOverflowIndicator (indicator, action) {
-      $(indicator).velocity('stop').velocity({
-        opacity: action === 'show' ? 0.4 : 0
-      }, { duration: 100 });
-    }
-
-  });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
 </script>
-
-
-  <script type="text/javascript" id="sidebar.nav">
-    $(document).ready(function () {
-      var html = $('html');
-
-      $('.sidebar-nav li').on('click', function () {
-        var item = $(this);
-        var activeTabClassName = 'sidebar-nav-active';
-        var activePanelClassName = 'sidebar-panel-active';
-        if (item.hasClass(activeTabClassName)) {
-          return;
-        }
-
-        var currentTarget = $('.' + activePanelClassName);
-        var target = $('.' + item.data('target'));
-
-        currentTarget.velocity('transition.slideUpOut', 200, function () {
-          target
-            .velocity('stop')
-            .velocity('transition.slideDownIn', 200)
-            .addClass(activePanelClassName);
-        });
-
-        item.siblings().removeClass(activeTabClassName);
-        item.addClass(activeTabClassName);
-      });
-
-      $('.post-toc a').on('click', function (e) {
-        e.preventDefault();
-        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
-        html.velocity('stop').velocity('scroll', {
-          offset: offset  + 'px',
-          mobileHA: false
-        });
-      });
-
-      // Expand sidebar on post detail page by default, when post has a toc.
-      var $tocContent = $('.post-toc-content');
-      if (isDesktop() && CONFIG.sidebar === 'post') {
-        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
-          displaySidebar();
-        }
-      }
-    });
-  </script>
-
-
-
-
-  <script type="text/javascript">
-    $(document).ready(function () {
-      if (CONFIG.sidebar === 'always') {
-        displaySidebar();
-      }
-    });
-  </script>
-
-  
-
-  
-  
-  
-
-  
-
-
-
-
-  
-  
 
 </body>
 </html>

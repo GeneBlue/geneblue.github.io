@@ -1,172 +1,252 @@
-<!doctype html>
-<html class="theme-next use-motion ">
+<!DOCTYPE html>
+<html lang="zh-Hans">
 <head>
-  
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-<meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-
-
-
-
-
-
-  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+<link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.3"/>
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 
-    <meta name="description" content="Personal Blog" />
-
-
-
-  <meta name="keywords" content="Java JNI," />
-
-
-
-<script>
-    (function(){
-        if('whoami'){
-            if (prompt('请输入文章密码') !== 'whoami'){
-                alert('密码错误！');
-                history.back();
-            }
-        }
-    })();
-</script>
-
-
-
-
-  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
-
-
-
-<script type="text/javascript" id="hexo.configuration">
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
   var CONFIG = {
-    scheme: '',
-    analytics: {
-      google: ''
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
     },
-    sidebar: 'post'
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
   };
 </script>
 
+  <meta name="description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 本篇主要关注JNI设计中的主要问题。这里讲述的大多数问题都与本地方法有关。Invocation API的介绍在Chapter 5中。 JNI Interface Functions and Pointers本地代码通过JNI函数可以获取JVM的一些特性。JNI函数可以通过一个接口指针获取。该接口指针">
+<meta name="keywords" content="Java JNI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JNI官方文档-Chapter 2：Design Overview">
+<meta property="og:url" content="http://yoursite.com/2015/07/20/JNI官方文档-Chapter 2：Design Overview/index.html">
+<meta property="og:site_name" content="GeneBlue&#39;s Blog">
+<meta property="og:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 本篇主要关注JNI设计中的主要问题。这里讲述的大多数问题都与本地方法有关。Invocation API的介绍在Chapter 5中。 JNI Interface Functions and Pointers本地代码通过JNI函数可以获取JVM的一些特性。JNI函数可以通过一个接口指针获取。该接口指针">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://7vzu7u.com1.z0.glb.clouddn.com/JNI-chapter%202-2-1.png ">
+<meta property="og:updated_time" content="2019-11-11T06:51:40.696Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JNI官方文档-Chapter 2：Design Overview">
+<meta name="twitter:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 本篇主要关注JNI设计中的主要问题。这里讲述的大多数问题都与本地方法有关。Invocation API的介绍在Chapter 5中。 JNI Interface Functions and Pointers本地代码通过JNI函数可以获取JVM的一些特性。JNI函数可以通过一个接口指针获取。该接口指针">
+<meta name="twitter:image" content="http://7vzu7u.com1.z0.glb.clouddn.com/JNI-chapter%202-2-1.png ">
+
+<link rel="canonical" href="http://yoursite.com/2015/07/20/JNI官方文档-Chapter 2：Design Overview/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>JNI官方文档-Chapter 2：Design Overview | GeneBlue's Blog</title>
+  
 
 
 
-  <title> JNI官方文档-Chapter 2：Design Overview // GeneBlue's Blog </title>
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
 </head>
 
-<body>
-<!--[if lte IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari." style='margin-left:auto;margin-right:auto;display: block;'/></a></div> <![endif]-->
-  <div class="container one-column page-post-detail">
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
     <div class="headband"></div>
 
-    <div id="header" class="header">
-      <div class="header-inner">
-        <h1 class="site-meta">
-  <span class="logo-line-before"><i></i></span>
-  <a href="/" class="brand">
-      <span class="logo">
-        <i class="icon-logo"></i>
-      </span>
-      <span class="site-title">GeneBlue's Blog</span>
-  </a>
-  <span class="logo-line-after"><i></i></span>
-</h1>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">GeneBlue's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">The quiter you become,the more you are able to hear!</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
 
 
+<nav class="site-nav">
+  
   <ul id="menu" class="menu">
-     
-    
-      
-      <li class="menu-item menu-item-home">
-        <a href="/">
-          <i class="menu-item-icon icon-home"></i> <br />
-          首页
-        </a>
-      </li>
-    
-      
-      <li class="menu-item menu-item-about">
-        <a href="/about">
-          <i class="menu-item-icon icon-about"></i> <br />
-          关于
-        </a>
-      </li>
-    
-      
-      <li class="menu-item menu-item-archives">
-        <a href="/archives">
-          <i class="menu-item-icon icon-archives"></i> <br />
-          归档
-        </a>
-      </li>
-    
-      
-      <li class="menu-item menu-item-tags">
-        <a href="/tags">
-          <i class="menu-item-icon icon-tags"></i> <br />
-          标签
-        </a>
-      </li>
-    
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>Sitemap</a>
+
+  </li>
   </ul>
 
+</nav>
+</div>
+    </header>
 
-      </div>
-    </div>
-
-    <div id="main" class="main">
-      <div class="main-inner">
-        <div id="content" class="content">
-          
-
-  <div id="posts" class="posts-expand">
     
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
 
-  <div class="post post-type-normal ">
-    <div class="post-header">
 
-      
-      
-        <h1 class="post-title">
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
           
-          
+
+          <div class="content">
             
-              JNI官方文档-Chapter 2：Design Overview
-            
-          
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/07/20/JNI官方文档-Chapter 2：Design Overview/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GeneBlue's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JNI官方文档-Chapter 2：Design Overview
         </h1>
-      
 
-      <div class="post-meta">
-        <span class="post-time">
-          发表于 2015-07-20
-        </span>
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
 
-        
+              <time title="Created: 2015-07-20 12:26:08" itemprop="dateCreated datePublished" datetime="2015-07-20T12:26:08+08:00">2015-07-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-11 14:51:40" itemprop="dateModified" datetime="2019-11-11T14:51:40+08:00">2019-11-11</time>
+              </span>
 
-        
           
-        
-      </div>
-    </div>
 
-    <div class="post-body">
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-      
-
-      
-        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong><br><strong>文章访问密码：whoami</strong></p>
+        <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
 <p>本篇主要关注JNI设计中的主要问题。这里讲述的大多数问题都与本地方法有关。Invocation API的介绍在Chapter 5中。</p>
 <h3 id="JNI-Interface-Functions-and-Pointers"><a href="#JNI-Interface-Functions-and-Pointers" class="headerlink" title="JNI Interface Functions and Pointers"></a>JNI Interface Functions and Pointers</h3><p>本地代码通过JNI函数可以获取JVM的一些特性。JNI函数可以通过一个接口指针获取。该接口指针是一个双重指针（指向指针的指针）。指针指向了一个指针数组，指针数组中的每一个成员都指向一个接口函数。每一个接口函数都在数组中预定义了一个偏移地址。下图可以表明接口指针的组织关系。</p>
 <a id="more"></a>
-<div align="center"><br><img src="http://7vzu7u.com1.z0.glb.clouddn.com/JNI-chapter%202-2-1.png " alt="JNI接口指针" title="JNI接口指针"><br></div>
+
+<div align="center">
+<img src="http://7vzu7u.com1.z0.glb.clouddn.com/JNI-chapter%202-2-1.png " alt="JNI接口指针" title="JNI接口指针">
+</div>
 
 
 <p>JNI接口是以类似于C++虚函数表或者COM接口的形式组织的。比起电路函数入口的方式，接口表的有点在于JNI的命名空间可以与本地代码分离开来。VM也可以较容易地提供多个版本的JNI函数表。例如，VM可以同时支持两种JNI函数表：</p>
@@ -183,8 +263,7 @@ class Cls {
     static {
       System.loadLibrary(“pkg_Cls”);
     }
-}
-</code></pre><p>System.loadLibrary方法的参数是由开发者定义的库名。VM会遵循平台约定将库名转换为本地库名。如Solaris系统会将pkg_Cls库名转换为libpkg_Cls.so本地库名，Win32系统会将pkg_Cls转换成pkg_Cls.dll本地库名。</p>
+}</code></pre><p>System.loadLibrary方法的参数是由开发者定义的库名。VM会遵循平台约定将库名转换为本地库名。如Solaris系统会将pkg_Cls库名转换为libpkg_Cls.so本地库名，Win32系统会将pkg_Cls转换成pkg_Cls.dll本地库名。</p>
 <p>只要所有的java类由同一个classLoader对象加载，开发者就可以使用一个单独的库来存储所有的需要的本地方法。VM内部会为每一个classLoader维护一个本地库列表。VM构建者应该规范本地库的命名以减少名字冲突的几率。</p>
 <p>如果一个OS不支持动态链接，那么所有的本地方法都必须与VM重新链接。在这种情况下，VM会完成System.loadLibrary方法的调用但并不会真的加载本地库。</p>
 <p>开发人员也可以调用JNI的RegisterNatives()函数来注册于一个类相关联的本地方法。RegisterNatives()函数在静态链接中相当有用。</p>
@@ -200,10 +279,19 @@ class Cls {
 <pre><code>class Cls1 {
     int g(int i);
     native int g(double d);
-}
-</code></pre><p>我们采用的简单命名方式可以确保所有的Unicode字符翻译为标准的C函数名。在完整的类名中，我们使用下划线”_”代替了斜线”/“。因为名字和类型描述符从不以数字开始，我们就是用_0,……,_9来表示转义字符。如表2-1所述：</p>
+}</code></pre><p>我们采用的简单命名方式可以确保所有的Unicode字符翻译为标准的C函数名。在完整的类名中，我们使用下划线”_”代替了斜线”/“。因为名字和类型描述符从不以数字开始，我们就是用_0,……,_9来表示转义字符。如表2-1所述：</p>
 <p>表2-1：Unicode转义字符</p>
-<table><br><tbody><br><br><tr><td><em>转义字符</em></td><td><em>注释</em></td></tr><br><tr><td>_0XXXX</td><td>一个Unicode字符XXXX。注意小写字母被用于表示非ASCII的Unicode字符，如：_0abcd与_0ABCD是相反的。</td></tr><br><tr><td><em>1</em></td><td>字符”“</td></tr><br><tr><td>_2</td><td>字符”;”</td></tr><br><tr><td>_3</td><td>字符”[“</td></tr><br><br></tbody><br></table>
+<table>
+<tbody>
+
+<tr><td><em>转义字符</em></td><td><em>注释</em></td></tr>
+<tr><td>_0XXXX</td><td>一个Unicode字符XXXX。注意小写字母被用于表示非ASCII的Unicode字符，如：_0abcd与_0ABCD是相反的。</td></tr>
+<tr><td>_1</td><td>字符"_"</td></tr>
+<tr><td>_2</td><td>字符";"</td></tr>
+<tr><td>_3</td><td>字符"["</td></tr>
+
+</tbody>
+</table>
 
 <p>所有的本地方法和接口API都遵循平台的标准库调用规范。如，UNIX系统使用C调用规范，然而Win32系统使用_stdcall。</p>
 <h3 id="Native-Method-Arguments"><a href="#Native-Method-Arguments" class="headerlink" title="Native Method Arguments"></a>Native Method Arguments</h3><p>JNI接口指针是第一个进入本地方法的参数。JNI接口指针是JNIEnv类型的。第二个参数依据本地方法是静态还是非静态而不同。非静态本地方法的第二个参数一般是一个对象的引用。静态方法的第二个参数是所属java类的引用。</p>
@@ -213,8 +301,7 @@ class Cls {
 class Cls {
     native double f(int i, String s);
     ...
-}
-</code></pre><p>C函数以长命名方式Java_pkg_Cls_f_Iljava_lang_String_2的形式来实现本地方法f：</p>
+}</code></pre><p>C函数以长命名方式Java_pkg_Cls_f_Iljava_lang_String_2的形式来实现本地方法f：</p>
 <p>代码示例2-1以C代码形式实现了本地方法</p>
 <pre><code>jdouble Java_pkg_Cls_f__ILjava_lang_String_2 (
     JNIEnv *env, /* interface pointer */
@@ -229,8 +316,7 @@ class Cls {
     /* Now we are done with str */
     (*env)-&gt;ReleaseStringUTFChars(env, s, str);
     return ...
-}
-</code></pre><p>注意，我们总是使用接口指针env来操纵java对象。使用C++，可以实现结构更加清晰的一个版本，如代码示例2-2所示：</p>
+}</code></pre><p>注意，我们总是使用接口指针env来操纵java对象。使用C++，可以实现结构更加清晰的一个版本，如代码示例2-2所示：</p>
 <pre><code>extern &quot;C&quot; /* specify the C calling convention */
 jdouble Java_pkg_Cls_f__ILjava_lang_String_2 (
     JNIEnv *env, /* interface pointer */
@@ -242,8 +328,7 @@ jdouble Java_pkg_Cls_f__ILjava_lang_String_2 (
     ...
     env-&gt;ReleaseStringUTFChars(s, str);
     return ...
-}
-</code></pre><p>使用C++,可以做到从源码中消除其他等级的间接表达和接口指针参数。但是，其本质仍与C相同。在C++中，JNI函数以C为蓝本的内联函数的形式定义。</p>
+}</code></pre><p>使用C++,可以做到从源码中消除其他等级的间接表达和接口指针参数。但是，其本质仍与C相同。在C++中，JNI函数以C为蓝本的内联函数的形式定义。</p>
 <h3 id="Referencing-Java-Objects"><a href="#Referencing-Java-Objects" class="headerlink" title="Referencing Java Objects"></a>Referencing Java Objects</h3><p>原始的数据类型如intergers，characters等在java和本地代码中都会被拷贝。在任意一方的所有java对象都是通过引用来传递的。VM必须能够追踪所有被传递到本地代码中的java对象，因此这些java对象并不是由垃圾收集器清理释放的。于是，本地代码必须有一种方法通知VM不在需要某些java对象。此外，垃圾收集器也必须能够清理有本地代码所引用的java对象。</p>
 <h3 id="Global-and-Local-References"><a href="#Global-and-Local-References" class="headerlink" title="Global and Local References"></a>Global and Local References</h3><p>JNI将引用对象划分成两类：局部和全局引用。局部引用在本地方法调用期间是可信的，并且在本地方法返回时自动被清理。全局引用在本地代码中一直存在，直至有了明确的清理要求。</p>
 <p>对象以局部引用的形式传递到本地方法中。所有本JNI函数返回的java对象都是局部引用形式。JNI允许开发是将局部引用转变为全局引用。JNI函数允许java对象是局部引用和全局引用。本地方法可以以局部引用或全局引用的形式对VM返回结果。</p>
@@ -276,10 +361,8 @@ jdouble Java_pkg_Cls_f__ILjava_lang_String_2 (
 <p>我们的方案提供了一种变通的方法。垃圾收集算法可以对每个给定的array做拷贝操作还是阻塞操作提供独立的决策。例如，垃圾收集器可以拷贝较小的对象，但会阻塞较大的对象。</p>
 <p>JNI的实现必须要确保运行在多线程下的native方法能够同时获取相同的array。例如，JNI应该为每一个被阻塞的array都维持一个内部计数器，这样就可以做到一个线程能够解除对一个array的阻塞，但同时该array被另一个thread阻塞。注意：JNI不需要锁定只被一个native方法访问的基本类型array。同时从不同的线程更新java array对象会导致不确定的结果。</p>
 <h3 id="Accessing-Fields-and-Methods"><a href="#Accessing-Fields-and-Methods" class="headerlink" title="Accessing Fields and Methods"></a>Accessing Fields and Methods</h3><p>JNI允许native代码访问field字段和调用java对象的方法。JNI通过名称和类型来识别方法和字段。一个两步式的进程会通过名称和类型来定位字段和方法，然后计算出开销。例如，为了调用cls类中的方法f，native代码首先以如下方式获取方法ID：</p>
-<pre><code>jmethodID mid = env-&gt;GetMethodID(cls, “f”, “(ILjava/lang/String;)D”);
-</code></pre><p>然后native代码会以如下形式反复地使用方法ID，不会再去查找方法：</p>
-<pre><code>jdouble result = env-&gt;CallDoubleMethod(obj, mid, 10, str);
-</code></pre><p>字段和方法ID不会阻止VM卸载ID已经被找到的类。当类被卸载掉后，方法或字段ID就会失效。因此，native代码必须确保：</p>
+<pre><code>jmethodID mid = env-&gt;GetMethodID(cls, “f”, “(ILjava/lang/String;)D”);</code></pre><p>然后native代码会以如下形式反复地使用方法ID，不会再去查找方法：</p>
+<pre><code>jdouble result = env-&gt;CallDoubleMethod(obj, mid, 10, str);</code></pre><p>字段和方法ID不会阻止VM卸载ID已经被找到的类。当类被卸载掉后，方法或字段ID就会失效。因此，native代码必须确保：</p>
 <ul>
 <li>对装载过的类维持活动状态的引用，或</li>
 <li>重新计算方法或字段ID</li>
@@ -332,355 +415,208 @@ DeleteGlobalRef()
 DeleteWeakGlobalRef()
 MonitorExit()
 PushLocalFrame()
-PopLocalFrame()
-</code></pre>
-      
+PopLocalFrame()</code></pre>
     </div>
 
-    <div class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/Java-JNI/"> #Java JNI </a>
-          
-        </div>
-      
+    
+    
+    
 
-      
-        <div class="post-nav">
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2015/07/18/JNI官方文档-Chapter 1：Introduction/">JNI官方文档-Chapter 1：Introduction</a>
-            
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java-JNI/" rel="tag"># Java JNI</a>
           </div>
 
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2015/07/21/JNI官方文档-Chapter 3：JNI Types and Data Structures/">JNI官方文档-Chapter 3：JNI Types and Data Structures</a>
-            
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2015/07/18/JNI官方文档-Chapter 1：Introduction/" rel="next" title="JNI官方文档-Chapter 1：Introduction">
+                  <i class="fa fa-chevron-left"></i> JNI官方文档-Chapter 1：Introduction
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2015/07/21/JNI官方文档-Chapter 3：JNI Types and Data Structures/" rel="prev" title="JNI官方文档-Chapter 3：JNI Types and Data Structures">
+                  JNI官方文档-Chapter 3：JNI Types and Data Structures <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-        </div>
-      
-
-      
-      
-    </div>
-  </div>
-
-
-
+      </footer>
     
-      <div class="comments" id="comments">
-        
-      </div>
-    
-  </div>
-
-
-        </div>
-
-        
-      </div>
-
-
-      
+  </article>
   
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
+  
+  
+
   </div>
 
-  <div id="sidebar" class="sidebar">
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
     <div class="sidebar-inner">
 
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
 
-      <div class="site-overview">
-        <div class="site-author motion-element">
-          <img class="site-author-image" src="/images/default_avatar.jpg" alt="GeneBlue" />
-          <p class="site-author-name">GeneBlue</p>
-        </div>
-        <p class="site-description motion-element">Personal Blog</p>
-        <div class="site-state motion-element">
-          <div class="site-state-item site-state-posts">
-            <a href="/archives">
-              <span class="site-state-item-count">24</span>
-              <span class="site-state-item-name">日志</span>
-            </a>
-          </div>
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#JNI-Interface-Functions-and-Pointers"><span class="nav-number">1.</span> <span class="nav-text">JNI Interface Functions and Pointers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Loading-and-Linking-Native-Methods"><span class="nav-number">2.</span> <span class="nav-text">Loading and Linking Native Methods</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Resolving-Native-Method-Names"><span class="nav-number">3.</span> <span class="nav-text">Resolving Native Method Names</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Native-Method-Arguments"><span class="nav-number">4.</span> <span class="nav-text">Native Method Arguments</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Referencing-Java-Objects"><span class="nav-number">5.</span> <span class="nav-text">Referencing Java Objects</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Global-and-Local-References"><span class="nav-number">6.</span> <span class="nav-text">Global and Local References</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Implementing-Local-References"><span class="nav-number">7.</span> <span class="nav-text">Implementing Local References</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Accessing-Java-Objects"><span class="nav-number">8.</span> <span class="nav-text">Accessing Java Objects</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Accessing-Primitive-Arrays"><span class="nav-number">9.</span> <span class="nav-text">Accessing Primitive Arrays</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Accessing-Fields-and-Methods"><span class="nav-number">10.</span> <span class="nav-text">Accessing Fields and Methods</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reporting-Programming-Errors"><span class="nav-number">11.</span> <span class="nav-text">Reporting Programming Errors</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-Exceptions"><span class="nav-number">12.</span> <span class="nav-text">Java Exceptions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Exceptions-and-Error-Codes"><span class="nav-number">13.</span> <span class="nav-text">Exceptions and Error Codes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Asynchronous-Exceptions"><span class="nav-number">14.</span> <span class="nav-text">Asynchronous Exceptions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Exception-Handling"><span class="nav-number">15.</span> <span class="nav-text">Exception Handling</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
 
-          <div class="site-state-item site-state-categories">
-            
-              <span class="site-state-item-count">0</span>
-              <span class="site-state-item-name">分类</span>
-              
-          </div>
-
-          <div class="site-state-item site-state-tags">
-            <a href="/tags">
-              <span class="site-state-item-count">15</span>
-              <span class="site-state-item-name">标签</span>
-              </a>
-          </div>
-
-        </div>
-
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="GeneBlue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">GeneBlue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
         
-
-        <div class="links-of-author motion-element">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
           
-        </div>
-
-        
-        
-
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">tags</span></a>
       </div>
-
-      
-        <div class="post-toc-wrap sidebar-panel-active">
-          <div class="post-toc-indicator-top post-toc-indicator"></div>
-          <div class="post-toc">
-            
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#JNI-Interface-Functions-and-Pointers"><span class="nav-number">1.</span> <span class="nav-text">JNI Interface Functions and Pointers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Loading-and-Linking-Native-Methods"><span class="nav-number">2.</span> <span class="nav-text">Loading and Linking Native Methods</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Resolving-Native-Method-Names"><span class="nav-number">3.</span> <span class="nav-text">Resolving Native Method Names</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Native-Method-Arguments"><span class="nav-number">4.</span> <span class="nav-text">Native Method Arguments</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Referencing-Java-Objects"><span class="nav-number">5.</span> <span class="nav-text">Referencing Java Objects</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Global-and-Local-References"><span class="nav-number">6.</span> <span class="nav-text">Global and Local References</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Implementing-Local-References"><span class="nav-number">7.</span> <span class="nav-text">Implementing Local References</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Accessing-Java-Objects"><span class="nav-number">8.</span> <span class="nav-text">Accessing Java Objects</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Accessing-Primitive-Arrays"><span class="nav-number">9.</span> <span class="nav-text">Accessing Primitive Arrays</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Accessing-Fields-and-Methods"><span class="nav-number">10.</span> <span class="nav-text">Accessing Fields and Methods</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reporting-Programming-Errors"><span class="nav-number">11.</span> <span class="nav-text">Reporting Programming Errors</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-Exceptions"><span class="nav-number">12.</span> <span class="nav-text">Java Exceptions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Exceptions-and-Error-Codes"><span class="nav-number">13.</span> <span class="nav-text">Exceptions and Error Codes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Asynchronous-Exceptions"><span class="nav-number">14.</span> <span class="nav-text">Asynchronous Exceptions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Exception-Handling"><span class="nav-number">15.</span> <span class="nav-text">Exception Handling</span></a></li></ol></div>
-            
-          </div>
-          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
-        </div>
-      
-
-    </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
   </div>
 
 
-    </div>
 
-    <div id="footer" class="footer">
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
       <div class="footer-inner">
-        <div class="copyright">
+        
+
+<div class="copyright">
   
-  &copy; &nbsp; 
-  2019
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
-    <i class="icon-heart"></i>
+    <i class="fa fa-user"></i>
   </span>
-  <span class="author">GeneBlue</span>
+  <span class="author" itemprop="copyrightHolder">GeneBlue</span>
 </div>
-
-<div class="powered-by">
-  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
-</div>
-
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT
-  </a>
-</div>
-
-
-
-      </div>
-    </div>
-
-    <div class="back-to-top"></div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.5.0
   </div>
 
-  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
 
   
-  
-
-  
-  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
-  <script type="text/javascript" src="/js/fancy-box.js"></script>
-
-
-  <script type="text/javascript" src="/js/helpers.js"></script>
-  
-
-  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
-  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
-
-  <script type="text/javascript" src="/js/motion_global.js" id="motion.global"></script>
-
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
 
 
 
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
-<script type="text/javascript" src="/js/bootstrap.scrollspy.js" id="bootstrap.scrollspy.custom"></script>
 
+  
 
-<script type="text/javascript" id="sidebar.toc.highlight">
-  $(document).ready(function () {
-    var tocSelector = '.post-toc';
-    var $tocSelector = $(tocSelector);
-    var activeCurrentSelector = '.active-current';
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
 
-    $tocSelector
-      .on('activate.bs.scrollspy', function () {
-        var $currentActiveElement = $(tocSelector + ' .active').last();
-
-        removeCurrentActiveClass();
-        $currentActiveElement.addClass('active-current');
-
-        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
-      })
-      .on('clear.bs.scrollspy', function () {
-        removeCurrentActiveClass();
-      });
-
-    function removeCurrentActiveClass () {
-      $(tocSelector + ' ' + activeCurrentSelector)
-        .removeClass(activeCurrentSelector.substring(1));
-    }
-
-    function processTOC () {
-      getTOCMaxHeight();
-      toggleTOCOverflowIndicators();
-    }
-
-    function getTOCMaxHeight () {
-      var $sidebarInner = $('.sidebar-inner');
-      var height = $('.sidebar').height() -
-                   $tocSelector.position().top -
-                   $('.post-toc-indicator-bottom').height();
-
-      $tocSelector.css('height', height);
-
-      return height;
-    }
-
-    function toggleTOCOverflowIndicators () {
-      tocOverflowIndicator(
-        '.post-toc-indicator-top',
-        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
-      );
-
-      tocOverflowIndicator(
-        '.post-toc-indicator-bottom',
-        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
-      )
-    }
-
-    $(document).on('sidebar.didShow', function () {
-      processTOC();
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '1d44761390eeb9904aab',
+      clientSecret: '517694b3ef78c87a290d8bf2dfc16f3f34ae9606b',
+      repo: 'geneblue.github.io',
+      owner: 'GeneBlue',
+      admin: ['GeneBlue'],
+      id: '32559714808f9e1cfa5deda6fac6ca5f',
+        language: '',
+      distractionFreeMode: 'true'
     });
-
-    $('body').scrollspy({ target: tocSelector });
-    $(window).on('resize', function () {
-      if ( $('.sidebar').hasClass('sidebar-active') ) {
-        processTOC();
-      }
-    });
-
-    onScroll($tocSelector);
-
-    function onScroll (element) {
-      element.on('mousewheel DOMMouseScroll', function (event) {
-          var oe = event.originalEvent;
-          var delta = oe.wheelDelta || -oe.detail;
-          var self = this;
-
-          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
-          event.preventDefault();
-
-          toggleTOCOverflowIndicators();
-      });
-    }
-
-    function tocOverflowIndicator (indicator, action) {
-      $(indicator).velocity('stop').velocity({
-        opacity: action === 'show' ? 0.4 : 0
-      }, { duration: 100 });
-    }
-
-  });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
 </script>
-
-
-  <script type="text/javascript" id="sidebar.nav">
-    $(document).ready(function () {
-      var html = $('html');
-
-      $('.sidebar-nav li').on('click', function () {
-        var item = $(this);
-        var activeTabClassName = 'sidebar-nav-active';
-        var activePanelClassName = 'sidebar-panel-active';
-        if (item.hasClass(activeTabClassName)) {
-          return;
-        }
-
-        var currentTarget = $('.' + activePanelClassName);
-        var target = $('.' + item.data('target'));
-
-        currentTarget.velocity('transition.slideUpOut', 200, function () {
-          target
-            .velocity('stop')
-            .velocity('transition.slideDownIn', 200)
-            .addClass(activePanelClassName);
-        });
-
-        item.siblings().removeClass(activeTabClassName);
-        item.addClass(activeTabClassName);
-      });
-
-      $('.post-toc a').on('click', function (e) {
-        e.preventDefault();
-        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
-        html.velocity('stop').velocity('scroll', {
-          offset: offset  + 'px',
-          mobileHA: false
-        });
-      });
-
-      // Expand sidebar on post detail page by default, when post has a toc.
-      var $tocContent = $('.post-toc-content');
-      if (isDesktop() && CONFIG.sidebar === 'post') {
-        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
-          displaySidebar();
-        }
-      }
-    });
-  </script>
-
-
-
-
-  <script type="text/javascript">
-    $(document).ready(function () {
-      if (CONFIG.sidebar === 'always') {
-        displaySidebar();
-      }
-    });
-  </script>
-
-  
-
-  
-  
-  
-
-  
-
-
-
-
-  
-  
 
 </body>
 </html>

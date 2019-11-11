@@ -1,173 +1,249 @@
-<!doctype html>
-<html class="theme-next use-motion ">
+<!DOCTYPE html>
+<html lang="zh-Hans">
 <head>
-  
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-<meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-
-
-
-
-
-
-  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+<link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.3"/>
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 
-    <meta name="description" content="Personal Blog" />
-
-
-
-  <meta name="keywords" content="Java JNI," />
-
-
-
-<script>
-    (function(){
-        if('whoami'){
-            if (prompt('请输入文章密码') !== 'whoami'){
-                alert('密码错误！');
-                history.back();
-            }
-        }
-    })();
-</script>
-
-
-
-
-  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
-
-
-
-<script type="text/javascript" id="hexo.configuration">
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
   var CONFIG = {
-    scheme: '',
-    analytics: {
-      google: ''
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
     },
-    sidebar: 'post'
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
   };
 </script>
 
+  <meta name="description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 在使用NDK的时候，发现自己对jNI机制并不是很了解，就把官方文档拿来看了看并翻译了一下。官方文档地址看这里。自己也是首次翻译英文资料，有翻译不妥的地方请联系我，我将及时更改。  本篇开始介绍JNI（Java Native Interface）技术。JNI是一种本地编程接口。它允许运行在java V">
+<meta name="keywords" content="Java JNI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JNI官方文档-Chapter 1：Introduction">
+<meta property="og:url" content="http://yoursite.com/2015/07/18/JNI官方文档-Chapter 1：Introduction/index.html">
+<meta property="og:site_name" content="GeneBlue&#39;s Blog">
+<meta property="og:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 在使用NDK的时候，发现自己对jNI机制并不是很了解，就把官方文档拿来看了看并翻译了一下。官方文档地址看这里。自己也是首次翻译英文资料，有翻译不妥的地方请联系我，我将及时更改。  本篇开始介绍JNI（Java Native Interface）技术。JNI是一种本地编程接口。它允许运行在java V">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-11-11T06:51:37.553Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JNI官方文档-Chapter 1：Introduction">
+<meta name="twitter:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 在使用NDK的时候，发现自己对jNI机制并不是很了解，就把官方文档拿来看了看并翻译了一下。官方文档地址看这里。自己也是首次翻译英文资料，有翻译不妥的地方请联系我，我将及时更改。  本篇开始介绍JNI（Java Native Interface）技术。JNI是一种本地编程接口。它允许运行在java V">
+
+<link rel="canonical" href="http://yoursite.com/2015/07/18/JNI官方文档-Chapter 1：Introduction/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>JNI官方文档-Chapter 1：Introduction | GeneBlue's Blog</title>
+  
 
 
 
-  <title> JNI官方文档-Chapter 1：Introduction // GeneBlue's Blog </title>
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
 </head>
 
-<body>
-<!--[if lte IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari." style='margin-left:auto;margin-right:auto;display: block;'/></a></div> <![endif]-->
-  <div class="container one-column page-post-detail">
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
     <div class="headband"></div>
 
-    <div id="header" class="header">
-      <div class="header-inner">
-        <h1 class="site-meta">
-  <span class="logo-line-before"><i></i></span>
-  <a href="/" class="brand">
-      <span class="logo">
-        <i class="icon-logo"></i>
-      </span>
-      <span class="site-title">GeneBlue's Blog</span>
-  </a>
-  <span class="logo-line-after"><i></i></span>
-</h1>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">GeneBlue's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">The quiter you become,the more you are able to hear!</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
 
 
+<nav class="site-nav">
+  
   <ul id="menu" class="menu">
-     
-    
-      
-      <li class="menu-item menu-item-home">
-        <a href="/">
-          <i class="menu-item-icon icon-home"></i> <br />
-          首页
-        </a>
-      </li>
-    
-      
-      <li class="menu-item menu-item-about">
-        <a href="/about">
-          <i class="menu-item-icon icon-about"></i> <br />
-          关于
-        </a>
-      </li>
-    
-      
-      <li class="menu-item menu-item-archives">
-        <a href="/archives">
-          <i class="menu-item-icon icon-archives"></i> <br />
-          归档
-        </a>
-      </li>
-    
-      
-      <li class="menu-item menu-item-tags">
-        <a href="/tags">
-          <i class="menu-item-icon icon-tags"></i> <br />
-          标签
-        </a>
-      </li>
-    
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>Sitemap</a>
+
+  </li>
   </ul>
 
+</nav>
+</div>
+    </header>
 
-      </div>
-    </div>
-
-    <div id="main" class="main">
-      <div class="main-inner">
-        <div id="content" class="content">
-          
-
-  <div id="posts" class="posts-expand">
     
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
 
-  <div class="post post-type-normal ">
-    <div class="post-header">
 
-      
-      
-        <h1 class="post-title">
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
           
-          
+
+          <div class="content">
             
-              JNI官方文档-Chapter 1：Introduction
-            
-          
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/07/18/JNI官方文档-Chapter 1：Introduction/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GeneBlue's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JNI官方文档-Chapter 1：Introduction
         </h1>
-      
 
-      <div class="post-meta">
-        <span class="post-time">
-          发表于 2015-07-18
-        </span>
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
 
-        
+              <time title="Created: 2015-07-18 12:26:08" itemprop="dateCreated datePublished" datetime="2015-07-18T12:26:08+08:00">2015-07-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-11 14:51:37" itemprop="dateModified" datetime="2019-11-11T14:51:37+08:00">2019-11-11</time>
+              </span>
 
-        
           
-        
-      </div>
-    </div>
 
-    <div class="post-body">
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-      
-
-      
-        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong><br><strong>文章访问密码：whoami</strong></p>
-<p>在使用NDK的时候，发现自己对jNI机制并不是很了解，就把官方文档拿来看了看并翻译了一下。官方文档地址看<a href="http://docs.oracle.com/javase/6/docs/technotes/guides/jni/spec/jniTOC.html" target="_blank" rel="external">这里</a>。自己也是首次翻译英文资料，有翻译不妥的地方请联系我，我将及时更改。</p>
+        <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+<p>在使用NDK的时候，发现自己对jNI机制并不是很了解，就把官方文档拿来看了看并翻译了一下。官方文档地址看<a href="http://docs.oracle.com/javase/6/docs/technotes/guides/jni/spec/jniTOC.html" target="_blank" rel="noopener">这里</a>。自己也是首次翻译英文资料，有翻译不妥的地方请联系我，我将及时更改。</p>
 <hr>
 <p>本篇开始介绍JNI（Java Native Interface）技术。JNI是一种本地编程接口。它允许运行在java VM 中的java代码与使用C/C++或汇编等其它编程语言写成的应用或者库进行交互操作。</p>
 <p>JNI机制能够存在的最重要一点在于利用了JVM的基础实现是没有被限制死。因此，JVM的构建者可以增添对JNI的支持而不会影响到VM的其他部分。开发人员在编写完一个版本的native程序或库后就可以在所有支持JNI技术的JVM中运行。</p>
 <a id="more"></a>
+
 <p>本篇包括以下几个话题：</p>
 <ul>
 <li>Java Native Interface Overview</li>
@@ -239,353 +315,207 @@
 <p>如果你是JVM的构建者，那么你应该在JVM中实现JNI机制。经过时间的检验JNI在VM的实现上不会牵涉任何上层代码而且没有什么限制，包括对象表述，垃圾收集机制等。如果你发现我们遗漏的问题请给我们反馈。</p>
 <h3 id="Changes"><a href="#Changes" class="headerlink" title="Changes"></a>Changes</h3><p>在Java SE 6.0中，一直被反对的JDK1_1InitArgs和JDK1_1AttachArgs结构已经被移除，取而代之的是JavaVMInitArgs和JavaVMAttachArgs结构。</p>
 
-      
     </div>
 
-    <div class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/Java-JNI/"> #Java JNI </a>
-          
-        </div>
-      
+    
+    
+    
 
-      
-        <div class="post-nav">
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2015/04/20/Android开发中错误解决（持续更新）/">Android开发中错误解决（持续更新）</a>
-            
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java-JNI/" rel="tag"># Java JNI</a>
           </div>
 
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2015/07/20/JNI官方文档-Chapter 2：Design Overview/">JNI官方文档-Chapter 2：Design Overview</a>
-            
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2015/04/20/Android开发中错误解决（持续更新）/" rel="next" title="Android开发中错误解决（持续更新）">
+                  <i class="fa fa-chevron-left"></i> Android开发中错误解决（持续更新）
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2015/07/20/JNI官方文档-Chapter 2：Design Overview/" rel="prev" title="JNI官方文档-Chapter 2：Design Overview">
+                  JNI官方文档-Chapter 2：Design Overview <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-        </div>
-      
-
-      
-      
-    </div>
-  </div>
-
-
-
+      </footer>
     
-      <div class="comments" id="comments">
-        
-      </div>
-    
-  </div>
-
-
-        </div>
-
-        
-      </div>
-
-
-      
+  </article>
   
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
+  
+  
+
   </div>
 
-  <div id="sidebar" class="sidebar">
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
     <div class="sidebar-inner">
 
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
 
-      <div class="site-overview">
-        <div class="site-author motion-element">
-          <img class="site-author-image" src="/images/default_avatar.jpg" alt="GeneBlue" />
-          <p class="site-author-name">GeneBlue</p>
-        </div>
-        <p class="site-description motion-element">Personal Blog</p>
-        <div class="site-state motion-element">
-          <div class="site-state-item site-state-posts">
-            <a href="/archives">
-              <span class="site-state-item-count">24</span>
-              <span class="site-state-item-name">日志</span>
-            </a>
-          </div>
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-Native-Interface-Overview"><span class="nav-number">1.</span> <span class="nav-text">Java Native Interface Overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Historical-Background"><span class="nav-number">2.</span> <span class="nav-text">Historical Background</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JDK-1-0本地方法接口"><span class="nav-number">2.1.</span> <span class="nav-text">JDK 1.0本地方法接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Java-运行接口"><span class="nav-number">2.2.</span> <span class="nav-text">Java 运行接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Raw本地接口和Java-COM接口"><span class="nav-number">2.3.</span> <span class="nav-text">Raw本地接口和Java/COM接口</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Objectives"><span class="nav-number">3.</span> <span class="nav-text">Objectives</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-Native-Interface-Approach"><span class="nav-number">4.</span> <span class="nav-text">Java Native Interface Approach</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Programming-to-the-JNI"><span class="nav-number">5.</span> <span class="nav-text">Programming to the JNI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Changes"><span class="nav-number">6.</span> <span class="nav-text">Changes</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
 
-          <div class="site-state-item site-state-categories">
-            
-              <span class="site-state-item-count">0</span>
-              <span class="site-state-item-name">分类</span>
-              
-          </div>
-
-          <div class="site-state-item site-state-tags">
-            <a href="/tags">
-              <span class="site-state-item-count">15</span>
-              <span class="site-state-item-name">标签</span>
-              </a>
-          </div>
-
-        </div>
-
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="GeneBlue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">GeneBlue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
         
-
-        <div class="links-of-author motion-element">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
           
-        </div>
-
-        
-        
-
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">tags</span></a>
       </div>
-
-      
-        <div class="post-toc-wrap sidebar-panel-active">
-          <div class="post-toc-indicator-top post-toc-indicator"></div>
-          <div class="post-toc">
-            
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-Native-Interface-Overview"><span class="nav-number">1.</span> <span class="nav-text">Java Native Interface Overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Historical-Background"><span class="nav-number">2.</span> <span class="nav-text">Historical Background</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JDK-1-0本地方法接口"><span class="nav-number">2.1.</span> <span class="nav-text">JDK 1.0本地方法接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Java-运行接口"><span class="nav-number">2.2.</span> <span class="nav-text">Java 运行接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Raw本地接口和Java-COM接口"><span class="nav-number">2.3.</span> <span class="nav-text">Raw本地接口和Java/COM接口</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Objectives"><span class="nav-number">3.</span> <span class="nav-text">Objectives</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-Native-Interface-Approach"><span class="nav-number">4.</span> <span class="nav-text">Java Native Interface Approach</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Programming-to-the-JNI"><span class="nav-number">5.</span> <span class="nav-text">Programming to the JNI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Changes"><span class="nav-number">6.</span> <span class="nav-text">Changes</span></a></li></ol></div>
-            
-          </div>
-          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
-        </div>
-      
-
-    </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
   </div>
 
 
-    </div>
 
-    <div id="footer" class="footer">
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
       <div class="footer-inner">
-        <div class="copyright">
+        
+
+<div class="copyright">
   
-  &copy; &nbsp; 
-  2019
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
-    <i class="icon-heart"></i>
+    <i class="fa fa-user"></i>
   </span>
-  <span class="author">GeneBlue</span>
+  <span class="author" itemprop="copyrightHolder">GeneBlue</span>
 </div>
-
-<div class="powered-by">
-  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
-</div>
-
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT
-  </a>
-</div>
-
-
-
-      </div>
-    </div>
-
-    <div class="back-to-top"></div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.5.0
   </div>
 
-  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
 
   
-  
-
-  
-  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
-  <script type="text/javascript" src="/js/fancy-box.js"></script>
-
-
-  <script type="text/javascript" src="/js/helpers.js"></script>
-  
-
-  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
-  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
-
-  <script type="text/javascript" src="/js/motion_global.js" id="motion.global"></script>
-
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
 
 
 
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
-<script type="text/javascript" src="/js/bootstrap.scrollspy.js" id="bootstrap.scrollspy.custom"></script>
 
+  
 
-<script type="text/javascript" id="sidebar.toc.highlight">
-  $(document).ready(function () {
-    var tocSelector = '.post-toc';
-    var $tocSelector = $(tocSelector);
-    var activeCurrentSelector = '.active-current';
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
 
-    $tocSelector
-      .on('activate.bs.scrollspy', function () {
-        var $currentActiveElement = $(tocSelector + ' .active').last();
-
-        removeCurrentActiveClass();
-        $currentActiveElement.addClass('active-current');
-
-        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
-      })
-      .on('clear.bs.scrollspy', function () {
-        removeCurrentActiveClass();
-      });
-
-    function removeCurrentActiveClass () {
-      $(tocSelector + ' ' + activeCurrentSelector)
-        .removeClass(activeCurrentSelector.substring(1));
-    }
-
-    function processTOC () {
-      getTOCMaxHeight();
-      toggleTOCOverflowIndicators();
-    }
-
-    function getTOCMaxHeight () {
-      var $sidebarInner = $('.sidebar-inner');
-      var height = $('.sidebar').height() -
-                   $tocSelector.position().top -
-                   $('.post-toc-indicator-bottom').height();
-
-      $tocSelector.css('height', height);
-
-      return height;
-    }
-
-    function toggleTOCOverflowIndicators () {
-      tocOverflowIndicator(
-        '.post-toc-indicator-top',
-        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
-      );
-
-      tocOverflowIndicator(
-        '.post-toc-indicator-bottom',
-        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
-      )
-    }
-
-    $(document).on('sidebar.didShow', function () {
-      processTOC();
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '1d44761390eeb9904aab',
+      clientSecret: '517694b3ef78c87a290d8bf2dfc16f3f34ae9606b',
+      repo: 'geneblue.github.io',
+      owner: 'GeneBlue',
+      admin: ['GeneBlue'],
+      id: '2d0f1f28f068f1f72c9de3af6fb27033',
+        language: '',
+      distractionFreeMode: 'true'
     });
-
-    $('body').scrollspy({ target: tocSelector });
-    $(window).on('resize', function () {
-      if ( $('.sidebar').hasClass('sidebar-active') ) {
-        processTOC();
-      }
-    });
-
-    onScroll($tocSelector);
-
-    function onScroll (element) {
-      element.on('mousewheel DOMMouseScroll', function (event) {
-          var oe = event.originalEvent;
-          var delta = oe.wheelDelta || -oe.detail;
-          var self = this;
-
-          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
-          event.preventDefault();
-
-          toggleTOCOverflowIndicators();
-      });
-    }
-
-    function tocOverflowIndicator (indicator, action) {
-      $(indicator).velocity('stop').velocity({
-        opacity: action === 'show' ? 0.4 : 0
-      }, { duration: 100 });
-    }
-
-  });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
 </script>
-
-
-  <script type="text/javascript" id="sidebar.nav">
-    $(document).ready(function () {
-      var html = $('html');
-
-      $('.sidebar-nav li').on('click', function () {
-        var item = $(this);
-        var activeTabClassName = 'sidebar-nav-active';
-        var activePanelClassName = 'sidebar-panel-active';
-        if (item.hasClass(activeTabClassName)) {
-          return;
-        }
-
-        var currentTarget = $('.' + activePanelClassName);
-        var target = $('.' + item.data('target'));
-
-        currentTarget.velocity('transition.slideUpOut', 200, function () {
-          target
-            .velocity('stop')
-            .velocity('transition.slideDownIn', 200)
-            .addClass(activePanelClassName);
-        });
-
-        item.siblings().removeClass(activeTabClassName);
-        item.addClass(activeTabClassName);
-      });
-
-      $('.post-toc a').on('click', function (e) {
-        e.preventDefault();
-        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
-        html.velocity('stop').velocity('scroll', {
-          offset: offset  + 'px',
-          mobileHA: false
-        });
-      });
-
-      // Expand sidebar on post detail page by default, when post has a toc.
-      var $tocContent = $('.post-toc-content');
-      if (isDesktop() && CONFIG.sidebar === 'post') {
-        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
-          displaySidebar();
-        }
-      }
-    });
-  </script>
-
-
-
-
-  <script type="text/javascript">
-    $(document).ready(function () {
-      if (CONFIG.sidebar === 'always') {
-        displaySidebar();
-      }
-    });
-  </script>
-
-  
-
-  
-  
-  
-
-  
-
-
-
-
-  
-  
 
 </body>
 </html>

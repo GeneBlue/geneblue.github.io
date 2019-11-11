@@ -1,533 +1,465 @@
-<!doctype html>
-<html class="theme-next use-motion ">
+<!DOCTYPE html>
+<html lang="zh-Hans">
 <head>
-  
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-<meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-
-
-
-
-
-
-  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+<link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.3"/>
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 
-    <meta name="description" content="Personal Blog" />
-
-
-
-  <meta name="keywords" content="Android kernel security," />
-
-
-
-<script>
-    (function(){
-        if('whoami'){
-            if (prompt('请输入文章密码') !== 'whoami'){
-                alert('密码错误！');
-                history.back();
-            }
-        }
-    })();
-</script>
-
-
-
-
-  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
-
-
-
-<script type="text/javascript" id="hexo.configuration">
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
   var CONFIG = {
-    scheme: '',
-    analytics: {
-      google: ''
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
     },
-    sidebar: 'post'
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
   };
 </script>
 
+  <meta name="description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 前几天，Google 正式发布了 Android 8.0。 没错，真的就叫 OREO（奥利奥）。 运行于 Andorid 8.0 的内核会增加几点安全特性，主要用于缓解内核漏洞和内核驱动 bug。 这些特性已经更新在 kernel/common 源码的 android-3.18，android-4.">
+<meta name="keywords" content="Android kernel security">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 8.0 内核安全特性">
+<meta property="og:url" content="http://yoursite.com/2017/08/23/Android8.0_Kernel_Hardening/index.html">
+<meta property="og:site_name" content="GeneBlue&#39;s Blog">
+<meta property="og:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 前几天，Google 正式发布了 Android 8.0。 没错，真的就叫 OREO（奥利奥）。 运行于 Andorid 8.0 的内核会增加几点安全特性，主要用于缓解内核漏洞和内核驱动 bug。 这些特性已经更新在 kernel/common 源码的 android-3.18，android-4.">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-11-11T06:51:06.413Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 8.0 内核安全特性">
+<meta name="twitter:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 前几天，Google 正式发布了 Android 8.0。 没错，真的就叫 OREO（奥利奥）。 运行于 Andorid 8.0 的内核会增加几点安全特性，主要用于缓解内核漏洞和内核驱动 bug。 这些特性已经更新在 kernel/common 源码的 android-3.18，android-4.">
+
+<link rel="canonical" href="http://yoursite.com/2017/08/23/Android8.0_Kernel_Hardening/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Android 8.0 内核安全特性 | GeneBlue's Blog</title>
+  
 
 
 
-  <title> Android 8.0 内核安全特性 // GeneBlue's Blog </title>
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
 </head>
 
-<body>
-<!--[if lte IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari." style='margin-left:auto;margin-right:auto;display: block;'/></a></div> <![endif]-->
-  <div class="container one-column page-post-detail">
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
     <div class="headband"></div>
 
-    <div id="header" class="header">
-      <div class="header-inner">
-        <h1 class="site-meta">
-  <span class="logo-line-before"><i></i></span>
-  <a href="/" class="brand">
-      <span class="logo">
-        <i class="icon-logo"></i>
-      </span>
-      <span class="site-title">GeneBlue's Blog</span>
-  </a>
-  <span class="logo-line-after"><i></i></span>
-</h1>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">GeneBlue's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">The quiter you become,the more you are able to hear!</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
 
 
+<nav class="site-nav">
+  
   <ul id="menu" class="menu">
-     
-    
-      
-      <li class="menu-item menu-item-home">
-        <a href="/">
-          <i class="menu-item-icon icon-home"></i> <br />
-          首页
-        </a>
-      </li>
-    
-      
-      <li class="menu-item menu-item-about">
-        <a href="/about">
-          <i class="menu-item-icon icon-about"></i> <br />
-          关于
-        </a>
-      </li>
-    
-      
-      <li class="menu-item menu-item-archives">
-        <a href="/archives">
-          <i class="menu-item-icon icon-archives"></i> <br />
-          归档
-        </a>
-      </li>
-    
-      
-      <li class="menu-item menu-item-tags">
-        <a href="/tags">
-          <i class="menu-item-icon icon-tags"></i> <br />
-          标签
-        </a>
-      </li>
-    
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>Sitemap</a>
+
+  </li>
   </ul>
 
+</nav>
+</div>
+    </header>
 
-      </div>
-    </div>
-
-    <div id="main" class="main">
-      <div class="main-inner">
-        <div id="content" class="content">
-          
-
-  <div id="posts" class="posts-expand">
     
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
 
-  <div class="post post-type-normal ">
-    <div class="post-header">
 
-      
-      
-        <h1 class="post-title">
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
           
-          
+
+          <div class="content">
             
-              Android 8.0 内核安全特性
-            
-          
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/23/Android8.0_Kernel_Hardening/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GeneBlue's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android 8.0 内核安全特性
         </h1>
-      
 
-      <div class="post-meta">
-        <span class="post-time">
-          发表于 2017-08-23
-        </span>
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
 
-        
+              <time title="Created: 2017-08-23 11:02:08" itemprop="dateCreated datePublished" datetime="2017-08-23T11:02:08+08:00">2017-08-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-11 14:51:06" itemprop="dateModified" datetime="2019-11-11T14:51:06+08:00">2019-11-11</time>
+              </span>
 
-        
           
-        
-      </div>
-    </div>
 
-    <div class="post-body">
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-      
-
-      
-        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong><br><strong>文章访问密码：whoami</strong></p>
+        <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
 <p>前几天，Google 正式发布了 Android 8.0。 没错，真的就叫 OREO（奥利奥）。</p>
-<p>运行于 Andorid 8.0 的内核会增加几点安全特性，主要用于缓解内核漏洞和内核驱动 bug。 这些特性已经更新在 <a href="https://android.googlesource.com/kernel/common/" target="_blank" rel="external">kernel/common</a> 源码的 android-3.18，android-4.4 和 android-4.9 分支中。</p>
+<p>运行于 Andorid 8.0 的内核会增加几点安全特性，主要用于缓解内核漏洞和内核驱动 bug。 这些特性已经更新在 <a href="https://android.googlesource.com/kernel/common/" target="_blank" rel="noopener">kernel/common</a> 源码的 android-3.18，android-4.4 和 android-4.9 分支中。</p>
 <a id="more"></a>
+
 <h3 id="0x01-新增安全特性"><a href="#0x01-新增安全特性" class="headerlink" title="0x01 新增安全特性"></a>0x01 新增安全特性</h3><h5 id="Hardened-usercopy"><a href="#Hardened-usercopy" class="headerlink" title="Hardened usercopy"></a>Hardened usercopy</h5><p><code>CONFIG_HARDENED_USERCOPY=y</code></p>
 <p>内核经常通过 <code>copy_from_user()/copy_to_user()</code> 读写用户态空间，但这对函数没有边界检查(或者说开发者们没有做好边界检查)，如果能够控制相关参数，就可以大量覆盖内核空间或者大量泄漏内核内存。前者如果能覆盖到比较重要的内核对象，就极易导致任意代码执行；后者就是典型的内核信息泄漏了。</p>
-<p>针对这个问题，Linux 内核加固补丁集项目 Grsecurity 增加了 PAX_USERCOPY 特性来增强这两个函数。该补丁主要关注这两个函数的内核指针参数，对内核指针做一系列检查，主要包括不允许为null，不允许指向 kmalloc() 0 长度时分配的地址，不允许指向内核代码段，如果指向已分配的内核堆，确保拷贝内容大小要在已分配对象的大小之内，如果拷贝涉及内核栈，拷贝内容的大小要在当前进程的内核栈中。还有其他的一些检查，针对不同架构也有一些差异，具体细节，参见<a href="https://lwn.net/Articles/695991/" target="_blank" rel="external">Hardened usercopy</a>。</p>
-<h5 id="arm-arm64-PAN"><a href="#arm-arm64-PAN" class="headerlink" title="arm/arm64 PAN"></a>arm/arm64 PAN</h5><figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="attr">CONFIG_CPU_SW_DOMAIN_PAN</span>=y</div><div class="line"><span class="attr">CONFIG_ARM64_SW_TTBR0_PAN</span>=y</div></pre></td></tr></table></figure>
+<p>针对这个问题，Linux 内核加固补丁集项目 Grsecurity 增加了 PAX_USERCOPY 特性来增强这两个函数。该补丁主要关注这两个函数的内核指针参数，对内核指针做一系列检查，主要包括不允许为null，不允许指向 kmalloc() 0 长度时分配的地址，不允许指向内核代码段，如果指向已分配的内核堆，确保拷贝内容大小要在已分配对象的大小之内，如果拷贝涉及内核栈，拷贝内容的大小要在当前进程的内核栈中。还有其他的一些检查，针对不同架构也有一些差异，具体细节，参见<a href="https://lwn.net/Articles/695991/" target="_blank" rel="noopener">Hardened usercopy</a>。</p>
+<h5 id="arm-arm64-PAN"><a href="#arm-arm64-PAN" class="headerlink" title="arm/arm64 PAN"></a>arm/arm64 PAN</h5><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">CONFIG_CPU_SW_DOMAIN_PAN</span>=y</span><br><span class="line"><span class="attr">CONFIG_ARM64_SW_TTBR0_PAN</span>=y</span><br></pre></td></tr></table></figure>
+
 <p>PAN(Privileged Access Never) 可以认为是 PXN(Privileged eXecute Never) 的增强版，用于阻止内核直接访问用户空间。PXN 不允许内核执行用户态代码，PAN 直接不允许内核访问用户空间数据，进一步隔离内核空间与用户空间。</p>
 <h5 id="KASLR"><a href="#KASLR" class="headerlink" title="KASLR"></a>KASLR</h5><p><code>CONFIG_RANDOMIZE_BASE=y</code></p>
 <p>KASLR(Kernel Address Space Layout Randomization) 用于随机化内核的内存地址，在 4.4 和之后的内核中，将会默认使用。 内核符号不再固定，这无疑影响内核提权。比较普遍的解决办法是，先通过信息泄漏漏洞获取一些内核地址，然后再计算出关注的内核符号地址。方法也不是绝对的，没准哪天就爆出一个直接绕过 KASLR 的漏洞。</p>
 <p>在 Android 阵营中，三星手机的安全性比较高，目前已经有一些机器在使用 KASLR 了。</p>
 <h3 id="0x02-其他安全特性"><a href="#0x02-其他安全特性" class="headerlink" title="0x02 其他安全特性"></a>0x02 其他安全特性</h3><p>Android 8.0 也将继续支持正在使用的安全特性</p>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">栈溢出缓解<span class="symbol">:CONFIG_CC_STACKPROTECTOR_STRONG=y</span></div><div class="line">内存保护<span class="symbol">:CONFIG_DEBUG_RODATA=y</span> <span class="keyword">or</span> CONFIG_STRICT_KERNEL_RWX=y</div><div class="line">x86 下的 <span class="symbol">SMAP:</span>CONFIG_X86_SMAP=y</div></pre></td></tr></table></figure>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">栈溢出缓解:<span class="attribute">CONFIG_CC_STACKPROTECTOR_STRONG</span>=y</span><br><span class="line">内存保护:<span class="attribute">CONFIG_DEBUG_RODATA</span>=y <span class="keyword">or</span> <span class="attribute">CONFIG_STRICT_KERNEL_RWX</span>=y</span><br><span class="line">x86 下的 SMAP:<span class="attribute">CONFIG_X86_SMAP</span>=y</span><br></pre></td></tr></table></figure>
+
 <h3 id="0x03-参考"><a href="#0x03-参考" class="headerlink" title="0x03 参考"></a>0x03 参考</h3><ul>
-<li><a href="https://source.android.com/devices/architecture/kernel/hardening" target="_blank" rel="external">Kernel Hardening</a></li>
-<li><a href="https://lwn.net/Articles/695991/" target="_blank" rel="external">Hardened usercopy</a></li>
+<li><a href="https://source.android.com/devices/architecture/kernel/hardening" target="_blank" rel="noopener">Kernel Hardening</a></li>
+<li><a href="https://lwn.net/Articles/695991/" target="_blank" rel="noopener">Hardened usercopy</a></li>
 </ul>
 
-      
     </div>
 
-    <div class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/Android-kernel-security/"> #Android kernel security </a>
-          
-        </div>
-      
+    
+    
+    
 
-      
-        <div class="post-nav">
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/06/30/CVE-2016-10277_Moto_bootloader_initroot/">CVE-2016-10277 Moto bootloader initroot</a>
-            
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android-kernel-security/" rel="tag"># Android kernel security</a>
           </div>
 
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2017/10/12/MediaTek_M4U_Driver_Arbitrary_Memory_Overwrite/">MediaTek M4U Driver Arbitrary Memory Overwrite</a>
-            
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2017/06/30/CVE-2016-10277_Moto_bootloader_initroot/" rel="next" title="CVE-2016-10277 Moto bootloader initroot">
+                  <i class="fa fa-chevron-left"></i> CVE-2016-10277 Moto bootloader initroot
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2017/10/12/MediaTek_M4U_Driver_Arbitrary_Memory_Overwrite/" rel="prev" title="MediaTek M4U Driver Arbitrary Memory Overwrite">
+                  MediaTek M4U Driver Arbitrary Memory Overwrite <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-        </div>
-      
-
-      
-      
-    </div>
-  </div>
-
-
-
+      </footer>
     
-      <div class="comments" id="comments">
-        
-      </div>
-    
-  </div>
-
-
-        </div>
-
-        
-      </div>
-
-
-      
+  </article>
   
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
+  
+  
+
   </div>
 
-  <div id="sidebar" class="sidebar">
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
     <div class="sidebar-inner">
 
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
 
-      <div class="site-overview">
-        <div class="site-author motion-element">
-          <img class="site-author-image" src="/images/default_avatar.jpg" alt="GeneBlue" />
-          <p class="site-author-name">GeneBlue</p>
-        </div>
-        <p class="site-description motion-element">Personal Blog</p>
-        <div class="site-state motion-element">
-          <div class="site-state-item site-state-posts">
-            <a href="/archives">
-              <span class="site-state-item-count">24</span>
-              <span class="site-state-item-name">日志</span>
-            </a>
-          </div>
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-新增安全特性"><span class="nav-number">1.</span> <span class="nav-text">0x01 新增安全特性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Hardened-usercopy"><span class="nav-number">1.0.1.</span> <span class="nav-text">Hardened usercopy</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#arm-arm64-PAN"><span class="nav-number">1.0.2.</span> <span class="nav-text">arm/arm64 PAN</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#KASLR"><span class="nav-number">1.0.3.</span> <span class="nav-text">KASLR</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-其他安全特性"><span class="nav-number">2.</span> <span class="nav-text">0x02 其他安全特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x03-参考"><span class="nav-number">3.</span> <span class="nav-text">0x03 参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
 
-          <div class="site-state-item site-state-categories">
-            
-              <span class="site-state-item-count">0</span>
-              <span class="site-state-item-name">分类</span>
-              
-          </div>
-
-          <div class="site-state-item site-state-tags">
-            <a href="/tags">
-              <span class="site-state-item-count">15</span>
-              <span class="site-state-item-name">标签</span>
-              </a>
-          </div>
-
-        </div>
-
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="GeneBlue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">GeneBlue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
         
-
-        <div class="links-of-author motion-element">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
           
-        </div>
-
-        
-        
-
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">tags</span></a>
       </div>
-
-      
-        <div class="post-toc-wrap sidebar-panel-active">
-          <div class="post-toc-indicator-top post-toc-indicator"></div>
-          <div class="post-toc">
-            
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-新增安全特性"><span class="nav-number">1.</span> <span class="nav-text">0x01 新增安全特性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Hardened-usercopy"><span class="nav-number">1.0.1.</span> <span class="nav-text">Hardened usercopy</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#arm-arm64-PAN"><span class="nav-number">1.0.2.</span> <span class="nav-text">arm/arm64 PAN</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#KASLR"><span class="nav-number">1.0.3.</span> <span class="nav-text">KASLR</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-其他安全特性"><span class="nav-number">2.</span> <span class="nav-text">0x02 其他安全特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x03-参考"><span class="nav-number">3.</span> <span class="nav-text">0x03 参考</span></a></li></ol></div>
-            
-          </div>
-          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
-        </div>
-      
-
-    </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
   </div>
 
 
-    </div>
 
-    <div id="footer" class="footer">
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
       <div class="footer-inner">
-        <div class="copyright">
+        
+
+<div class="copyright">
   
-  &copy; &nbsp; 
-  2019
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
-    <i class="icon-heart"></i>
+    <i class="fa fa-user"></i>
   </span>
-  <span class="author">GeneBlue</span>
+  <span class="author" itemprop="copyrightHolder">GeneBlue</span>
 </div>
-
-<div class="powered-by">
-  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
-</div>
-
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT
-  </a>
-</div>
-
-
-
-      </div>
-    </div>
-
-    <div class="back-to-top"></div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.5.0
   </div>
 
-  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
 
   
-  
-
-  
-  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
-  <script type="text/javascript" src="/js/fancy-box.js"></script>
-
-
-  <script type="text/javascript" src="/js/helpers.js"></script>
-  
-
-  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
-  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
-
-  <script type="text/javascript" src="/js/motion_global.js" id="motion.global"></script>
-
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
 
 
 
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
-<script type="text/javascript" src="/js/bootstrap.scrollspy.js" id="bootstrap.scrollspy.custom"></script>
 
+  
 
-<script type="text/javascript" id="sidebar.toc.highlight">
-  $(document).ready(function () {
-    var tocSelector = '.post-toc';
-    var $tocSelector = $(tocSelector);
-    var activeCurrentSelector = '.active-current';
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
 
-    $tocSelector
-      .on('activate.bs.scrollspy', function () {
-        var $currentActiveElement = $(tocSelector + ' .active').last();
-
-        removeCurrentActiveClass();
-        $currentActiveElement.addClass('active-current');
-
-        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
-      })
-      .on('clear.bs.scrollspy', function () {
-        removeCurrentActiveClass();
-      });
-
-    function removeCurrentActiveClass () {
-      $(tocSelector + ' ' + activeCurrentSelector)
-        .removeClass(activeCurrentSelector.substring(1));
-    }
-
-    function processTOC () {
-      getTOCMaxHeight();
-      toggleTOCOverflowIndicators();
-    }
-
-    function getTOCMaxHeight () {
-      var $sidebarInner = $('.sidebar-inner');
-      var height = $('.sidebar').height() -
-                   $tocSelector.position().top -
-                   $('.post-toc-indicator-bottom').height();
-
-      $tocSelector.css('height', height);
-
-      return height;
-    }
-
-    function toggleTOCOverflowIndicators () {
-      tocOverflowIndicator(
-        '.post-toc-indicator-top',
-        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
-      );
-
-      tocOverflowIndicator(
-        '.post-toc-indicator-bottom',
-        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
-      )
-    }
-
-    $(document).on('sidebar.didShow', function () {
-      processTOC();
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '1d44761390eeb9904aab',
+      clientSecret: '517694b3ef78c87a290d8bf2dfc16f3f34ae9606b',
+      repo: 'geneblue.github.io',
+      owner: 'GeneBlue',
+      admin: ['GeneBlue'],
+      id: 'c1d0539b132dc544815cece2f345fe2f',
+        language: '',
+      distractionFreeMode: 'true'
     });
-
-    $('body').scrollspy({ target: tocSelector });
-    $(window).on('resize', function () {
-      if ( $('.sidebar').hasClass('sidebar-active') ) {
-        processTOC();
-      }
-    });
-
-    onScroll($tocSelector);
-
-    function onScroll (element) {
-      element.on('mousewheel DOMMouseScroll', function (event) {
-          var oe = event.originalEvent;
-          var delta = oe.wheelDelta || -oe.detail;
-          var self = this;
-
-          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
-          event.preventDefault();
-
-          toggleTOCOverflowIndicators();
-      });
-    }
-
-    function tocOverflowIndicator (indicator, action) {
-      $(indicator).velocity('stop').velocity({
-        opacity: action === 'show' ? 0.4 : 0
-      }, { duration: 100 });
-    }
-
-  });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
 </script>
-
-
-  <script type="text/javascript" id="sidebar.nav">
-    $(document).ready(function () {
-      var html = $('html');
-
-      $('.sidebar-nav li').on('click', function () {
-        var item = $(this);
-        var activeTabClassName = 'sidebar-nav-active';
-        var activePanelClassName = 'sidebar-panel-active';
-        if (item.hasClass(activeTabClassName)) {
-          return;
-        }
-
-        var currentTarget = $('.' + activePanelClassName);
-        var target = $('.' + item.data('target'));
-
-        currentTarget.velocity('transition.slideUpOut', 200, function () {
-          target
-            .velocity('stop')
-            .velocity('transition.slideDownIn', 200)
-            .addClass(activePanelClassName);
-        });
-
-        item.siblings().removeClass(activeTabClassName);
-        item.addClass(activeTabClassName);
-      });
-
-      $('.post-toc a').on('click', function (e) {
-        e.preventDefault();
-        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
-        html.velocity('stop').velocity('scroll', {
-          offset: offset  + 'px',
-          mobileHA: false
-        });
-      });
-
-      // Expand sidebar on post detail page by default, when post has a toc.
-      var $tocContent = $('.post-toc-content');
-      if (isDesktop() && CONFIG.sidebar === 'post') {
-        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
-          displaySidebar();
-        }
-      }
-    });
-  </script>
-
-
-
-
-  <script type="text/javascript">
-    $(document).ready(function () {
-      if (CONFIG.sidebar === 'always') {
-        displaySidebar();
-      }
-    });
-  </script>
-
-  
-
-  
-  
-  
-
-  
-
-
-
-
-  
-  
 
 </body>
 </html>

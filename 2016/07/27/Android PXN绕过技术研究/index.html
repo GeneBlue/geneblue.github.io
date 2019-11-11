@@ -1,175 +1,265 @@
-<!doctype html>
-<html class="theme-next use-motion ">
+<!DOCTYPE html>
+<html lang="zh-Hans">
 <head>
-  
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-<meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-
-
-
-
-
-
-  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+<link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.3"/>
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 
-    <meta name="description" content="Personal Blog" />
-
-
-
-  <meta name="keywords" content="Android PXN," />
-
-
-
-<script>
-    (function(){
-        if('whoami'){
-            if (prompt('请输入文章密码') !== 'whoami'){
-                alert('密码错误！');
-                history.back();
-            }
-        }
-    })();
-</script>
-
-
-
-
-  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
-
-
-
-<script type="text/javascript" id="hexo.configuration">
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
   var CONFIG = {
-    scheme: '',
-    analytics: {
-      google: ''
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
     },
-    sidebar: 'post'
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
   };
 </script>
 
+  <meta name="description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 0X01 PXN技术介绍PXN是Privileged eXecute Never的缩写，意为非特权执行，简单点说PXN是ARM平台下的一项内核保护措施，该措施的目的是阻止内核执行用户态代码，保证内核的执行流程不会被劫持到用户空间。">
+<meta name="keywords" content="Android PXN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android PXN绕过技术研究">
+<meta property="og:url" content="http://yoursite.com/2016/07/27/Android PXN绕过技术研究/index.html">
+<meta property="og:site_name" content="GeneBlue&#39;s Blog">
+<meta property="og:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 0X01 PXN技术介绍PXN是Privileged eXecute Never的缩写，意为非特权执行，简单点说PXN是ARM平台下的一项内核保护措施，该措施的目的是阻止内核执行用户态代码，保证内核的执行流程不会被劫持到用户空间。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBd05783c0f0b41439e1e5f8266c4dcec8?method=download&shareKey=f0443eab52b4696b43434dc251c08f64">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBa3084716f717a9957413e4cbb3cad103?method=download&shareKey=4f505f804a4619e79bad4c3d4e6cff4d">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBbec68c770e90af8bb3681af2e4935271?method=download&shareKey=73bd75f9558011ddfb14fef125e4fc8e">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB67e6ff34848ac1633d6ddcd423b2a998?method=download&shareKey=45919e21054c4513baa8db3af0782a19">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB37258309d8392f3876a2430b9cda6aaa?method=download&shareKey=3b76687843defa80b7d293a726962044">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB68abbc7d5e04ae1080d25c53427e00f6?method=download&shareKey=fc31242a37efb900aacd93953c63f31b">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB8b1edf36f454abf79221adaf85500d14?method=download&shareKey=63e1a0c05567a252fc70da3fbedaaf49">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB00b60146f8d6f2633fdca5a4aeba0739?method=download&shareKey=c5d086f1f030bc518bf887c6259ea175">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB616c1b7de4079661b6f4ae8d733377ee?method=download&shareKey=c8e4ba9da8c3695bcbed0dea903dae16">
+<meta property="og:updated_time" content="2019-11-11T06:51:02.648Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android PXN绕过技术研究">
+<meta name="twitter:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 0X01 PXN技术介绍PXN是Privileged eXecute Never的缩写，意为非特权执行，简单点说PXN是ARM平台下的一项内核保护措施，该措施的目的是阻止内核执行用户态代码，保证内核的执行流程不会被劫持到用户空间。">
+<meta name="twitter:image" content="https://note.youdao.com/yws/api/personal/file/WEBd05783c0f0b41439e1e5f8266c4dcec8?method=download&shareKey=f0443eab52b4696b43434dc251c08f64">
+
+<link rel="canonical" href="http://yoursite.com/2016/07/27/Android PXN绕过技术研究/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Android PXN绕过技术研究 | GeneBlue's Blog</title>
+  
 
 
 
-  <title> Android PXN绕过技术研究 // GeneBlue's Blog </title>
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
 </head>
 
-<body>
-<!--[if lte IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari." style='margin-left:auto;margin-right:auto;display: block;'/></a></div> <![endif]-->
-  <div class="container one-column page-post-detail">
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
     <div class="headband"></div>
 
-    <div id="header" class="header">
-      <div class="header-inner">
-        <h1 class="site-meta">
-  <span class="logo-line-before"><i></i></span>
-  <a href="/" class="brand">
-      <span class="logo">
-        <i class="icon-logo"></i>
-      </span>
-      <span class="site-title">GeneBlue's Blog</span>
-  </a>
-  <span class="logo-line-after"><i></i></span>
-</h1>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">GeneBlue's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">The quiter you become,the more you are able to hear!</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
 
 
+<nav class="site-nav">
+  
   <ul id="menu" class="menu">
-     
-    
-      
-      <li class="menu-item menu-item-home">
-        <a href="/">
-          <i class="menu-item-icon icon-home"></i> <br />
-          首页
-        </a>
-      </li>
-    
-      
-      <li class="menu-item menu-item-about">
-        <a href="/about">
-          <i class="menu-item-icon icon-about"></i> <br />
-          关于
-        </a>
-      </li>
-    
-      
-      <li class="menu-item menu-item-archives">
-        <a href="/archives">
-          <i class="menu-item-icon icon-archives"></i> <br />
-          归档
-        </a>
-      </li>
-    
-      
-      <li class="menu-item menu-item-tags">
-        <a href="/tags">
-          <i class="menu-item-icon icon-tags"></i> <br />
-          标签
-        </a>
-      </li>
-    
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>Sitemap</a>
+
+  </li>
   </ul>
 
+</nav>
+</div>
+    </header>
 
-      </div>
-    </div>
-
-    <div id="main" class="main">
-      <div class="main-inner">
-        <div id="content" class="content">
-          
-
-  <div id="posts" class="posts-expand">
     
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
 
-  <div class="post post-type-normal ">
-    <div class="post-header">
 
-      
-      
-        <h1 class="post-title">
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
           
-          
+
+          <div class="content">
             
-              Android PXN绕过技术研究
-            
-          
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/07/27/Android PXN绕过技术研究/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GeneBlue's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android PXN绕过技术研究
         </h1>
-      
 
-      <div class="post-meta">
-        <span class="post-time">
-          发表于 2016-07-27
-        </span>
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
 
-        
+              <time title="Created: 2016-07-27 12:02:08" itemprop="dateCreated datePublished" datetime="2016-07-27T12:02:08+08:00">2016-07-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-11 14:51:02" itemprop="dateModified" datetime="2019-11-11T14:51:02+08:00">2019-11-11</time>
+              </span>
 
-        
           
-        
-      </div>
-    </div>
 
-    <div class="post-body">
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-      
-
-      
-        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong><br><strong>文章访问密码：whoami</strong></p>
+        <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
 <h3 id="0X01-PXN技术介绍"><a href="#0X01-PXN技术介绍" class="headerlink" title="0X01 PXN技术介绍"></a>0X01 PXN技术介绍</h3><p>PXN是Privileged eXecute Never的缩写，意为非特权执行，简单点说PXN是ARM平台下的一项内核保护措施，该措施的目的是阻止内核执行用户态代码，保证内核的执行流程不会被劫持到用户空间。</p>
 <a id="more"></a>
-<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBd05783c0f0b41439e1e5f8266c4dcec8?method=download&shareKey=f0443eab52b4696b43434dc251c08f64" alt="PXN Bit" style="width: 459.82px; height: 365.94px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="PXN Bit"><br></div>
+
+<div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEBd05783c0f0b41439e1e5f8266c4dcec8?method=download&shareKey=f0443eab52b4696b43434dc251c08f64" alt="PXN Bit" style="width: 459.82px; height: 365.94px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="PXN Bit">
+</div>
 
 <p>一级页表的PXN位置1时即开启了PXN保护。当CPU运行在PL1即内核态时却尝试执行用户态代码，就会产生Permission fault错误。也是就说，PXN只会阻止用户态代码以内核权限执行，并没有阻止内核去读取用户空间的数据，这一点对于bypass PXN非常重要。</p>
 <h3 id="0X02-非PXN提权"><a href="#0X02-非PXN提权" class="headerlink" title="0X02 非PXN提权"></a>0X02 非PXN提权</h3><p>在没有PXN的年代，攻击者常采用ret2usr技术来获取内核的执行权限，从而使用户态代码在内核空间执行，进而可以调用内核函数或者随意修改内核数据达到提权的目的。如图2是ret2usr的示意：</p>
-<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBa3084716f717a9957413e4cbb3cad103?method=download&shareKey=4f505f804a4619e79bad4c3d4e6cff4d" alt="ret2usr示意" style="width: 342.00px; height: 460.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="ret2usr示意"><br></div>
+<div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEBa3084716f717a9957413e4cbb3cad103?method=download&shareKey=4f505f804a4619e79bad4c3d4e6cff4d" alt="ret2usr示意" style="width: 342.00px; height: 460.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="ret2usr示意">
+</div>
 
 <p>当内核存在漏洞时，攻击者的目标就是要控制住某个内核函数指针，有的漏洞可以直接控制内核指针，有的要通过内核写或其它方式篡改掉可在用户态触发的内核指针，比如常用的ptmx_fops表的fsync指针，然后将这个可控的内核指针重定向到用户态的Shell Code处。当漏洞触发时或在用户态人为调用内核函数时，内核的执行流程将被重定向到Shell Code处，此时Shell Code运行在内核空间并可随意访问内核函数或内核数据。一般来说，直接修改进程creds或通过commit_creds()这个内核函数来修改都能达到提权的目的。</p>
 <p>通过commit_creds()函数来提权是较为传统的方式，在Shell Code直接调用commit_creds(prepare_kernel_cred(0))即可提升本进程权限，但这里存在一个问题，如何得到commit_creds()和prepare_kernel_cred()这两个内核函数地址。Android系统的碎片化导致这两个函数的地址不是固定的，如果一定要获取，就要从/proc/kallsyms文件中读取内核符号表，然而读取该文件需要Root权限。所以在Android平台通过commit_creds()函数来提权的方法通常不被采用。</p>
@@ -182,21 +272,21 @@ static inline struct thread_info *current_thread_info(void)
 {
     register unsigned long sp asm (&quot;sp&quot;);
     return (struct thread_info *)(sp &amp; ~(THREAD_SIZE - 1));
-}
-</code></pre><div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBbec68c770e90af8bb3681af2e4935271?method=download&shareKey=73bd75f9558011ddfb14fef125e4fc8e" alt="thread_info位置" style="width: 482.41px; height: 298.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="thread_info位置"><br></div>
+}</code></pre><div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEBbec68c770e90af8bb3681af2e4935271?method=download&shareKey=73bd75f9558011ddfb14fef125e4fc8e" alt="thread_info位置" style="width: 482.41px; height: 298.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="thread_info位置">
+</div>
 
 <p>然而，目前大多数的Android设备都开启了PXN保护，这让ret2usr攻击不再有效……</p>
-<h3 id="0X03-bypass-PXN常规方法"><a href="#0X03-bypass-PXN常规方法" class="headerlink" title="0X03 bypass PXN常规方法"></a>0X03 bypass PXN常规方法</h3><p>PXN的设计初衷就是阻断ret2usr这类攻击手段，让内核只执行内核空间的代码。类似于<a href="http://www.freebuf.com/articles/system/94198.html" target="_blank" rel="external">《Linux内核ROP姿势详解(一)》</a>一文中采用ROP bypass SMEP的方法，ARM平台下bypass PXN也可以采用ROP技术。<a href="http://blog.csdn.net/hu3167343/article/details/47394707" target="_blank" rel="external">《PXN防护技术的研究与绕过》</a>一文已经详细讲解了构建内核ROP来bypass PXN的步骤，这里不再重复原文内容，大概介绍原文中未涉及到的小细节。通过该文可知，bypass PXN时内核ROP主要完成三部分工作：泄漏内核sp值，计算addr_limit地址和patch addr_limit。这个过程的最终目的是patch addr_limit，让用户态可以自由访问内核空间，然后修改内核creds结构来提权。</p>
+<h3 id="0X03-bypass-PXN常规方法"><a href="#0X03-bypass-PXN常规方法" class="headerlink" title="0X03 bypass PXN常规方法"></a>0X03 bypass PXN常规方法</h3><p>PXN的设计初衷就是阻断ret2usr这类攻击手段，让内核只执行内核空间的代码。类似于<a href="http://www.freebuf.com/articles/system/94198.html" target="_blank" rel="noopener">《Linux内核ROP姿势详解(一)》</a>一文中采用ROP bypass SMEP的方法，ARM平台下bypass PXN也可以采用ROP技术。<a href="http://blog.csdn.net/hu3167343/article/details/47394707" target="_blank" rel="noopener">《PXN防护技术的研究与绕过》</a>一文已经详细讲解了构建内核ROP来bypass PXN的步骤，这里不再重复原文内容，大概介绍原文中未涉及到的小细节。通过该文可知，bypass PXN时内核ROP主要完成三部分工作：泄漏内核sp值，计算addr_limit地址和patch addr_limit。这个过程的最终目的是patch addr_limit，让用户态可以自由访问内核空间，然后修改内核creds结构来提权。</p>
 <p>可以看出泄漏内核sp值不仅仅用于找到addr_limit地址，更是用于提权时定位creds结构在内存中的位置。用户态虽然可以自由访问内核空间，但并不能以指针的方式直接访问内核，要以内核可接受的通信方式来间接访问，比如使用管道pipe来通信。之后对creds的每一次修改都要通过pipe write的方式。有别于ret2usr攻击，这种方式的提权操作运行在用户空间，而ret2usr中的Shell Code运行在内核态，这是这两种方式的本质区别。</p>
 <p>构建内核ROP 虽然可以bypass PXN，但这种方法仍然存在不少弊端。第一，ROP链的执行很难兼顾到内核栈的平衡，这为内核的后续运行埋下了不安定因素;第二，构建ROP链时使用的gadgets寻找起来比较麻烦;最后，构建好的ROP链很难做到通用，原因仍是Android的碎片化。</p>
-<h3 id="0X04-bypass-PXN新方法"><a href="#0X04-bypass-PXN新方法" class="headerlink" title="0X04 bypass PXN新方法"></a>0X04 bypass PXN新方法</h3><p>针对上述缺陷，360冰刃实验室的安全研究员赵建强、陈耿佳和潘剑锋在mosec2016中分享了一些新方法。在参鉴会议<a href="https://github.com/jianqiangzhao/mosec2016" target="_blank" rel="external">ppt</a>的基础上，笔者实践了其中的一些方法。</p>
+<h3 id="0X04-bypass-PXN新方法"><a href="#0X04-bypass-PXN新方法" class="headerlink" title="0X04 bypass PXN新方法"></a>0X04 bypass PXN新方法</h3><p>针对上述缺陷，360冰刃实验室的安全研究员赵建强、陈耿佳和潘剑锋在mosec2016中分享了一些新方法。在参鉴会议<a href="https://github.com/jianqiangzhao/mosec2016" target="_blank" rel="noopener">ppt</a>的基础上，笔者实践了其中的一些方法。</p>
 <h4 id="方法一：bypass-PXN-with-set-fs-KERNEL-DS"><a href="#方法一：bypass-PXN-with-set-fs-KERNEL-DS" class="headerlink" title="方法一：bypass PXN with set_fs(KERNEL_DS)"></a>方法一：bypass PXN with set_fs(KERNEL_DS)</h4><p>第一种方法也是笔者实践的方法，这里还是以2015年最火的漏洞CVE-2015-3636来讲述。一切都要从set_fs()这个内核函数说起。</p>
 <pre><code>static inline void set_fs(mm_segment_t fs)
 {
     current_thread_info()-&gt;addr_limit = fs;
     modify_domain(DOMAIN_KERNEL, fs ? DOMAIN_CLIENT : DOMAIN_MANAGER);
-}
-</code></pre><p>set_fs()函数原型，可见该函数就是用来修改当前进程的addr_limit值。addr_limit值限定了用户态程序能够访问的地址空间，那么内核为什么要使用这样的函数呢？这主要是因为内核要使用系统调用。系统调用是设计给用户态程序用的，当用户态去使用系统调用时会受地址空间的限制，有时内核也要去使用系统调用，比如一些文件操作，当内核使用的时候就要去掉地址空间的限制，一般调用set_fs(KERNEL_DS)更改addr_limit值去掉空间限制，使用完系统调用后还要将地址空间的限制还原，这时调用set_fs(oldfs)即可。set_fs()这个函数较为危险，所以内核在使用的时候总是以set_fs(KERNEL_DS)和set_fs(oldfs)这两次调用成对出现。所以如果能以漏洞的方式绕过set_fs(oldfs)的执行，内核空间将一直对用户态打开，这样也就绕过了PXN。</p>
+}</code></pre><p>set_fs()函数原型，可见该函数就是用来修改当前进程的addr_limit值。addr_limit值限定了用户态程序能够访问的地址空间，那么内核为什么要使用这样的函数呢？这主要是因为内核要使用系统调用。系统调用是设计给用户态程序用的，当用户态去使用系统调用时会受地址空间的限制，有时内核也要去使用系统调用，比如一些文件操作，当内核使用的时候就要去掉地址空间的限制，一般调用set_fs(KERNEL_DS)更改addr_limit值去掉空间限制，使用完系统调用后还要将地址空间的限制还原，这时调用set_fs(oldfs)即可。set_fs()这个函数较为危险，所以内核在使用的时候总是以set_fs(KERNEL_DS)和set_fs(oldfs)这两次调用成对出现。所以如果能以漏洞的方式绕过set_fs(oldfs)的执行，内核空间将一直对用户态打开，这样也就绕过了PXN。</p>
 <p>首先，我们需要在内核代码中寻找set_fs()被调用的模块，然后再从其中筛选出便于利用的部分。那应该怎样去筛选呢？前文已表明，绕过set_fs(oldfs)的执行就算是绕过PXN了，所以如果能在set_fs(KERNEL_DS)和set_fs(oldfs)这两个指令之间找到一个可控的函数指针，就极有可能绕过set_fs(oldfs)执行，如下kernel_setsockopt()函数所示。笔者按照这样的方法在3.4的内核中寻找一番，确实找到了很多这样的模块。</p>
 <pre><code>int kernel_setsockopt(struct socket *sock, int level, int optname,
         char *optval, unsigned int optlen)
@@ -215,8 +305,7 @@ static inline struct thread_info *current_thread_info(void)
                     optlen);
     set_fs(oldfs);
     return err;
-}
-</code></pre><p><a href="https://github.com/fi01/CVE-2015-3636" target="_blank" rel="external">github</a>上已有3636在非PXN下的利用代码。其中sk-&gt;sk_prot-&gt;close指针和R0，R1寄存器都是可以控制的。所以我们控制sk-&gt;sk_prot-&gt;close指针跳转到kernel_setsockopt()函数地址处，此时的R0即是kernel_setsockopt()的第一个参数sock，所以sock-&gt;ops-&gt;setsockopt这个函数指针就可以通过R0+offset来控制。这个offset的具体值可以查看kernel_setsockopt()的汇编码来确定。汇编码如下表所示。</p>
+}</code></pre><p><a href="https://github.com/fi01/CVE-2015-3636" target="_blank" rel="noopener">github</a>上已有3636在非PXN下的利用代码。其中sk-&gt;sk_prot-&gt;close指针和R0，R1寄存器都是可以控制的。所以我们控制sk-&gt;sk_prot-&gt;close指针跳转到kernel_setsockopt()函数地址处，此时的R0即是kernel_setsockopt()的第一个参数sock，所以sock-&gt;ops-&gt;setsockopt这个函数指针就可以通过R0+offset来控制。这个offset的具体值可以查看kernel_setsockopt()的汇编码来确定。汇编码如下表所示。</p>
 <pre><code>ROM:C084AAE0 kernel_setsockopt_                      ; CODE XREF: generic_ip_connect_+124p
 ROM:C084AAE0
 ROM:C084AAE0 var_20          = -0x20
@@ -254,8 +343,7 @@ ROM:C084AB38                 LDR             LR, [R11,#arg_0]
 ROM:C084AB3C                 STR             LR, [SP,#0x20+var_20]
 ROM:C084AB40                 BL              sock_setsockopt_
 ROM:C084AB44                 B               loc_C084AB2C
-ROM:C084AB44 ; End of function kernel_setsockpt_
-</code></pre><p>在编码实现的过程中，偏移可能无法一次性确定下来，而且实体机的内核调试比较麻烦，这时内核panic产生的寄存器上下文信息就显得非常有帮助了。可以从last_kmsg中查看相应的寄存器值来判断覆盖sk结构中的偏移是否正确。</p>
+ROM:C084AB44 ; End of function kernel_setsockpt_</code></pre><p>在编码实现的过程中，偏移可能无法一次性确定下来，而且实体机的内核调试比较麻烦，这时内核panic产生的寄存器上下文信息就显得非常有帮助了。可以从last_kmsg中查看相应的寄存器值来判断覆盖sk结构中的偏移是否正确。</p>
 <p>在顺利绕过set_fs(oldfs)指令后，此时PXN就已经被绕过，用户态程序可以随意访问内核地址空间，可以用如下的一段代码验证一下，返回0即表示读取内核地址成功。</p>
 <pre><code>int read_at_address_pipe(void* address, void* buf, ssize_t len)
 {
@@ -282,12 +370,15 @@ address = 0xc1032000;
 void *buf;
 buf = (void *)malloc(100 * sizeof(void));
 int ret2 = read_at_address_pipe(address, buf, 10);
-printf(&quot;ret = %d\n&quot;,ret2);
-</code></pre><div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB67e6ff34848ac1633d6ddcd423b2a998?method=download&shareKey=45919e21054c4513baa8db3af0782a19" alt="访问内核" style="width: 420.00px; height: 37.83px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="访问内核"><br></div>
+printf(&quot;ret = %d\n&quot;,ret2);</code></pre><div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEB67e6ff34848ac1633d6ddcd423b2a998?method=download&shareKey=45919e21054c4513baa8db3af0782a19" alt="访问内核" style="width: 420.00px; height: 37.83px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="访问内核">
+</div>
 
 
-<p>提权的最终操作就是要修改进程的creds结构，在bypass PXN的常规方法中，是通过泄露内核sp来定位creds的，但这个过程中并没有泄露内核sp，那该怎样去找提权进程的creds呢？笔者本也不太明白，后来看雪网友风间仁给予了一些思路：可以先用特征码搜索内核空间init_task进程的<a href="http://androidxref.com/kernel_3.4/xref/include/linux/init_task.h#141" target="_blank" rel="external">task_sturct</a>结构，然后通过该结构中的tasks链表去遍历内核空间所有进程的task_struct结构，在遍历的过程中通过进程名就能找到提权进程的task_struct，之后就能确认提权进程creds的位置。遍历过程如下图所示。</p>
-<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB37258309d8392f3876a2430b9cda6aaa?method=download&shareKey=3b76687843defa80b7d293a726962044" alt="task_struct链表" style="width: 535.75px; height: 228.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="task_struct链表"><br></div>
+<p>提权的最终操作就是要修改进程的creds结构，在bypass PXN的常规方法中，是通过泄露内核sp来定位creds的，但这个过程中并没有泄露内核sp，那该怎样去找提权进程的creds呢？笔者本也不太明白，后来看雪网友风间仁给予了一些思路：可以先用特征码搜索内核空间init_task进程的<a href="http://androidxref.com/kernel_3.4/xref/include/linux/init_task.h#141" target="_blank" rel="noopener">task_sturct</a>结构，然后通过该结构中的tasks链表去遍历内核空间所有进程的task_struct结构，在遍历的过程中通过进程名就能找到提权进程的task_struct，之后就能确认提权进程creds的位置。遍历过程如下图所示。</p>
+<div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEB37258309d8392f3876a2430b9cda6aaa?method=download&shareKey=3b76687843defa80b7d293a726962044" alt="task_struct链表" style="width: 535.75px; height: 228.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="task_struct链表">
+</div>
 
 
 <pre><code>for(i = 0xc1032000;i&lt;0xc13af673;i+=4){
@@ -316,8 +407,7 @@ for(i = 0;i&lt;0x400;i+=4){
           printf(&quot;    ++init head prev= %x\n&quot;,init_head.prev);
           break;
     }
-}
-</code></pre><p>首先，我们需要在内核空间寻找init_task进程的task_struct结构。这里存在一个问题，为什么不能在内核空间直接搜索提权进程的task_struct呢？这可能并非不可，而是考虑到搜索的效率。init_task进程的task_struct是静态创建的，分布在内核中相对固定区域，这个区域值可以从/proc/iomem中的kernel data字段获取，而其他进程都是由init进程fork而来，task_struct结构是动态分配在内核堆区域。相比较而言，kernel data区范围较小，搜索起来会快很多。寻找init_task位置的代码如下所示，for循环中的两个硬编码可以通过读/proc/iomem来消除掉，这里主要是利用了task_struct前三个成员的特征来搜索内存。搜索完毕后，就可以获取init_task进程的task_struct结构在内存中的位置init_task_address，获取了位置后，可以通过一定的偏移位置获取tasks链表头，也可以使用上述代码遍历来获取，这里使用了一个小技巧，tasks链表头下面的pushable_tasks变量的第一个值prio在手机设备中的值总是为0x8c，利用这个就可以在循环的过程中找到tasks位置。之后就可以利用tasks这个链表头，去遍历内核链表了。</p>
+}</code></pre><p>首先，我们需要在内核空间寻找init_task进程的task_struct结构。这里存在一个问题，为什么不能在内核空间直接搜索提权进程的task_struct呢？这可能并非不可，而是考虑到搜索的效率。init_task进程的task_struct是静态创建的，分布在内核中相对固定区域，这个区域值可以从/proc/iomem中的kernel data字段获取，而其他进程都是由init进程fork而来，task_struct结构是动态分配在内核堆区域。相比较而言，kernel data区范围较小，搜索起来会快很多。寻找init_task位置的代码如下所示，for循环中的两个硬编码可以通过读/proc/iomem来消除掉，这里主要是利用了task_struct前三个成员的特征来搜索内存。搜索完毕后，就可以获取init_task进程的task_struct结构在内存中的位置init_task_address，获取了位置后，可以通过一定的偏移位置获取tasks链表头，也可以使用上述代码遍历来获取，这里使用了一个小技巧，tasks链表头下面的pushable_tasks变量的第一个值prio在手机设备中的值总是为0x8c，利用这个就可以在循环的过程中找到tasks位置。之后就可以利用tasks这个链表头，去遍历内核链表了。</p>
 <p>因为每一次对内核的访问都要通过pipe read方式，而且在遍历过程中，我们还要去确当前遍历到的tast_struct结构是否属于提权进程，所以遍历内核链表的方法就有别与内核中的链表遍历方法。遍历过程如下所示。需要注意的是，判定遍历到的task_struct时利用到了cpu_timers这种通用的定位方法，这是因为cpu_timers的netx与prev是相同的，所以这可以作为一个特征，再用comm成员判断一下进程名即可确认是否为提权进程。</p>
 <pre><code>for(;pos-&gt;next != init_head.next ;){
     printf(&quot;   ++pos value = %x\n&quot;,*pos);
@@ -336,382 +426,243 @@ for(i = 0;i&lt;0x400;i+=4){
     }
     offset = pos-&gt;next;
      read_at_address_pipe(pos-&gt;next,pos,sizeof(*pos));
-}
-</code></pre><p>当找到提权进程creds时，接下来的工作就是要对其修改，写内核的操作依然是通过管道pipe的方式。至此，通过遍历内核task_struct结构来修改提权进程creds的操作就完成了。</p>
-<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB68abbc7d5e04ae1080d25c53427e00f6?method=download&shareKey=fc31242a37efb900aacd93953c63f31b" alt="bypass PXN" style="width: 472.04px; height: 310.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="bypass PXN"><br></div>
+}</code></pre><p>当找到提权进程creds时，接下来的工作就是要对其修改，写内核的操作依然是通过管道pipe的方式。至此，通过遍历内核task_struct结构来修改提权进程creds的操作就完成了。</p>
+<div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEB68abbc7d5e04ae1080d25c53427e00f6?method=download&shareKey=fc31242a37efb900aacd93953c63f31b" alt="bypass PXN" style="width: 472.04px; height: 310.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="bypass PXN">
+</div>
 
 
 <p>对于3636这个漏洞，我们可以控制R0寄存器，但有的漏洞是无法控制R0的。此时还能采用绕过set_fs(oldfs)的方式来bypass PXN吗？</p>
-<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB8b1edf36f454abf79221adaf85500d14?method=download&shareKey=63e1a0c05567a252fc70da3fbedaaf49" alt="设备操作函数" style="width: 465.33px; height: 183.66px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="设备操作函数"><br></div>
+<div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEB8b1edf36f454abf79221adaf85500d14?method=download&shareKey=63e1a0c05567a252fc70da3fbedaaf49" alt="设备操作函数" style="width: 465.33px; height: 183.66px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="设备操作函数">
+</div>
 
 <p>这些设备操作函数的第一个参数并非全部是不可控的，如aio_fsync()函数的第一个参数kiocb就是可控的（见ppt），所以可以利用漏洞的方式将aio_fsync()这个函数指针更改到kernel_setsockopt()函数处，然后就可以继续用上述的方法来bypass PXN了。</p>
 <h4 id="方法二：bypass-PXN-with-one-bug"><a href="#方法二：bypass-PXN-with-one-bug" class="headerlink" title="方法二：bypass PXN with one bug"></a>方法二：bypass PXN with one bug</h4><p>在理解了第一种方法的基础上，第二种方法就显得很简单了。方法二依然和set_fs()这个内核函数有关，当很难控制寄存器时可以采用这种方法。该方法依靠的是驱动程序中可能存在的bug，如下两图所示，bug代码中打开文件失败时，并没有调用set_fs(oldfs)及时关闭内核空间，这导致内核空间可一直被访问。</p>
-<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB00b60146f8d6f2633fdca5a4aeba0739?method=download&shareKey=c5d086f1f030bc518bf887c6259ea175" alt="正常代码" style="width: 357.99px; height: 309.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="正常代码"><br></div>
+<div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEB00b60146f8d6f2633fdca5a4aeba0739?method=download&shareKey=c5d086f1f030bc518bf887c6259ea175" alt="正常代码" style="width: 357.99px; height: 309.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="正常代码">
+</div>
 
-<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB616c1b7de4079661b6f4ae8d733377ee?method=download&shareKey=c8e4ba9da8c3695bcbed0dea903dae16" alt="bug代码" style="width: 353.83px; height: 293.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="bug代码"><br></div>
+<div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEB616c1b7de4079661b6f4ae8d733377ee?method=download&shareKey=c8e4ba9da8c3695bcbed0dea903dae16" alt="bug代码" style="width: 353.83px; height: 293.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="bug代码">
+</div>
 
 <p>所以，当找到这样的一个bug时，通过ioctl()系统调用故意让驱动函数执行失败即可绕过pxn。可见，这种方法是最简单的，但前提是要能找到这样的bug代码。</p>
 <h4 id="方法三：bypass-PXN-with-fake-file-operations"><a href="#方法三：bypass-PXN-with-fake-file-operations" class="headerlink" title="方法三：bypass PXN with fake file_operations"></a>方法三：bypass PXN with fake file_operations</h4><p>第三种方法是通过伪造驱动的file_operations来任意读写内核。file_operations 中存储设备驱动的函数指针，比如设备的ioctl函数指针。可以利用内核的漏洞，比如内核任意写漏洞将file_operations结构伪造到用户态空间，从而可以控制file_operations结构中的所有函数指针，比如可以将ioctl的函数指针重定向到一个内核代码处，这个内核代码可以实现任意地址读（如ppt中所示）。当在用户态去调用这个驱动的ioctl函数时，实际执行的是那个内核代码。在用户空间执行API函数调用的流程是 用户程序-&gt;glibc库-&gt;系统调用，那么相应执行结果的返回流程是系统调用-&gt;glibc库-&gt;用户程序，然而系统调用的返回值可能会被glibc库当作error处理掉，所以需要自己实现glibc库中对应的syscall函数，从而使用户程序直接与系统调用沟通，拿到那个内核代码片执行的结果。这样就可以一直调用file_operations中伪造的函数指针来不停地读写内核，而且这个过程也没有去patch addr_limit。可以去读写内核了，提权过程就与上述方法一相同了。</p>
 <h3 id="0X05-总结"><a href="#0X05-总结" class="headerlink" title="0X05 总结"></a>0X05 总结</h3><p>至此，笔者在介绍ret2usr提权方法的基础上，向大家完整介绍了 bypass PXN提权的新方法。希望这篇文章能对需要的朋友有所帮助。</p>
 <h3 id="0X06-参考文献"><a href="#0X06-参考文献" class="headerlink" title="0X06 参考文献"></a>0X06 参考文献</h3><ul>
-<li><a href="http://blog.csdn.net/hu3167343/article/details/47394707" target="_blank" rel="external">PXN防护技术的研究与绕过</a></li>
-<li><a href="http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.subset.architecture.reference/index.html" target="_blank" rel="external">ARM Infomation Center</a></li>
-<li><a href="http://blog.idhyt.com/2016/06/09/exploit-process-descriptor/" target="_blank" rel="external">进程描述符</a></li>
-<li><a href="https://www.blackhat.com/docs/us-15/materials/us-15-Xu-Ah-Universal-Android-Rooting-Is-Back-wp.pdf" target="_blank" rel="external">Ownyour Android! Yet Another Universal Root</a></li>
-<li><a href="http://www.freebuf.com/vuls/95708.html" target="_blank" rel="external">利用Linux内核里的Use-After-Free（UAF）漏洞提权</a></li>
-<li><a href="https://github.com/jianqiangzhao/mosec2016" target="_blank" rel="external">Android Root利用技术漫谈：绕过PXN</a></li>
-<li><a href="http://www.freebuf.com/articles/system/94198.html" target="_blank" rel="external">Linux内核ROP姿势详解(一)</a></li>
-<li><a href="https://github.com/fi01/CVE-2015-3636" target="_blank" rel="external">https://github.com/fi01/CVE-2015-3636</a></li>
+<li><a href="http://blog.csdn.net/hu3167343/article/details/47394707" target="_blank" rel="noopener">PXN防护技术的研究与绕过</a></li>
+<li><a href="http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.subset.architecture.reference/index.html" target="_blank" rel="noopener">ARM Infomation Center</a></li>
+<li><a href="http://blog.idhyt.com/2016/06/09/exploit-process-descriptor/" target="_blank" rel="noopener">进程描述符</a></li>
+<li><a href="https://www.blackhat.com/docs/us-15/materials/us-15-Xu-Ah-Universal-Android-Rooting-Is-Back-wp.pdf" target="_blank" rel="noopener">Ownyour Android! Yet Another Universal Root</a></li>
+<li><a href="http://www.freebuf.com/vuls/95708.html" target="_blank" rel="noopener">利用Linux内核里的Use-After-Free（UAF）漏洞提权</a></li>
+<li><a href="https://github.com/jianqiangzhao/mosec2016" target="_blank" rel="noopener">Android Root利用技术漫谈：绕过PXN</a></li>
+<li><a href="http://www.freebuf.com/articles/system/94198.html" target="_blank" rel="noopener">Linux内核ROP姿势详解(一)</a></li>
+<li><a href="https://github.com/fi01/CVE-2015-3636" target="_blank" rel="noopener">https://github.com/fi01/CVE-2015-3636</a></li>
 </ul>
 <hr>
 
-      
     </div>
 
-    <div class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/Android-PXN/"> #Android PXN </a>
-          
-        </div>
-      
+    
+    
+    
 
-      
-        <div class="post-nav">
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/07/12/从Android手机中提取内核/">从Android手机中提取内核</a>
-            
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android-PXN/" rel="tag"># Android PXN</a>
           </div>
 
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2016/08/16/Android内核模块编译执行/">Android内核模块编译执行</a>
-            
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2016/07/12/从Android手机中提取内核/" rel="next" title="从Android手机中提取内核">
+                  <i class="fa fa-chevron-left"></i> 从Android手机中提取内核
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2016/08/16/Android内核模块编译执行/" rel="prev" title="Android内核模块编译执行">
+                  Android内核模块编译执行 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-        </div>
-      
-
-      
-      
-    </div>
-  </div>
-
-
-
+      </footer>
     
-      <div class="comments" id="comments">
-        
-      </div>
-    
-  </div>
-
-
-        </div>
-
-        
-      </div>
-
-
-      
+  </article>
   
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
+  
+  
+
   </div>
 
-  <div id="sidebar" class="sidebar">
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
     <div class="sidebar-inner">
 
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
 
-      <div class="site-overview">
-        <div class="site-author motion-element">
-          <img class="site-author-image" src="/images/default_avatar.jpg" alt="GeneBlue" />
-          <p class="site-author-name">GeneBlue</p>
-        </div>
-        <p class="site-description motion-element">Personal Blog</p>
-        <div class="site-state motion-element">
-          <div class="site-state-item site-state-posts">
-            <a href="/archives">
-              <span class="site-state-item-count">24</span>
-              <span class="site-state-item-name">日志</span>
-            </a>
-          </div>
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0X01-PXN技术介绍"><span class="nav-number">1.</span> <span class="nav-text">0X01 PXN技术介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X02-非PXN提权"><span class="nav-number">2.</span> <span class="nav-text">0X02 非PXN提权</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X03-bypass-PXN常规方法"><span class="nav-number">3.</span> <span class="nav-text">0X03 bypass PXN常规方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X04-bypass-PXN新方法"><span class="nav-number">4.</span> <span class="nav-text">0X04 bypass PXN新方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方法一：bypass-PXN-with-set-fs-KERNEL-DS"><span class="nav-number">4.1.</span> <span class="nav-text">方法一：bypass PXN with set_fs(KERNEL_DS)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法二：bypass-PXN-with-one-bug"><span class="nav-number">4.2.</span> <span class="nav-text">方法二：bypass PXN with one bug</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法三：bypass-PXN-with-fake-file-operations"><span class="nav-number">4.3.</span> <span class="nav-text">方法三：bypass PXN with fake file_operations</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X05-总结"><span class="nav-number">5.</span> <span class="nav-text">0X05 总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X06-参考文献"><span class="nav-number">6.</span> <span class="nav-text">0X06 参考文献</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
 
-          <div class="site-state-item site-state-categories">
-            
-              <span class="site-state-item-count">0</span>
-              <span class="site-state-item-name">分类</span>
-              
-          </div>
-
-          <div class="site-state-item site-state-tags">
-            <a href="/tags">
-              <span class="site-state-item-count">15</span>
-              <span class="site-state-item-name">标签</span>
-              </a>
-          </div>
-
-        </div>
-
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="GeneBlue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">GeneBlue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
         
-
-        <div class="links-of-author motion-element">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
           
-        </div>
-
-        
-        
-
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">tags</span></a>
       </div>
-
-      
-        <div class="post-toc-wrap sidebar-panel-active">
-          <div class="post-toc-indicator-top post-toc-indicator"></div>
-          <div class="post-toc">
-            
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0X01-PXN技术介绍"><span class="nav-number">1.</span> <span class="nav-text">0X01 PXN技术介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X02-非PXN提权"><span class="nav-number">2.</span> <span class="nav-text">0X02 非PXN提权</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X03-bypass-PXN常规方法"><span class="nav-number">3.</span> <span class="nav-text">0X03 bypass PXN常规方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X04-bypass-PXN新方法"><span class="nav-number">4.</span> <span class="nav-text">0X04 bypass PXN新方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方法一：bypass-PXN-with-set-fs-KERNEL-DS"><span class="nav-number">4.1.</span> <span class="nav-text">方法一：bypass PXN with set_fs(KERNEL_DS)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法二：bypass-PXN-with-one-bug"><span class="nav-number">4.2.</span> <span class="nav-text">方法二：bypass PXN with one bug</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法三：bypass-PXN-with-fake-file-operations"><span class="nav-number">4.3.</span> <span class="nav-text">方法三：bypass PXN with fake file_operations</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X05-总结"><span class="nav-number">5.</span> <span class="nav-text">0X05 总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X06-参考文献"><span class="nav-number">6.</span> <span class="nav-text">0X06 参考文献</span></a></li></ol></div>
-            
-          </div>
-          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
-        </div>
-      
-
-    </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
   </div>
 
 
-    </div>
 
-    <div id="footer" class="footer">
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
       <div class="footer-inner">
-        <div class="copyright">
+        
+
+<div class="copyright">
   
-  &copy; &nbsp; 
-  2019
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
-    <i class="icon-heart"></i>
+    <i class="fa fa-user"></i>
   </span>
-  <span class="author">GeneBlue</span>
+  <span class="author" itemprop="copyrightHolder">GeneBlue</span>
 </div>
-
-<div class="powered-by">
-  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
-</div>
-
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT
-  </a>
-</div>
-
-
-
-      </div>
-    </div>
-
-    <div class="back-to-top"></div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.5.0
   </div>
 
-  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
 
   
-  
-
-  
-  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
-  <script type="text/javascript" src="/js/fancy-box.js"></script>
-
-
-  <script type="text/javascript" src="/js/helpers.js"></script>
-  
-
-  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
-  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
-
-  <script type="text/javascript" src="/js/motion_global.js" id="motion.global"></script>
-
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
 
 
 
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
-<script type="text/javascript" src="/js/bootstrap.scrollspy.js" id="bootstrap.scrollspy.custom"></script>
 
+  
 
-<script type="text/javascript" id="sidebar.toc.highlight">
-  $(document).ready(function () {
-    var tocSelector = '.post-toc';
-    var $tocSelector = $(tocSelector);
-    var activeCurrentSelector = '.active-current';
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
 
-    $tocSelector
-      .on('activate.bs.scrollspy', function () {
-        var $currentActiveElement = $(tocSelector + ' .active').last();
-
-        removeCurrentActiveClass();
-        $currentActiveElement.addClass('active-current');
-
-        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
-      })
-      .on('clear.bs.scrollspy', function () {
-        removeCurrentActiveClass();
-      });
-
-    function removeCurrentActiveClass () {
-      $(tocSelector + ' ' + activeCurrentSelector)
-        .removeClass(activeCurrentSelector.substring(1));
-    }
-
-    function processTOC () {
-      getTOCMaxHeight();
-      toggleTOCOverflowIndicators();
-    }
-
-    function getTOCMaxHeight () {
-      var $sidebarInner = $('.sidebar-inner');
-      var height = $('.sidebar').height() -
-                   $tocSelector.position().top -
-                   $('.post-toc-indicator-bottom').height();
-
-      $tocSelector.css('height', height);
-
-      return height;
-    }
-
-    function toggleTOCOverflowIndicators () {
-      tocOverflowIndicator(
-        '.post-toc-indicator-top',
-        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
-      );
-
-      tocOverflowIndicator(
-        '.post-toc-indicator-bottom',
-        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
-      )
-    }
-
-    $(document).on('sidebar.didShow', function () {
-      processTOC();
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '1d44761390eeb9904aab',
+      clientSecret: '517694b3ef78c87a290d8bf2dfc16f3f34ae9606b',
+      repo: 'geneblue.github.io',
+      owner: 'GeneBlue',
+      admin: ['GeneBlue'],
+      id: '08e514caa318a68f942d0370206190b5',
+        language: '',
+      distractionFreeMode: 'true'
     });
-
-    $('body').scrollspy({ target: tocSelector });
-    $(window).on('resize', function () {
-      if ( $('.sidebar').hasClass('sidebar-active') ) {
-        processTOC();
-      }
-    });
-
-    onScroll($tocSelector);
-
-    function onScroll (element) {
-      element.on('mousewheel DOMMouseScroll', function (event) {
-          var oe = event.originalEvent;
-          var delta = oe.wheelDelta || -oe.detail;
-          var self = this;
-
-          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
-          event.preventDefault();
-
-          toggleTOCOverflowIndicators();
-      });
-    }
-
-    function tocOverflowIndicator (indicator, action) {
-      $(indicator).velocity('stop').velocity({
-        opacity: action === 'show' ? 0.4 : 0
-      }, { duration: 100 });
-    }
-
-  });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
 </script>
-
-
-  <script type="text/javascript" id="sidebar.nav">
-    $(document).ready(function () {
-      var html = $('html');
-
-      $('.sidebar-nav li').on('click', function () {
-        var item = $(this);
-        var activeTabClassName = 'sidebar-nav-active';
-        var activePanelClassName = 'sidebar-panel-active';
-        if (item.hasClass(activeTabClassName)) {
-          return;
-        }
-
-        var currentTarget = $('.' + activePanelClassName);
-        var target = $('.' + item.data('target'));
-
-        currentTarget.velocity('transition.slideUpOut', 200, function () {
-          target
-            .velocity('stop')
-            .velocity('transition.slideDownIn', 200)
-            .addClass(activePanelClassName);
-        });
-
-        item.siblings().removeClass(activeTabClassName);
-        item.addClass(activeTabClassName);
-      });
-
-      $('.post-toc a').on('click', function (e) {
-        e.preventDefault();
-        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
-        html.velocity('stop').velocity('scroll', {
-          offset: offset  + 'px',
-          mobileHA: false
-        });
-      });
-
-      // Expand sidebar on post detail page by default, when post has a toc.
-      var $tocContent = $('.post-toc-content');
-      if (isDesktop() && CONFIG.sidebar === 'post') {
-        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
-          displaySidebar();
-        }
-      }
-    });
-  </script>
-
-
-
-
-  <script type="text/javascript">
-    $(document).ready(function () {
-      if (CONFIG.sidebar === 'always') {
-        displaySidebar();
-      }
-    });
-  </script>
-
-  
-
-  
-  
-  
-
-  
-
-
-
-
-  
-  
 
 </body>
 </html>

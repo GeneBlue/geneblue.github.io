@@ -1,205 +1,304 @@
-<!doctype html>
-<html class="theme-next use-motion ">
+<!DOCTYPE html>
+<html lang="zh-Hans">
 <head>
-  
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-<meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-
-
-
-
-
-
-  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+<link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.3"/>
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 
-    <meta name="description" content="Personal Blog" />
-
-
-
-  <meta name="keywords" content="Android Kernel," />
-
-
-
-<script>
-    (function(){
-        if('whoami'){
-            if (prompt('请输入文章密码') !== 'whoami'){
-                alert('密码错误！');
-                history.back();
-            }
-        }
-    })();
-</script>
-
-
-
-
-  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
-
-
-
-<script type="text/javascript" id="hexo.configuration">
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
   var CONFIG = {
-    scheme: '',
-    analytics: {
-      google: ''
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
     },
-    sidebar: 'post'
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
   };
 </script>
 
+  <meta name="description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 0X01 环境Device: Nexus 5 OS Version: Android4.4.4 KTU84P Kernel Version: 3.4.00X02 内核提取Android 内核文件存放在boot分区，先在设备中找到boot分区存放的位置： adb shell su cd /dev/bl">
+<meta name="keywords" content="Android Kernel">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从Android手机中提取内核">
+<meta property="og:url" content="http://yoursite.com/2016/07/12/从Android手机中提取内核/index.html">
+<meta property="og:site_name" content="GeneBlue&#39;s Blog">
+<meta property="og:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 0X01 环境Device: Nexus 5 OS Version: Android4.4.4 KTU84P Kernel Version: 3.4.00X02 内核提取Android 内核文件存放在boot分区，先在设备中找到boot分区存放的位置： adb shell su cd /dev/bl">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBef5d993171f97cd22f78fa0bbdd5f0fd?method=download&shareKey=3ac977c4eefa79dc83ab929e7f1af87b">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB6eba27912a87208dbb484b60d72ee655?method=download&shareKey=04bff9f0498a29c7ced7f976fa3e697a">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBff15ec162d278664e811d8d89ddf6d5d?method=download&shareKey=bd3f114654329157e14ab7123321343b">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBf8ec12060727deb350205b6733a60e74?method=download&shareKey=a8632f5f9b3ec9c9e1d0fdb2d70ea8d6">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBfd7bf04931da2459a4f1f96d26232204?method=download&shareKey=dee63bdd3f728ddaf2cef62fdc65ce19">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBcdba3c7323255f41edfa43eabc4f6bd1?method=download&shareKey=a738088653aa0e7c96e076f38bd916eb">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB7ab5abed02898b8298e428180ba6ffb0?method=download&shareKey=2bf754e7ef1965f1ca515c6b9b7c46ef">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB34ddd9f5a21103805926f4eaeaaba0d1?method=download&shareKey=78a321fb14c91e7767c50c5732b65cad">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBb732fa45fde6e272b77b16b369a58b2a?method=download&shareKey=e361704d4e438bd2e59034e5e5a6b538">
+<meta property="og:updated_time" content="2019-11-11T06:52:12.557Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从Android手机中提取内核">
+<meta name="twitter:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 0X01 环境Device: Nexus 5 OS Version: Android4.4.4 KTU84P Kernel Version: 3.4.00X02 内核提取Android 内核文件存放在boot分区，先在设备中找到boot分区存放的位置： adb shell su cd /dev/bl">
+<meta name="twitter:image" content="https://note.youdao.com/yws/api/personal/file/WEBef5d993171f97cd22f78fa0bbdd5f0fd?method=download&shareKey=3ac977c4eefa79dc83ab929e7f1af87b">
+
+<link rel="canonical" href="http://yoursite.com/2016/07/12/从Android手机中提取内核/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>从Android手机中提取内核 | GeneBlue's Blog</title>
+  
 
 
 
-  <title> 从Android手机中提取内核 // GeneBlue's Blog </title>
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
 </head>
 
-<body>
-<!--[if lte IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari." style='margin-left:auto;margin-right:auto;display: block;'/></a></div> <![endif]-->
-  <div class="container one-column page-post-detail">
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
     <div class="headband"></div>
 
-    <div id="header" class="header">
-      <div class="header-inner">
-        <h1 class="site-meta">
-  <span class="logo-line-before"><i></i></span>
-  <a href="/" class="brand">
-      <span class="logo">
-        <i class="icon-logo"></i>
-      </span>
-      <span class="site-title">GeneBlue's Blog</span>
-  </a>
-  <span class="logo-line-after"><i></i></span>
-</h1>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">GeneBlue's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">The quiter you become,the more you are able to hear!</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
 
 
+<nav class="site-nav">
+  
   <ul id="menu" class="menu">
-     
-    
-      
-      <li class="menu-item menu-item-home">
-        <a href="/">
-          <i class="menu-item-icon icon-home"></i> <br />
-          首页
-        </a>
-      </li>
-    
-      
-      <li class="menu-item menu-item-about">
-        <a href="/about">
-          <i class="menu-item-icon icon-about"></i> <br />
-          关于
-        </a>
-      </li>
-    
-      
-      <li class="menu-item menu-item-archives">
-        <a href="/archives">
-          <i class="menu-item-icon icon-archives"></i> <br />
-          归档
-        </a>
-      </li>
-    
-      
-      <li class="menu-item menu-item-tags">
-        <a href="/tags">
-          <i class="menu-item-icon icon-tags"></i> <br />
-          标签
-        </a>
-      </li>
-    
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>Sitemap</a>
+
+  </li>
   </ul>
 
+</nav>
+</div>
+    </header>
 
-      </div>
-    </div>
-
-    <div id="main" class="main">
-      <div class="main-inner">
-        <div id="content" class="content">
-          
-
-  <div id="posts" class="posts-expand">
     
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
 
-  <div class="post post-type-normal ">
-    <div class="post-header">
 
-      
-      
-        <h1 class="post-title">
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
           
-          
+
+          <div class="content">
             
-              从Android手机中提取内核
-            
-          
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/07/12/从Android手机中提取内核/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GeneBlue's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          从Android手机中提取内核
         </h1>
-      
 
-      <div class="post-meta">
-        <span class="post-time">
-          发表于 2016-07-12
-        </span>
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
 
-        
+              <time title="Created: 2016-07-12 12:02:08" itemprop="dateCreated datePublished" datetime="2016-07-12T12:02:08+08:00">2016-07-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-11 14:52:12" itemprop="dateModified" datetime="2019-11-11T14:52:12+08:00">2019-11-11</time>
+              </span>
 
-        
           
-        
-      </div>
-    </div>
 
-    <div class="post-body">
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-      
-
-      
-        <p><strong>Author: GeneBlue</strong><br><strong>禁止任何形式转载</strong><br><strong>文章访问密码：whoami</strong></p>
+        <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
 <h3 id="0X01-环境"><a href="#0X01-环境" class="headerlink" title="0X01 环境"></a>0X01 环境</h3><pre><code>Device: Nexus 5
 OS Version: Android4.4.4 KTU84P
-Kernel Version: 3.4.0
-</code></pre><h3 id="0X02-内核提取"><a href="#0X02-内核提取" class="headerlink" title="0X02 内核提取"></a>0X02 内核提取</h3><p>Android 内核文件存放在boot分区，先在设备中找到boot分区存放的位置：</p>
+Kernel Version: 3.4.0</code></pre><h3 id="0X02-内核提取"><a href="#0X02-内核提取" class="headerlink" title="0X02 内核提取"></a>0X02 内核提取</h3><p>Android 内核文件存放在boot分区，先在设备中找到boot分区存放的位置：</p>
 <pre><code>adb shell
 su
 cd /dev/block/platform/msm_sdcc.1/by-name
-ls -l boot
-</code></pre><a id="more"></a>
-<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBef5d993171f97cd22f78fa0bbdd5f0fd?method=download&shareKey=3ac977c4eefa79dc83ab929e7f1af87b" alt="get boot" style="width: 601.70px; height: 26.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="get boot"><br></div>
+ls -l boot</code></pre><a id="more"></a>
+
+<div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEBef5d993171f97cd22f78fa0bbdd5f0fd?method=download&shareKey=3ac977c4eefa79dc83ab929e7f1af87b" alt="get boot" style="width: 601.70px; height: 26.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="get boot">
+</div>
 
 <p>这个boot文件是个软链接，/dev/block/mmcblk0p19 即是boot分区</p>
 <p>用dd将其dump出来</p>
-<pre><code>dd if=/dev/block/mmcblk0p19 of=/sdcard/boot.img
-</code></pre><p>用binwalk分析boot.img</p>
-<pre><code>sudo binwalk boot.img
-</code></pre><div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB6eba27912a87208dbb484b60d72ee655?method=download&shareKey=04bff9f0498a29c7ced7f976fa3e697a" alt="binwalk" style="width: 601.70px; height: 138.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="binwalk"><br></div>
+<pre><code>dd if=/dev/block/mmcblk0p19 of=/sdcard/boot.img</code></pre><p>用binwalk分析boot.img</p>
+<pre><code>sudo binwalk boot.img</code></pre><div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEB6eba27912a87208dbb484b60d72ee655?method=download&shareKey=04bff9f0498a29c7ced7f976fa3e697a" alt="binwalk" style="width: 601.70px; height: 138.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="binwalk">
+</div>
 
 <p>从boot.img中提取出压缩的内核文件：</p>
-<pre><code>dd if=boot.img of=kernel.gz bs=1 skip=20660
-</code></pre><div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBff15ec162d278664e811d8d89ddf6d5d?method=download&shareKey=bd3f114654329157e14ab7123321343b" alt="dd kernel" style="width: 601.70px; height: 65.33px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="dd kernel"><br></div>
+<pre><code>dd if=boot.img of=kernel.gz bs=1 skip=20660</code></pre><div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEBff15ec162d278664e811d8d89ddf6d5d?method=download&shareKey=bd3f114654329157e14ab7123321343b" alt="dd kernel" style="width: 601.70px; height: 65.33px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="dd kernel">
+</div>
 
 <p>解压：</p>
 <pre><code>gzip -d kernel.gz 
-sudo binwalk kernel
-</code></pre><p>这个kernel中不包含符号信息，所以还要从设备中提取符号信息：<br>/proc/kallsyms文件中存储了所有内核符号，但文件中存储的地址值都是0,这是为了防止内核地址泄露</p>
-<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBf8ec12060727deb350205b6733a60e74?method=download&shareKey=a8632f5f9b3ec9c9e1d0fdb2d70ea8d6" alt="kallsyms" style="width: 521.50px; height: 326.05px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="kallsyms"><br></div><br>要获取地址，可以修改　/proc/sys/kernel/kptr_restrict　值，要以root权限<br><br>    echo 1 &gt; /proc/sys/kernel/kptr_restrict<br><br><div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBfd7bf04931da2459a4f1f96d26232204?method=download&shareKey=dee63bdd3f728ddaf2cef62fdc65ce19" alt="kallsyms" style="width: 520.67px; height: 310.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="kallsyms"><br></div>
+sudo binwalk kernel</code></pre><p>这个kernel中不包含符号信息，所以还要从设备中提取符号信息：<br>/proc/kallsyms文件中存储了所有内核符号，但文件中存储的地址值都是0,这是为了防止内核地址泄露</p>
+<div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEBf8ec12060727deb350205b6733a60e74?method=download&shareKey=a8632f5f9b3ec9c9e1d0fdb2d70ea8d6" alt="kallsyms" style="width: 521.50px; height: 326.05px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="kallsyms">
+</div>
+要获取地址，可以修改　/proc/sys/kernel/kptr_restrict　值，要以root权限
+
+<pre><code>echo 1 &gt; /proc/sys/kernel/kptr_restrict</code></pre><div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEBfd7bf04931da2459a4f1f96d26232204?method=download&shareKey=dee63bdd3f728ddaf2cef62fdc65ce19" alt="kallsyms" style="width: 520.67px; height: 310.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="kallsyms">
+</div>
 
 <p>之后便可以拿到内核符号。</p>
 <h3 id="0X03-IDA分析"><a href="#0X03-IDA分析" class="headerlink" title="0X03 IDA分析"></a>0X03 IDA分析</h3><p>对于提取出来的kernel文件，可以直接放到ida中分析</p>
-<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBcdba3c7323255f41edfa43eabc4f6bd1?method=download&shareKey=a738088653aa0e7c96e076f38bd916eb" alt="IDA" style="width: 476.76px; height: 361.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="IDA"><br></div>
+<div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEBcdba3c7323255f41edfa43eabc4f6bd1?method=download&shareKey=a738088653aa0e7c96e076f38bd916eb" alt="IDA" style="width: 476.76px; height: 361.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="IDA">
+</div>
 
 <p>注意处理器类型选择ARM小端，然后设置内核起始地址为0xC0008000</p>
-<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB7ab5abed02898b8298e428180ba6ffb0?method=download&shareKey=2bf754e7ef1965f1ca515c6b9b7c46ef" alt="IDA" style="width: 361.19px; height: 420.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="IDA"><br></div>
+<div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEB7ab5abed02898b8298e428180ba6ffb0?method=download&shareKey=2bf754e7ef1965f1ca515c6b9b7c46ef" alt="IDA" style="width: 361.19px; height: 420.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="IDA">
+</div>
 
 <p>随后，就可以在IDA中查看感兴趣的汇编代码了</p>
-<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEB34ddd9f5a21103805926f4eaeaaba0d1?method=download&shareKey=78a321fb14c91e7767c50c5732b65cad" alt="IDA Analysis" style="width: 521.15px; height: 293.66px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="IDA Analysis"><br></div>
+<div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEB34ddd9f5a21103805926f4eaeaaba0d1?method=download&shareKey=78a321fb14c91e7767c50c5732b65cad" alt="IDA Analysis" style="width: 521.15px; height: 293.66px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="IDA Analysis">
+</div>
 
 <p>这时的函数名不太友好，向IDA中导入之前提取出来的符号信息就可以看到对应的函数名。</p>
 <pre><code>ksyms = open(&quot;C:\Users\Mr\Desktop\GetKernel\syms.txt&quot;)
@@ -208,360 +307,215 @@ for line in ksyms:
     name = line[11:]
     idaapi.set_debug_name(addr,name)
     MakeNameEx(addr,name,SN_NOWARN)
-    Message(&quot;%08X:%sn&quot;%(addr,name))
-</code></pre><p>在IDA的File-&gt;Script Command中运行上述python脚本，之后就可以在IDA中成功添加符号信息</p>
-<div align="center"><br><img src="https://note.youdao.com/yws/api/personal/file/WEBb732fa45fde6e272b77b16b369a58b2a?method=download&shareKey=e361704d4e438bd2e59034e5e5a6b538" alt="IDA　Analysis" style="width: 556.51px; height: 314.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="IDA Analysis"><br></div>
+    Message(&quot;%08X:%sn&quot;%(addr,name))</code></pre><p>在IDA的File-&gt;Script Command中运行上述python脚本，之后就可以在IDA中成功添加符号信息</p>
+<div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEBb732fa45fde6e272b77b16b369a58b2a?method=download&shareKey=e361704d4e438bd2e59034e5e5a6b538" alt="IDA　Analysis" style="width: 556.51px; height: 314.50px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="IDA Analysis">
+</div>
 
 <p>之后就可以具体分析内核代码了</p>
 <hr>
 
-      
     </div>
 
-    <div class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/Android-Kernel/"> #Android Kernel </a>
-          
-        </div>
-      
+    
+    
+    
 
-      
-        <div class="post-nav">
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/01/27/Android内核编译调试/">Android内核编译调试</a>
-            
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android-Kernel/" rel="tag"># Android Kernel</a>
           </div>
 
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2016/07/27/Android PXN绕过技术研究/">Android PXN绕过技术研究</a>
-            
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2016/01/27/Android内核编译调试/" rel="next" title="Android内核编译调试">
+                  <i class="fa fa-chevron-left"></i> Android内核编译调试
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2016/07/27/Android PXN绕过技术研究/" rel="prev" title="Android PXN绕过技术研究">
+                  Android PXN绕过技术研究 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-        </div>
-      
-
-      
-      
-    </div>
-  </div>
-
-
-
+      </footer>
     
-      <div class="comments" id="comments">
-        
-      </div>
-    
-  </div>
-
-
-        </div>
-
-        
-      </div>
-
-
-      
+  </article>
   
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
+  
+  
+
   </div>
 
-  <div id="sidebar" class="sidebar">
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
     <div class="sidebar-inner">
 
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
 
-      <div class="site-overview">
-        <div class="site-author motion-element">
-          <img class="site-author-image" src="/images/default_avatar.jpg" alt="GeneBlue" />
-          <p class="site-author-name">GeneBlue</p>
-        </div>
-        <p class="site-description motion-element">Personal Blog</p>
-        <div class="site-state motion-element">
-          <div class="site-state-item site-state-posts">
-            <a href="/archives">
-              <span class="site-state-item-count">24</span>
-              <span class="site-state-item-name">日志</span>
-            </a>
-          </div>
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0X01-环境"><span class="nav-number">1.</span> <span class="nav-text">0X01 环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X02-内核提取"><span class="nav-number">2.</span> <span class="nav-text">0X02 内核提取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X03-IDA分析"><span class="nav-number">3.</span> <span class="nav-text">0X03 IDA分析</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
 
-          <div class="site-state-item site-state-categories">
-            
-              <span class="site-state-item-count">0</span>
-              <span class="site-state-item-name">分类</span>
-              
-          </div>
-
-          <div class="site-state-item site-state-tags">
-            <a href="/tags">
-              <span class="site-state-item-count">15</span>
-              <span class="site-state-item-name">标签</span>
-              </a>
-          </div>
-
-        </div>
-
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="GeneBlue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">GeneBlue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
         
-
-        <div class="links-of-author motion-element">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
           
-        </div>
-
-        
-        
-
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">tags</span></a>
       </div>
-
-      
-        <div class="post-toc-wrap sidebar-panel-active">
-          <div class="post-toc-indicator-top post-toc-indicator"></div>
-          <div class="post-toc">
-            
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0X01-环境"><span class="nav-number">1.</span> <span class="nav-text">0X01 环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X02-内核提取"><span class="nav-number">2.</span> <span class="nav-text">0X02 内核提取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X03-IDA分析"><span class="nav-number">3.</span> <span class="nav-text">0X03 IDA分析</span></a></li></ol></div>
-            
-          </div>
-          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
-        </div>
-      
-
-    </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
   </div>
 
 
-    </div>
 
-    <div id="footer" class="footer">
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
       <div class="footer-inner">
-        <div class="copyright">
+        
+
+<div class="copyright">
   
-  &copy; &nbsp; 
-  2019
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
-    <i class="icon-heart"></i>
+    <i class="fa fa-user"></i>
   </span>
-  <span class="author">GeneBlue</span>
+  <span class="author" itemprop="copyrightHolder">GeneBlue</span>
 </div>
-
-<div class="powered-by">
-  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
-</div>
-
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT
-  </a>
-</div>
-
-
-
-      </div>
-    </div>
-
-    <div class="back-to-top"></div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.5.0
   </div>
 
-  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
 
   
-  
-
-  
-  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
-  <script type="text/javascript" src="/js/fancy-box.js"></script>
-
-
-  <script type="text/javascript" src="/js/helpers.js"></script>
-  
-
-  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
-  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
-
-  <script type="text/javascript" src="/js/motion_global.js" id="motion.global"></script>
-
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
 
 
 
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
-<script type="text/javascript" src="/js/bootstrap.scrollspy.js" id="bootstrap.scrollspy.custom"></script>
 
+  
 
-<script type="text/javascript" id="sidebar.toc.highlight">
-  $(document).ready(function () {
-    var tocSelector = '.post-toc';
-    var $tocSelector = $(tocSelector);
-    var activeCurrentSelector = '.active-current';
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
 
-    $tocSelector
-      .on('activate.bs.scrollspy', function () {
-        var $currentActiveElement = $(tocSelector + ' .active').last();
-
-        removeCurrentActiveClass();
-        $currentActiveElement.addClass('active-current');
-
-        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
-      })
-      .on('clear.bs.scrollspy', function () {
-        removeCurrentActiveClass();
-      });
-
-    function removeCurrentActiveClass () {
-      $(tocSelector + ' ' + activeCurrentSelector)
-        .removeClass(activeCurrentSelector.substring(1));
-    }
-
-    function processTOC () {
-      getTOCMaxHeight();
-      toggleTOCOverflowIndicators();
-    }
-
-    function getTOCMaxHeight () {
-      var $sidebarInner = $('.sidebar-inner');
-      var height = $('.sidebar').height() -
-                   $tocSelector.position().top -
-                   $('.post-toc-indicator-bottom').height();
-
-      $tocSelector.css('height', height);
-
-      return height;
-    }
-
-    function toggleTOCOverflowIndicators () {
-      tocOverflowIndicator(
-        '.post-toc-indicator-top',
-        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
-      );
-
-      tocOverflowIndicator(
-        '.post-toc-indicator-bottom',
-        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
-      )
-    }
-
-    $(document).on('sidebar.didShow', function () {
-      processTOC();
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '1d44761390eeb9904aab',
+      clientSecret: '517694b3ef78c87a290d8bf2dfc16f3f34ae9606b',
+      repo: 'geneblue.github.io',
+      owner: 'GeneBlue',
+      admin: ['GeneBlue'],
+      id: 'c5bad62aea14d9429761e667a09729a1',
+        language: '',
+      distractionFreeMode: 'true'
     });
-
-    $('body').scrollspy({ target: tocSelector });
-    $(window).on('resize', function () {
-      if ( $('.sidebar').hasClass('sidebar-active') ) {
-        processTOC();
-      }
-    });
-
-    onScroll($tocSelector);
-
-    function onScroll (element) {
-      element.on('mousewheel DOMMouseScroll', function (event) {
-          var oe = event.originalEvent;
-          var delta = oe.wheelDelta || -oe.detail;
-          var self = this;
-
-          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
-          event.preventDefault();
-
-          toggleTOCOverflowIndicators();
-      });
-    }
-
-    function tocOverflowIndicator (indicator, action) {
-      $(indicator).velocity('stop').velocity({
-        opacity: action === 'show' ? 0.4 : 0
-      }, { duration: 100 });
-    }
-
-  });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
 </script>
-
-
-  <script type="text/javascript" id="sidebar.nav">
-    $(document).ready(function () {
-      var html = $('html');
-
-      $('.sidebar-nav li').on('click', function () {
-        var item = $(this);
-        var activeTabClassName = 'sidebar-nav-active';
-        var activePanelClassName = 'sidebar-panel-active';
-        if (item.hasClass(activeTabClassName)) {
-          return;
-        }
-
-        var currentTarget = $('.' + activePanelClassName);
-        var target = $('.' + item.data('target'));
-
-        currentTarget.velocity('transition.slideUpOut', 200, function () {
-          target
-            .velocity('stop')
-            .velocity('transition.slideDownIn', 200)
-            .addClass(activePanelClassName);
-        });
-
-        item.siblings().removeClass(activeTabClassName);
-        item.addClass(activeTabClassName);
-      });
-
-      $('.post-toc a').on('click', function (e) {
-        e.preventDefault();
-        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
-        html.velocity('stop').velocity('scroll', {
-          offset: offset  + 'px',
-          mobileHA: false
-        });
-      });
-
-      // Expand sidebar on post detail page by default, when post has a toc.
-      var $tocContent = $('.post-toc-content');
-      if (isDesktop() && CONFIG.sidebar === 'post') {
-        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
-          displaySidebar();
-        }
-      }
-    });
-  </script>
-
-
-
-
-  <script type="text/javascript">
-    $(document).ready(function () {
-      if (CONFIG.sidebar === 'always') {
-        displaySidebar();
-      }
-    });
-  </script>
-
-  
-
-  
-  
-  
-
-  
-
-
-
-
-  
-  
 
 </body>
 </html>
