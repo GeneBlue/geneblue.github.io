@@ -24,14 +24,14 @@
     scheme: 'Muse',
     version: '7.5.0',
     exturl: false,
-    sidebar: {"display":"post","offset":12,"onmobile":false},
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
     copycode: {"enable":false,"show_result":false,"style":null},
-    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: true,
     mediumzoom: false,
     lazyload: false,
-    pangu: false,
+    pangu: true,
     algolia: {
       appID: '',
       apiKey: '',
@@ -124,7 +124,8 @@
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-        <p class="site-subtitle">The quiter you become,the more you are able to hear!</p>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
   </div>
 
   <div class="site-nav-toggle">
@@ -160,11 +161,6 @@
     <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
 
   </li>
-        <li class="menu-item menu-item-sitemap">
-
-    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>Sitemap</a>
-
-  </li>
   </ul>
 
 </nav>
@@ -172,6 +168,11 @@
     </header>
 
     
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -199,10 +200,10 @@
       <meta itemprop="name" content="GeneBlue's Blog">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
+        <h2 class="post-title" itemprop="name headline">
           
             <a href="/2019/09/13/Android%20DEX-VMP%20%E8%99%9A%E6%8B%9F%E4%BF%9D%E6%8A%A4%E6%8A%80%E6%9C%AF/" class="post-title-link" itemprop="url">Android DEX-VMP 虚拟保护技术</a>
-        </h1>
+        </h2>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -273,10 +274,10 @@
       <meta itemprop="name" content="GeneBlue's Blog">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
+        <h2 class="post-title" itemprop="name headline">
           
             <a href="/2018/10/27/KSMA--Android%E9%80%9A%E7%94%A8Root%E6%8A%80%E6%9C%AF/" class="post-title-link" itemprop="url">KSMA--Android通用Root技术</a>
-        </h1>
+        </h2>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -346,10 +347,10 @@
       <meta itemprop="name" content="GeneBlue's Blog">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
+        <h2 class="post-title" itemprop="name headline">
           
             <a href="/2018/01/05/IDA%E6%8F%92%E4%BB%B6%E6%8E%A8%E8%8D%90-Keypatch/" class="post-title-link" itemprop="url">IDA插件推荐-Keypatch</a>
-        </h1>
+        </h2>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -419,10 +420,10 @@
       <meta itemprop="name" content="GeneBlue's Blog">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
+        <h2 class="post-title" itemprop="name headline">
           
             <a href="/2017/10/12/MediaTek_M4U_Driver_Arbitrary_Memory_Overwrite/" class="post-title-link" itemprop="url">MediaTek M4U Driver Arbitrary Memory Overwrite</a>
-        </h1>
+        </h2>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -492,10 +493,10 @@
       <meta itemprop="name" content="GeneBlue's Blog">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
+        <h2 class="post-title" itemprop="name headline">
           
             <a href="/2017/08/23/Android8.0_Kernel_Hardening/" class="post-title-link" itemprop="url">Android 8.0 内核安全特性</a>
-        </h1>
+        </h2>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -624,10 +625,6 @@
 
 
       </div>
-        <div class="back-to-top motion-element">
-          <i class="fa fa-arrow-up"></i>
-          <span>0%</span>
-        </div>
 
     </div>
   </aside>
@@ -678,6 +675,7 @@
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>

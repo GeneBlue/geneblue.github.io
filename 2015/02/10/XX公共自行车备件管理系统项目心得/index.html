@@ -24,14 +24,14 @@
     scheme: 'Muse',
     version: '7.5.0',
     exturl: false,
-    sidebar: {"display":"post","offset":12,"onmobile":false},
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
     copycode: {"enable":false,"show_result":false,"style":null},
-    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: true,
     mediumzoom: false,
     lazyload: false,
-    pangu: false,
+    pangu: true,
     algolia: {
       appID: '',
       apiKey: '',
@@ -129,7 +129,8 @@
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-        <p class="site-subtitle">The quiter you become,the more you are able to hear!</p>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
   </div>
 
   <div class="site-nav-toggle">
@@ -165,11 +166,6 @@
     <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
 
   </li>
-        <li class="menu-item menu-item-sitemap">
-
-    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>Sitemap</a>
-
-  </li>
   </ul>
 
 </nav>
@@ -177,6 +173,11 @@
     </header>
 
     
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -204,9 +205,9 @@
       <meta itemprop="name" content="GeneBlue's Blog">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
+        <h2 class="post-title" itemprop="name headline">
           XX公共自行车备件管理系统项目心得
-        </h1>
+        </h2>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -367,10 +368,6 @@
 
 
       </div>
-        <div class="back-to-top motion-element">
-          <i class="fa fa-arrow-up"></i>
-          <span>0%</span>
-        </div>
 
     </div>
   </aside>
@@ -421,6 +418,7 @@
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
@@ -456,7 +454,7 @@
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
     var gitalk = new Gitalk({
       clientID: '1d44761390eeb9904aab',
-      clientSecret: '517694b3ef78c87a290d8bf2dfc16f3f34ae9606b',
+      clientSecret: '517694b3ef78c87a290d8bf2dfc16f3f34ae9606',
       repo: 'geneblue.github.io',
       owner: 'GeneBlue',
       admin: ['GeneBlue'],

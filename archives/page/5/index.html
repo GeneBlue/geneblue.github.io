@@ -24,14 +24,14 @@
     scheme: 'Muse',
     version: '7.5.0',
     exturl: false,
-    sidebar: {"display":"post","offset":12,"onmobile":false},
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
     copycode: {"enable":false,"show_result":false,"style":null},
-    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: true,
     mediumzoom: false,
     lazyload: false,
-    pangu: false,
+    pangu: true,
     algolia: {
       appID: '',
       apiKey: '',
@@ -124,7 +124,8 @@
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-        <p class="site-subtitle">The quiter you become,the more you are able to hear!</p>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
   </div>
 
   <div class="site-nav-toggle">
@@ -160,11 +161,6 @@
     <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
 
   </li>
-        <li class="menu-item menu-item-sitemap">
-
-    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>Sitemap</a>
-
-  </li>
   </ul>
 
 </nav>
@@ -172,6 +168,11 @@
     </header>
 
     
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -193,7 +194,7 @@
 
       
     <div class="collection-year">
-      <h1 class="collection-header">2015</h1>
+      <h2 class="collection-header">2015</h2>
     </div>
 
   <article itemscope itemtype="http://schema.org/Article">
@@ -207,11 +208,11 @@
         </time>
       </div>
 
-      <h2 class="post-title">
+      <h3 class="post-title">
           <a class="post-title-link" href="/2015/02/27/Xposed插件编写流程/" itemprop="url">
             <span itemprop="name">Xposed插件编写流程</span>
           </a>
-      </h2>
+      </h3>
 
     </header>
   </article>
@@ -227,11 +228,11 @@
         </time>
       </div>
 
-      <h2 class="post-title">
+      <h3 class="post-title">
           <a class="post-title-link" href="/2015/02/21/Xposed翻译文档/" itemprop="url">
             <span itemprop="name">Xposed翻译文档</span>
           </a>
-      </h2>
+      </h3>
 
     </header>
   </article>
@@ -247,11 +248,11 @@
         </time>
       </div>
 
-      <h2 class="post-title">
+      <h3 class="post-title">
           <a class="post-title-link" href="/2015/02/10/XX公共自行车备件管理系统项目心得/" itemprop="url">
             <span itemprop="name">XX公共自行车备件管理系统项目心得</span>
           </a>
-      </h2>
+      </h3>
 
     </header>
   </article>
@@ -267,11 +268,11 @@
         </time>
       </div>
 
-      <h2 class="post-title">
+      <h3 class="post-title">
           <a class="post-title-link" href="/2015/02/10/Xposed demo分析/" itemprop="url">
             <span itemprop="name">Xposed demo分析</span>
           </a>
-      </h2>
+      </h3>
 
     </header>
   </article>
@@ -355,10 +356,6 @@
 
 
       </div>
-        <div class="back-to-top motion-element">
-          <i class="fa fa-arrow-up"></i>
-          <span>0%</span>
-        </div>
 
     </div>
   </aside>
@@ -409,6 +406,7 @@
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
