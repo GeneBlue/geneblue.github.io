@@ -26,7 +26,7 @@
     exturl: false,
     sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
     copycode: {"enable":false,"show_result":false,"style":null},
-    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: true,
     mediumzoom: false,
@@ -124,7 +124,8 @@
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-        <p class="site-subtitle">The quiter you become,the more you are able to hear!</p>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
   </div>
 
   <div class="site-nav-toggle">
@@ -167,10 +168,7 @@
     </header>
 
     
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -192,7 +190,7 @@
 
       
     <div class="collection-year">
-      <h1 class="collection-header">2016</h1>
+      <h2 class="collection-header">2016</h2>
     </div>
 
   <article itemscope itemtype="http://schema.org/Article">
@@ -206,11 +204,11 @@
         </time>
       </div>
 
-      <h2 class="post-title">
+      <h3 class="post-title">
           <a class="post-title-link" href="/2016/08/16/Android内核模块编译执行/" itemprop="url">
             <span itemprop="name">Android内核模块编译执行</span>
           </a>
-      </h2>
+      </h3>
 
     </header>
   </article>
@@ -291,6 +289,10 @@
 
 
       </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
 
     </div>
   </aside>
@@ -313,11 +315,6 @@
   </span>
   <span class="author" itemprop="copyrightHolder">GeneBlue</span>
 </div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
-  </div>
-  <span class="post-meta-divider">|</span>
-  <div class="theme-info">Theme – <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.5.0
-  </div>
 
         
 
