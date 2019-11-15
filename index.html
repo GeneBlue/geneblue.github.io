@@ -184,6 +184,79 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/23/cve-2019-2215-binder/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GeneBlue's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/10/23/cve-2019-2215-binder/" class="post-title-link" itemprop="url">CVE-2019-2215 Binder 内核提权漏洞简要分析</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-10-23 12:02:08" itemprop="dateCreated datePublished" datetime="2019-10-23T12:02:08+08:00">2019-10-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-15 14:20:46" itemprop="dateModified" datetime="2019-11-15T14:20:46+08:00">2019-11-15</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+<p>距离上一个 binder 漏洞（水滴 <code>CVE-2019-2025</code>）只过去寥寥数月，在国庆期间，Android 内核又被爆出一个 binder 内核提权漏洞。宇宙最强安全团队 <code>google pj0</code> 已经给出了漏洞细节，详情可以看<a href="https://bugs.chromium.org/p/project-zero/issues/detail?id=1942" target="_blank" rel="noopener">这里</a>。看来 binder 模块还是值得长期关注的。这篇文章主要解释 google poc 的利用原理。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/10/23/cve-2019-2215-binder/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/13/Android DEX-VMP 虚拟保护技术/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -473,80 +546,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/23/Android8.0_Kernel_Hardening/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="GeneBlue">
-      <meta itemprop="description" content="Personal Blog">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="GeneBlue's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/08/23/Android8.0_Kernel_Hardening/" class="post-title-link" itemprop="url">Android 8.0 内核安全特性</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2017-08-23 11:02:08" itemprop="dateCreated datePublished" datetime="2017-08-23T11:02:08+08:00">2017-08-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-11-11 14:51:06" itemprop="dateModified" datetime="2019-11-11T14:51:06+08:00">2019-11-11</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<p>前几天，Google 正式发布了 Android 8.0。 没错，真的就叫 OREO（奥利奥）。</p>
-<p>运行于 Andorid 8.0 的内核会增加几点安全特性，主要用于缓解内核漏洞和内核驱动 bug。 这些特性已经更新在 <a href="https://android.googlesource.com/kernel/common/" target="_blank" rel="noopener">kernel/common</a> 源码的 android-3.18，android-4.4 和 android-4.9 分支中。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2017/08/23/Android8.0_Kernel_Hardening/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -597,14 +596,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-count">25</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

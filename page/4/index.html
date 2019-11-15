@@ -184,6 +184,80 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/07/21/JNI官方文档-Chapter 3：JNI Types and Data Structures/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GeneBlue's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2015/07/21/JNI%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3-Chapter%203%EF%BC%9AJNI%20Types%20and%20Data%20Structures/" class="post-title-link" itemprop="url">JNI官方文档-Chapter 3：JNI Types and Data Structures</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2015-07-21 12:26:08" itemprop="dateCreated datePublished" datetime="2015-07-21T12:26:08+08:00">2015-07-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-11 14:51:43" itemprop="dateModified" datetime="2019-11-11T14:51:43+08:00">2019-11-11</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+<p>本章讲述JNI是如何映射java类型到native C类型的。</p>
+<h3 id="Primitive-Types"><a href="#Primitive-Types" class="headerlink" title="Primitive Types"></a>Primitive Types</h3><p>表3-1表明了java基本类型和平台依赖的（machine-dependent）等价native类型。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2015/07/21/JNI官方文档-Chapter 3：JNI Types and Data Structures/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/07/20/JNI官方文档-Chapter 2：Design Overview/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -489,89 +563,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/03/18/so文件的调试方法/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="GeneBlue">
-      <meta itemprop="description" content="Personal Blog">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="GeneBlue's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2015/03/18/so%E6%96%87%E4%BB%B6%E7%9A%84%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">so文件的调试方法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2015-03-18 12:09:08" itemprop="dateCreated datePublished" datetime="2015-03-18T12:09:08+08:00">2015-03-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-11-11 14:51:57" itemprop="dateModified" datetime="2019-11-11T14:51:57+08:00">2019-11-11</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<h3 id="0X01-基本步骤"><a href="#0X01-基本步骤" class="headerlink" title="0X01 基本步骤"></a>0X01 基本步骤</h3><p>这里介绍使用IDA对so文件的动态调试，其他调试工具的使用，以后再做补充。</p>
-<p>IDA从6.1版本开始支持Android原生程序的动态调试。</p>
-<ul>
-<li><p>将ida目录下的android_server拷贝到android的目录中</p>
-<p> adb push android_server /data/local/tmp/</p>
-</li>
-</ul>
-<pre><code>adb shell 进入模拟器
-
-
-cd /data/local/tmp/</code></pre>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2015/03/18/so文件的调试方法/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -622,14 +613,14 @@ cd /data/local/tmp/</code></pre>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-count">25</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
