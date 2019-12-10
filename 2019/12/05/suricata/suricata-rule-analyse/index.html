@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 所谓规则 rule 或者签名 signature 就是 suricata 引擎在处理网络数据时，以此判断网络请求是否是恶意的，并分别对请求采取什么措施。 一条简单的规则如下： 1alert ip any any -&amp;gt; any any (msg: &quot;HELLO&quot;; content: &quot;HELLO">
+<meta name="keywords" content="suricata">
+<meta property="og:type" content="article">
+<meta property="og:title" content="suricata 规则结构解析">
+<meta property="og:url" content="http://yoursite.com/2019/12/05/suricata/suricata-rule-analyse/index.html">
+<meta property="og:site_name" content="GeneBlue&#39;s Blog">
+<meta property="og:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 所谓规则 rule 或者签名 signature 就是 suricata 引擎在处理网络数据时，以此判断网络请求是否是恶意的，并分别对请求采取什么措施。 一条简单的规则如下： 1alert ip any any -&amp;gt; any any (msg: &quot;HELLO&quot;; content: &quot;HELLO">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB49614015f4778d512ff83425c78f4204?method=download&shareKey=66af0b5c201aaea11a77f6fe6240eca5">
+<meta property="og:updated_time" content="2019-12-10T08:03:13.009Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="suricata 规则结构解析">
+<meta name="twitter:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 所谓规则 rule 或者签名 signature 就是 suricata 引擎在处理网络数据时，以此判断网络请求是否是恶意的，并分别对请求采取什么措施。 一条简单的规则如下： 1alert ip any any -&amp;gt; any any (msg: &quot;HELLO&quot;; content: &quot;HELLO">
+<meta name="twitter:image" content="https://note.youdao.com/yws/api/personal/file/WEB49614015f4778d512ff83425c78f4204?method=download&shareKey=66af0b5c201aaea11a77f6fe6240eca5">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/05/suricata/suricata-rule-analyse/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>suricata 规则结构解析 | GeneBlue's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">GeneBlue's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/05/suricata/suricata-rule-analyse/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GeneBlue's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          suricata 规则结构解析
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-12-05 13:02:08" itemprop="dateCreated datePublished" datetime="2019-12-05T13:02:08+08:00">2019-12-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-12-10 16:03:13" itemprop="dateModified" datetime="2019-12-10T16:03:13+08:00">2019-12-10</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+<p>所谓规则 <code>rule</code> 或者签名 <code>signature</code> 就是 <code>suricata</code> 引擎在处理网络数据时，以此判断网络请求是否是恶意的，并分别对请求采取什么措施。</p>
+<p>一条简单的规则如下：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alert<span class="built_in"> ip </span>any any -&gt; any any (msg: <span class="string">"HELLO"</span>; content: <span class="string">"HELLO"</span>; )</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<p>可以大概看出，该规则是在判断网络数据中如果有 “HELLO” 消息就会产生报警。</p>
+<p><a href="https://suricata.readthedocs.io/en/latest/rules/index.html" target="_blank" rel="noopener">suricate rules</a> 处详细记录了 suricata 规则组成和各种网络协议关键参数。</p>
+<p>大体上 <code>suricata</code> 单条规则由三部分组成：</p>
+<ul>
+<li>操作 <code>Action</code></li>
+<li>头部 <code>Header</code></li>
+<li>规则项 <code>Rule Options</code></li>
+</ul>
+<p>以上面规则为例：</p>
+<div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEB49614015f4778d512ff83425c78f4204?method=download&shareKey=66af0b5c201aaea11a77f6fe6240eca5" alt="rule-demo" style="width: 434px; height: 80px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="rule-demo">
+</div>
+
+<h3 id="Action"><a href="#Action" class="headerlink" title="Action"></a>Action</h3><p><code>Action</code> 指 <code>IDS</code> 在规则或签名情形发生时，对数据包要采取的措施，常见措施有：</p>
+<ul>
+<li><code>Pass</code>：如果当前数据包匹配了规则，<code>suricata</code> 会通过该数据请求，并且忽略之后所有规则对该数据包的匹配</li>
+<li><code>Drop</code>：发生在 <code>IPS/inline</code> 模式下，如果匹配到，会立刻终止数据包的发送，也不会给发送方任何回应，发送方只能 <code>timeout</code>。<code>suricata</code> 会为该数据包生成一条 <code>alert</code> 日志</li>
+<li><code>Reject</code>：匹配到的话，发送方和接收方都会收到拒绝数据包，拒绝数据包主要有两种。如果当前检测到的恶意包是 <code>tcp</code> 数据包，则发送的 <code>tcp reset</code> 包；其他协议，发送 <code>icmp error</code> 包。<code>suricata</code> 生成一条 <code>alert</code> 日志。如果是 <code>IPS/Inline</code> 模式，同上面 <code>Drop</code> 的处理，不会再发送拒绝数据包了。</li>
+<li><code>Alert</code>：如果匹配上，该数据包并不会被认为是个威胁包，但会生成一条警告日志</li>
+</ul>
+<p>加载规则是按照规则文件中的先后顺序，但在解析匹配数据包时，规则的匹配顺序并不按照文件顺序，这当然是效率考虑。默认的规则解析顺序是：<code>pass</code>，<code>drop</code>，<code>reject</code>，<code>alert</code></p>
+<h3 id="Header"><a href="#Header" class="headerlink" title="Header"></a>Header</h3><p><code>Header</code> 定义协议，<code>ip</code> 地址，端口以及数据流向。</p>
+<h4 id="protocol"><a href="#protocol" class="headerlink" title="protocol"></a>protocol</h4><blockquote>
+<p>drop <font color="#dd0000">tcp</font><br> <code>$HOME_NET</code> any -&gt; <code>$EXTERNAL_NET</code> any (msg:”ET TROJAN Likely Bot Nick in IRC (USA +..)”)</p>
+</blockquote>
+<p><code>protocol</code> 告知 <code>IDS</code> 该条规则用于解析哪种协议，常用的协议的有 tcp，udp，icmp，ip（ip 表示 all 或者 any）或者其他应用层协议，比如 http,ftp,tls(包含ssl),smb,dns,ssh,smtp,imap,modbus(默认关闭)，dnp3（默认关闭）等。<code>suricata</code> 是否启用这些协议的解析，要看 <code>suricata.yaml</code> 中是否启动对协议的支持。<br><br>这里是不支持数据链路层协议，比如 <code>arp</code>，只支持网络层，传输层和应用层协议</p>
+<h4 id="源和目的地址"><a href="#源和目的地址" class="headerlink" title="源和目的地址"></a>源和目的地址</h4><blockquote>
+<p>drop tcp <font color="#dd0000">$HOME_NET</font><br> any -&gt; <font color="#dd0000">$EXTERNAL_NET</font><br> any (msg:”ET TROJAN Likely Bot Nick in IRC (USA +..)”)</p>
+</blockquote>
+<p>如上，单向数据流，<code>$HOME_NET</code> 为 <code>suricata.yaml</code> 中定义的源地址，<code>$EXTERNAL_NET</code> 是目的地址，这种在配置文件中变量名使用的比较多，也可以使用具体的 <code>ip</code> 地址来表示，有如下标识符：</p>
+<ul>
+<li><code>../..</code> : 表示 ip 范围（支持 CIDR）</li>
+<li><code>!</code>: 非</li>
+<li><code>[.., ..]</code>: 集合</li>
+</ul>
+<p>示例：</p>
+<ul>
+<li><code>!1.1.1.1</code> : 除了 <code>1.1.1.1</code> 外的所有 ip</li>
+<li><code>![1.1.1.1, 2.2.2.2]</code>：除了 <code>1.1.1.1, 2.2.2.2</code> 外的所有 ip</li>
+<li><code>$HOME_NET</code>: yaml 中定义，表示一般表示本地子网</li>
+<li><code>[10.0.0.0/24, !10.0.0.5]</code>：<code>10.0.0.0/24</code> 网段，但除了 <code>10.0.0.5</code></li>
+</ul>
+<h4 id="源和目的端口"><a href="#源和目的端口" class="headerlink" title="源和目的端口"></a>源和目的端口</h4><blockquote>
+<p>drop tcp <code>$HOME_NET</code> <font color="#dd0000">any</font><br> -&gt; <code>$EXTERNAL_NET</code> <font color="#dd0000">any</font><br> (msg:”ET TROJAN Likely Bot Nick in IRC (USA +..)”)</p>
+</blockquote>
+<p>示例规则表示的是源，目的任意端口，与上面类似，也可以采用标识符来精确表达：</p>
+<ul>
+<li><code>：</code> ：端口范围</li>
+<li><code>！</code>：非</li>
+<li><code>[..., ...]</code>: 集合</li>
+</ul>
+<p>示例：</p>
+<ul>
+<li><code>[80,81,82]</code>: 80，81，82端口</li>
+<li><code>[80:84]</code>: 80 到 84 端口</li>
+<li><code>[1024:]</code>: 1024 到最大端口号</li>
+<li><code>!80</code>: 除 80 端口外的所有其他端口</li>
+<li><code>[80:100,!99]</code>: 80 到 100 端口，但除了 99 </li>
+<li><code>[1:80,![2,4]</code>]： 1 到 80 端口，但除了 2 到 4 端口</li>
+</ul>
+<h4 id="dierction-数据流向"><a href="#dierction-数据流向" class="headerlink" title="dierction 数据流向"></a>dierction 数据流向</h4><blockquote>
+<p>drop tcp <code>$HOME_NET</code> any <font color="#dd0000">-&gt;</font><br> <code>$EXTERNAL_NET</code> any (msg:”ET TROJAN Likely Bot Nick in IRC (USA +..)”)</p>
+</blockquote>
+<p>告知待检测数据包走向，<code>-&gt;</code> 单项流量，从源到目的地址；<code>&lt;&gt;</code> 双向流量，没有 <code>&lt;-</code></p>
+<p>依靠 <code>header</code> 段的这些关键字段，就可以比较灵活的表示任何网络范围</p>
+<h3 id="Rule-Options"><a href="#Rule-Options" class="headerlink" title="Rule Options"></a>Rule Options</h3><p>rule options 规则项定义要对网络数据做怎样筛查，规则项的书写对我们要检查某种恶意数据包至关重要，写的好不好直接影响检出率和检查效率。</p>
+<p>规则项使用括号 <code>()</code> 包裹，其中的细则使用分号 <code>;</code> 分隔。细则里有的会使用关键字比如 <code>msg</code>，然后冒号 <code>:</code> 后描述具体信息，有的细则可能直接就是个关键字，比如 <code>nocase</code></p>
+<p>规则项的顺序如果随意改动的话，可能会变更该条规则最初表达的意思。</p>
+<p>之后简单介绍 <code>Meta keywords</code>，<code>IP keywords</code>，<code>TCP keywords</code>，<code>UDP keywords</code>，<code>Payload keywords</code>，<code>HTTP keywords</code>，<code>Modbus keywords</code> 这些常见规则项，未记录的规则项关键字参考文档。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://suricata.readthedocs.io/en/latest/rules/index.html" target="_blank" rel="noopener">suricate rules</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/suricata/" rel="tag"># suricata</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/12/05/suricata/suricata-install-on-ubuntu/" rel="next" title="suricata ubuntu 下安装使用">
+                  <i class="fa fa-chevron-left"></i> suricata ubuntu 下安装使用
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Action"><span class="nav-number">1.</span> <span class="nav-text">Action</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Header"><span class="nav-number">2.</span> <span class="nav-text">Header</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#protocol"><span class="nav-number">2.1.</span> <span class="nav-text">protocol</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#源和目的地址"><span class="nav-number">2.2.</span> <span class="nav-text">源和目的地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#源和目的端口"><span class="nav-number">2.3.</span> <span class="nav-text">源和目的端口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dierction-数据流向"><span class="nav-number">2.4.</span> <span class="nav-text">dierction 数据流向</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Rule-Options"><span class="nav-number">3.</span> <span class="nav-text">Rule Options</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="GeneBlue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">GeneBlue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GeneBlue</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

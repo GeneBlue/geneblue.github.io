@@ -184,6 +184,157 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/01/27/Android内核编译调试/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GeneBlue's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/01/27/Android%E5%86%85%E6%A0%B8%E7%BC%96%E8%AF%91%E8%B0%83%E8%AF%95/" class="post-title-link" itemprop="url">Android内核编译调试</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2016-01-27 12:02:08" itemprop="dateCreated datePublished" datetime="2016-01-27T12:02:08+08:00">2016-01-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-11 14:51:14" itemprop="dateModified" datetime="2019-11-11T14:51:14+08:00">2019-11-11</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+<h3 id="0X01-前言"><a href="#0X01-前言" class="headerlink" title="0X01 前言"></a>0X01 前言</h3><p>研究Android底层或漏洞方面的知识，编译调试内核源码是必不可少的。这篇文章介绍内核编译调试的基本步骤。</p>
+<h3 id="0X02-环境"><a href="#0X02-环境" class="headerlink" title="0X02 环境"></a>0X02 环境</h3><pre><code>Android开发环境：SDK，NDK
+PC OS：Ubuntu 14.04 LTS 64bit
+Kernel Source：goldfish3.4   
+Android Source: android-4.4.4_r1</code></pre>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2016/01/27/Android内核编译调试/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/07/22/JNI官方文档-Chapter 4：JNI Functions/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GeneBlue's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2015/07/22/JNI%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3-Chapter%204%EF%BC%9AJNI%20Functions/" class="post-title-link" itemprop="url">JNI官方文档-Chapter 4：JNI Functions</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2015-07-22 12:26:08" itemprop="dateCreated datePublished" datetime="2015-07-22T12:26:08+08:00">2015-07-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-11 14:51:46" itemprop="dateModified" datetime="2019-11-11T14:51:46+08:00">2019-11-11</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+<p>本章主要作为JNI函数的参考手册。这里提供完整的JNI函数列表，也提供JNI函数表的设计。</p>
+<p>注意“必须”这个词常常描述对JNI开发人员的限制。如，当你看到一个JNI函数“必须”接收一个非空的对象时，你就要确保NULL值不会被传递到该JNI函数。所以，该JNI函数的实现是不需要执行NULL值检查的。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2015/07/22/JNI官方文档-Chapter 4：JNI Functions/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/07/21/JNI官方文档-Chapter 3：JNI Types and Data Structures/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -404,170 +555,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/04/20/Android开发中错误解决（持续更新）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="GeneBlue">
-      <meta itemprop="description" content="Personal Blog">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="GeneBlue's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2015/04/20/Android%E5%BC%80%E5%8F%91%E4%B8%AD%E9%94%99%E8%AF%AF%E8%A7%A3%E5%86%B3%EF%BC%88%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%EF%BC%89/" class="post-title-link" itemprop="url">Android开发中错误解决（持续更新）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2015-04-20 12:30:08" itemprop="dateCreated datePublished" datetime="2015-04-20T12:30:08+08:00">2015-04-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-11-11 14:51:17" itemprop="dateModified" datetime="2019-11-11T14:51:17+08:00">2019-11-11</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<p>平时写Android程序时遇到的一些错误， 在此记录方便以后查找。</p>
-<h3 id="类中方法找不到问题"><a href="#类中方法找不到问题" class="headerlink" title="类中方法找不到问题"></a>类中方法找不到问题</h3><p>logcat中报错提示如下：<br>    java.lang.NoClassDefFoundError: com.google.zxing.EncodeHintType</p>
-<p>这个问题是在二维码编码中遇到的但是在代码使用的jar包中明明已经定义了该类，就是提示找不到该类，最后查找别人的解决办法，将jar文件存放在libs文件夹下就顺利解决了，之前我将其存放在了自定义的lib文件夹下。可问题是为什么别的jar文件放在lib下依然可以顺利使用jar中的类呢？？？？？？？？</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2015/04/20/Android开发中错误解决（持续更新）/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/03/20/DEX文件格式/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="GeneBlue">
-      <meta itemprop="description" content="Personal Blog">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="GeneBlue's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2015/03/20/DEX%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" class="post-title-link" itemprop="url">Dex文件格式</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2015-03-20 12:26:08" itemprop="dateCreated datePublished" datetime="2015-03-20T12:26:08+08:00">2015-03-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-11-11 14:51:31" itemprop="dateModified" datetime="2019-11-11T14:51:31+08:00">2019-11-11</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<p>为了更好了解DEX文件格式，写了个java版的DEX解析器，可以打印出一个dex文件中的字符串，字段和类中调用了哪些方法。具体代码见<a href="https://github.com/GeneBlue/DexFunctions" target="_blank" rel="noopener">这里</a> </p>
-<h3 id="0X01-准备工作"><a href="#0X01-准备工作" class="headerlink" title="0X01 准备工作"></a>0X01 准备工作</h3><p>java文件为Hello.java:</p>
-<pre><code>public class Hello {
-   public int foo(int a, int b) {
-       return (a + b) * (a - b);
-   }
-
-   public static void main(String[] argc) {
-       Hello hello = new Hello();
-       System.out.println(hello.foo(5, 3));
-   }
-}</code></pre>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2015/03/20/DEX文件格式/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -613,14 +605,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

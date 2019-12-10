@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Author: GeneBlueBlog: https://geneblue.github.io/ suricata 是一款免费，开源的 IDS 入侵检测引擎，而且支持 ips（入侵防御系统），nsm（网络安全监控）和离线 pcap 处理。另一款知名的开源 IDS 是 Snort，网络上的一般说法是 suricata 相较于 Snort 最大优势是支持多线程，另外支持 ipv6 并兼容 Snort">
+<meta name="keywords" content="suricata">
+<meta property="og:type" content="article">
+<meta property="og:title" content="suricata ubuntu 下安装使用">
+<meta property="og:url" content="http://yoursite.com/2019/12/05/suricata/suricata-install-on-ubuntu/index.html">
+<meta property="og:site_name" content="GeneBlue&#39;s Blog">
+<meta property="og:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ suricata 是一款免费，开源的 IDS 入侵检测引擎，而且支持 ips（入侵防御系统），nsm（网络安全监控）和离线 pcap 处理。另一款知名的开源 IDS 是 Snort，网络上的一般说法是 suricata 相较于 Snort 最大优势是支持多线程，另外支持 ipv6 并兼容 Snort">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-12-10T07:37:51.122Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="suricata ubuntu 下安装使用">
+<meta name="twitter:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ suricata 是一款免费，开源的 IDS 入侵检测引擎，而且支持 ips（入侵防御系统），nsm（网络安全监控）和离线 pcap 处理。另一款知名的开源 IDS 是 Snort，网络上的一般说法是 suricata 相较于 Snort 最大优势是支持多线程，另外支持 ipv6 并兼容 Snort">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/05/suricata/suricata-install-on-ubuntu/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>suricata ubuntu 下安装使用 | GeneBlue's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">GeneBlue's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/05/suricata/suricata-install-on-ubuntu/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GeneBlue's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          suricata ubuntu 下安装使用
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-12-05 12:02:08" itemprop="dateCreated datePublished" datetime="2019-12-05T12:02:08+08:00">2019-12-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-12-10 15:37:51" itemprop="dateModified" datetime="2019-12-10T15:37:51+08:00">2019-12-10</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+<p><code>suricata</code> 是一款免费，开源的 <code>IDS</code> 入侵检测引擎，而且支持 <code>ips</code>（入侵防御系统），<code>nsm</code>（网络安全监控）和离线 <code>pcap</code> 处理。另一款知名的开源 <code>IDS</code> 是 <code>Snort</code>，网络上的一般说法是 <code>suricata</code> 相较于 <code>Snort</code> 最大优势是支持多线程，另外支持 <code>ipv6</code> 并兼容 <code>Snort</code> 规则。</p>
+<a id="more"></a>
+
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><h4 id="ppa-安装"><a href="#ppa-安装" class="headerlink" title="ppa 安装"></a>ppa 安装</h4><p>安装当前最新版本</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install software-properties-common</span><br><span class="line">sudo<span class="built_in"> add-apt-repository </span>ppa:oisf/suricata-stable</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install suricata jq</span><br></pre></td></tr></table></figure>
+
+<p>jq 工具用来处理 json 数据</p>
+<p>debug 版本</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-<span class="builtin-name">get</span> install suricata-dbg</span><br></pre></td></tr></table></figure>
+
+<p>查看编译信息和运行状态</p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"><span class="meta-keyword">$suricata</span> --build-info</span></span><br><span class="line"><span class="meta"><span class="meta-keyword">$systemctl</span> status suricata</span></span><br></pre></td></tr></table></figure>
+
+<p>表示安装成功</p>
+<h4 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h4><p>安装包下载</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https:<span class="regexp">//</span>www.openinfosecfoundation.org<span class="regexp">/download/</span>suricata-<span class="number">5.0</span>.<span class="number">0</span>.tar.gz</span><br><span class="line">tar -zxvf suricata-<span class="number">5.0</span>.<span class="number">0</span>.tar.gz</span><br></pre></td></tr></table></figure>
+
+<p>ubuntu16.04 下编译依赖：</p>
+<figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-<span class="built_in">get</span> install libpcre3 libpcre3-dbg libpcre3-<span class="built_in">dev</span> build-essential libpcap-<span class="built_in">dev</span>   \</span><br><span class="line">                libnet1-<span class="built_in">dev</span> libyaml<span class="number">-0</span><span class="number">-2</span> libyaml-<span class="built_in">dev</span> pkg-config zlib1g zlib1g-<span class="built_in">dev</span> \</span><br><span class="line">                libcap-ng-<span class="built_in">dev</span> libcap-ng0 make libmagic-<span class="built_in">dev</span> libjansson-<span class="built_in">dev</span>        \</span><br><span class="line">                libnss3-<span class="built_in">dev</span> libgeoip-<span class="built_in">dev</span> liblua5<span class="number">.1</span>-<span class="built_in">dev</span> libhiredis-<span class="built_in">dev</span> libevent-<span class="built_in">dev</span> \</span><br><span class="line">                python-yaml rustc cargo</span><br></pre></td></tr></table></figure>
+
+<p>编译：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cd</span> suricata-<span class="number">5.0</span>.<span class="number">0</span></span><br><span class="line">./configure</span><br><span class="line"><span class="keyword">make</span></span><br><span class="line"><span class="keyword">make</span> install</span><br></pre></td></tr></table></figure>
+
+<p>生成的可执行文件在 <code>src/.libs/suricata</code></p>
+<h3 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h3><p>安装完后，来认识一些基本目录：</p>
+<p><code>/var/log/suricata</code>：存储 <code>suricata</code> 日志信息<br><code>/etc/suricata</code>：<code>suricate</code> 配置文件目录</p>
+<p><code>/var/log/suricata</code> 下:</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">certs	                    <span class="comment">#</span></span><br><span class="line">core	                    <span class="comment">#</span></span><br><span class="line">eve.json	                <span class="comment">#</span></span><br><span class="line">fast.<span class="built_in">log</span>	                <span class="comment">#</span></span><br><span class="line"><span class="built_in">files</span>	                    <span class="comment">#</span></span><br><span class="line">stats.<span class="built_in">log</span>	                <span class="comment">#</span></span><br><span class="line">suricata.<span class="built_in">log</span>	            <span class="comment">#</span></span><br><span class="line">suricata-<span class="built_in">start</span>.<span class="built_in">log</span>	        <span class="comment">#</span></span><br></pre></td></tr></table></figure>
+
+<p><code>/etc/suricata</code> 下:</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">classification.config	    <span class="comment"># 存放报警分类信息</span></span><br><span class="line"><span class="keyword">reference</span>.config	        <span class="comment"># reference 规则引用信息</span></span><br><span class="line">rules	                    <span class="comment"># 存放大量自带规则集目录</span></span><br><span class="line">suricata.yaml	            <span class="comment"># suricata 配置文件</span></span><br><span class="line">threshold.config	        <span class="comment">#</span></span><br></pre></td></tr></table></figure>
+
+<p><code>suricata.yaml</code> 为主要配置文件，包含：网络信息配置，输出信息配置，抓包配置，应用层协议配置</p>
+<p>更改配置，指向我们的测试规则文件</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">default</span>-rule-<span class="string">path:</span> <span class="regexp">/media/</span>psf<span class="regexp">/LinuxVolume/</span>IDS/rules</span><br><span class="line">rule-<span class="string">files:</span></span><br><span class="line">  - test.rules</span><br></pre></td></tr></table></figure>
+
+<p>一条简单的策略如下，表示任何 <code>ip</code> 地址的任意端口发送到本网段（数据流经网卡即可）任意端口的 <code>&quot;HELLO&quot;</code> 消息，将会记录在 <code>fast.log</code> 文件中</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alert<span class="built_in"> ip </span>any any -&gt; any any (msg: <span class="string">"HELLO"</span>; content: <span class="string">"HELLO"</span>; )</span><br></pre></td></tr></table></figure>
+
+<p>启动 suricata ids</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo suricata -c <span class="regexp">/media/</span>psf<span class="regexp">/LinuxVolume/</span>IDS<span class="regexp">/suricata.yaml -i enp0s5</span></span><br></pre></td></tr></table></figure>
+
+<p>发送数据如下：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scapy.all import *</span><br><span class="line">pkg = IP(<span class="attribute">dst</span>=<span class="string">"10.211.55.4"</span>) / TCP(<span class="attribute">dport</span>=1234) / <span class="string">"HELLO"</span></span><br><span class="line">pkg.send()</span><br></pre></td></tr></table></figure>
+
+<p>可以看到 fast.log 中记录了这条 alert 日志：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">$cat</span> <span class="string">/var/log/suricata/fast.log</span></span><br><span class="line"><span class="number">12</span><span class="string">/05/2019-17:16:59.407436</span>  <span class="string">[**]</span> <span class="string">[1:0:0]</span> <span class="string">HELLO</span> <span class="string">[**]</span> <span class="string">[Classification:</span> <span class="string">(null)]</span> <span class="string">[Priority:</span> <span class="number">3</span><span class="string">]</span> <span class="string">&#123;TCP&#125;</span> <span class="number">10.211</span><span class="number">.55</span><span class="number">.2</span><span class="string">:20</span> <span class="string">-&gt;</span> <span class="number">10.211</span><span class="number">.55</span><span class="number">.4</span><span class="string">:1234</span></span><br></pre></td></tr></table></figure>
+
+<p>以此，我们可以根据自己的需要编写规则文件，记录告警日志。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://suricata-ids.org/" target="_blank" rel="noopener">suricata 官网</a></li>
+<li><a href="https://suricata.readthedocs.io/en/latest/" target="_blank" rel="noopener">suricata doc</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/suricata/" rel="tag"># suricata</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/10/23/cve-2019-2215-binder/" rel="next" title="CVE-2019-2215 Binder 内核提权漏洞简要分析">
+                  <i class="fa fa-chevron-left"></i> CVE-2019-2215 Binder 内核提权漏洞简要分析
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/12/05/suricata/suricata-rule-analyse/" rel="prev" title="suricata 规则结构解析">
+                  suricata 规则结构解析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ppa-安装"><span class="nav-number">1.1.</span> <span class="nav-text">ppa 安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#编译安装"><span class="nav-number">1.2.</span> <span class="nav-text">编译安装</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#简单使用"><span class="nav-number">2.</span> <span class="nav-text">简单使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="GeneBlue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">GeneBlue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GeneBlue</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
