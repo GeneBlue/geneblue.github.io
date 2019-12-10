@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Author: GeneBlueBlog: https://geneblue.github.io/ Meta Keywords 可以理解为是 suricata 的基本关键字，不与任何协议绑定，在任何规则中都可以使用">
+<meta name="keywords" content="suricata">
+<meta property="og:type" content="article">
+<meta property="og:title" content="suricata 规则之 Meta Keywords">
+<meta property="og:url" content="http://yoursite.com/2019/12/05/suricata/suricata-rule-meta-keywords/index.html">
+<meta property="og:site_name" content="GeneBlue&#39;s Blog">
+<meta property="og:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ Meta Keywords 可以理解为是 suricata 的基本关键字，不与任何协议绑定，在任何规则中都可以使用">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-12-10T09:04:29.725Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="suricata 规则之 Meta Keywords">
+<meta name="twitter:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ Meta Keywords 可以理解为是 suricata 的基本关键字，不与任何协议绑定，在任何规则中都可以使用">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/05/suricata/suricata-rule-meta-keywords/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>suricata 规则之 Meta Keywords | GeneBlue's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">GeneBlue's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/05/suricata/suricata-rule-meta-keywords/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GeneBlue's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          suricata 规则之 Meta Keywords
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-12-05 14:02:08" itemprop="dateCreated datePublished" datetime="2019-12-05T14:02:08+08:00">2019-12-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-12-10 17:04:29" itemprop="dateModified" datetime="2019-12-10T17:04:29+08:00">2019-12-10</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+<p><code>Meta Keywords</code> 可以理解为是 <code>suricata</code> 的基本关键字，不与任何协议绑定，在任何规则中都可以使用</p>
+<a id="more"></a>
+
+<h3 id="Meta-Keywords"><a href="#Meta-Keywords" class="headerlink" title="Meta Keywords"></a>Meta Keywords</h3><h4 id="msg-message"><a href="#msg-message" class="headerlink" title="msg(message)"></a>msg(message)</h4><p><code>msg</code> 关键字用来记录当规则匹配到时，对数据包的文本描述信息，然后记录在日志中</p>
+<p>比如：</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">msg:</span> <span class="string">"ATTACK-RESPONSES 403 Forbidden"</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+<p>注意，按照惯例，<code>msg</code> 消息都是以大写字母开头，这样在日志记录中，从视觉上比较容易识别；<code>msg</code> 一般是规则的第一个关键字</p>
+<h4 id="sid-signature-ID"><a href="#sid-signature-ID" class="headerlink" title="sid(signature ID)"></a>sid(signature ID)</h4><p><code>sid</code> 签名标识符，数值类型，为每个规则定义一个 <code>id</code> 号，不能重复<br><br>比如：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">sid:</span> <span class="number">123</span><span class="string">;</span></span><br></pre></td></tr></table></figure>
+
+<p>一般，<code>sid</code>位于最后关键字（如果有 rev 关键字，则位于倒数第二个），这也是为了书写上的规范吧</p>
+<h4 id="rev-revision"><a href="#rev-revision" class="headerlink" title="rev (revision)"></a>rev (revision)</h4><p>用于表示规则的版本号</p>
+<p>比如：</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">rev:</span><span class="number">123</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="gid-group-ID"><a href="#gid-group-ID" class="headerlink" title="gid(group ID)"></a>gid(group ID)</h4><p><code>gid</code> 关键字不是很常用，默认是 1</p>
+<h4 id="classtype"><a href="#classtype" class="headerlink" title="classtype"></a>classtype</h4><p><code>classtype</code> 指定该规则触发时，属于哪种报警分类信息，当前的攻击属于什么威胁。具体的警报分类查看文件 <code>/etc/suricata/classification.config</code>，比如：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">config classification: rpc-portmap-decode,Decode of an RPC Query,2</span><br><span class="line">config classification: shellcode-detect,Executable code was detected,1</span><br><span class="line">config classification: string-detect,A suspicious string was detected,3</span><br></pre></td></tr></table></figure>
+
+<p>每一条报警分类信息，包含 短名，具体描述和警报优先级，严重事件优先级为1，在规则中，指定短名即可：</p>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">classtype:<span class="function"><span class="keyword">rpc</span>-portmap-decode</span>;</span><br></pre></td></tr></table></figure>
+
+<p>我们也可以在 <code>classification.config</code> 中增加自己的警报信息。</p>
+<h4 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h4><p><code>reference</code> 引用，给出规则触发时的额外参考信息，参考信息一般是 <code>url</code>，方便起见，也可以给一个 <code>cve</code> 号，<code>suricata</code> 会自动生成该 <code>cve</code> 在 <code>mitre</code> 站点的 <code>cve</code> 链接。</p>
+<p>形式：</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">reference</span>: <span class="keyword">type</span>, <span class="keyword">reference</span></span><br></pre></td></tr></table></figure>
+
+<p>比如：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">reference</span>: url, www.info.com;</span><br><span class="line"><span class="keyword">reference</span>: cve, CVE<span class="number">-2014</span><span class="number">-1234</span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>/etc/suricata/reference.config</code> 中记录了各种 type</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">$ cat /etc/suricata/reference.<span class="built_in">config</span></span><br><span class="line"><span class="meta"># config reference: system URL</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">config</span> reference: bugtraq   http:<span class="comment">//www.securityfocus.com/bid/</span></span><br><span class="line"><span class="built_in">config</span> reference: bid	    http:<span class="comment">//www.securityfocus.com/bid/</span></span><br><span class="line"><span class="built_in">config</span> reference: cve       http:<span class="comment">//cve.mitre.org/cgi-bin/cvename.cgi?name=</span></span><br><span class="line"><span class="meta">#config reference: cve       http:<span class="comment">//cvedetails.com/cve/</span></span></span><br><span class="line"><span class="built_in">config</span> reference: secunia   http:<span class="comment">//www.secunia.com/advisories/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#whitehats is unfortunately gone</span></span><br><span class="line"><span class="built_in">config</span> reference: arachNIDS http:<span class="comment">//www.whitehats.com/info/IDS</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">config</span> reference: McAfee    http:<span class="comment">//vil.nai.com/vil/content/v_</span></span><br><span class="line"><span class="built_in">config</span> reference: nessus    http:<span class="comment">//cgi.nessus.org/plugins/dump.php3?id=</span></span><br><span class="line"><span class="built_in">config</span> reference: url       http:<span class="comment">//</span></span><br><span class="line"><span class="built_in">config</span> reference: et        http:<span class="comment">//doc.emergingthreats.net/</span></span><br><span class="line"><span class="built_in">config</span> reference: etpro     http:<span class="comment">//doc.emergingthreatspro.com/</span></span><br><span class="line"><span class="built_in">config</span> reference: telus     http:<span class="comment">//</span></span><br><span class="line"><span class="built_in">config</span> reference: osvdb     http:<span class="comment">//osvdb.org/show/osvdb/</span></span><br><span class="line"><span class="built_in">config</span> reference: threatexpert http:<span class="comment">//www.threatexpert.com/report.aspx?md5=</span></span><br><span class="line"><span class="built_in">config</span> reference: md5	    http:<span class="comment">//www.threatexpert.com/report.aspx?md5=</span></span><br><span class="line"><span class="built_in">config</span> reference: exploitdb http:<span class="comment">//www.exploit-db.com/exploits/</span></span><br><span class="line"><span class="built_in">config</span> reference: openpacket https:<span class="comment">//www.openpacket.org/capture/grab/</span></span><br><span class="line"><span class="built_in">config</span> reference: securitytracker http:<span class="comment">//securitytracker.com/id?</span></span><br><span class="line"><span class="built_in">config</span> reference: secunia   http:<span class="comment">//secunia.com/advisories/</span></span><br><span class="line"><span class="built_in">config</span> reference: xforce    http:<span class="comment">//xforce.iss.net/xforce/xfdb/</span></span><br><span class="line"><span class="built_in">config</span> reference: msft      http:<span class="comment">//technet.microsoft.com/security/bulletin/</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="priority"><a href="#priority" class="headerlink" title="priority"></a>priority</h4><p><code>priority</code> 优先级关键字是个数字，范围 1 到 255，1 到 4 使用比较频繁，1 为最高优先级，注意如果特意把该规则的 <code>priority</code> 设置为 1，则会覆盖 <code>classtype</code> 中的低优先级</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">priority:</span><span class="number">1</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="metadata"><a href="#metadata" class="headerlink" title="metadata"></a>metadata</h4><p>记录非功能信息</p>
+<h4 id="target"><a href="#target" class="headerlink" title="target"></a>target</h4><p><code>target</code> 关键字指定警报的哪一侧是攻击的目标。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://suricata.readthedocs.io/en/latest/rules/meta.html" target="_blank" rel="noopener">meta doc</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/suricata/" rel="tag"># suricata</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/12/05/suricata/suricata-rule-analyse/" rel="next" title="suricata 规则结构解析">
+                  <i class="fa fa-chevron-left"></i> suricata 规则结构解析
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Meta-Keywords"><span class="nav-number">1.</span> <span class="nav-text">Meta Keywords</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#msg-message"><span class="nav-number">1.1.</span> <span class="nav-text">msg(message)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sid-signature-ID"><span class="nav-number">1.2.</span> <span class="nav-text">sid(signature ID)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rev-revision"><span class="nav-number">1.3.</span> <span class="nav-text">rev (revision)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gid-group-ID"><span class="nav-number">1.4.</span> <span class="nav-text">gid(group ID)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#classtype"><span class="nav-number">1.5.</span> <span class="nav-text">classtype</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reference"><span class="nav-number">1.6.</span> <span class="nav-text">reference</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#priority"><span class="nav-number">1.7.</span> <span class="nav-text">priority</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#metadata"><span class="nav-number">1.8.</span> <span class="nav-text">metadata</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#target"><span class="nav-number">1.9.</span> <span class="nav-text">target</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">2.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="GeneBlue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">GeneBlue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GeneBlue</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
