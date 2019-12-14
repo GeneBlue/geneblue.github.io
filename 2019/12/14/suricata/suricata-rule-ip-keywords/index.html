@@ -51,20 +51,20 @@
   };
 </script>
 
-  <meta name="description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 0X01 基本步骤这里介绍使用IDA对so文件的动态调试，其他调试工具的使用，以后再做补充。 IDA从6.1版本开始支持Android原生程序的动态调试。  将ida目录下的android_server拷贝到android的目录中  adb push android_server /data/loc">
-<meta name="keywords" content="Android Security">
+  <meta name="description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 指定为 ip 协议时的一些规则项字段">
+<meta name="keywords" content="suricata">
 <meta property="og:type" content="article">
-<meta property="og:title" content="so文件的调试方法">
-<meta property="og:url" content="http://yoursite.com/2015/03/18/so文件的调试方法/index.html">
+<meta property="og:title" content="suricata 规则之 IP Keywords">
+<meta property="og:url" content="http://yoursite.com/2019/12/14/suricata/suricata-rule-ip-keywords/index.html">
 <meta property="og:site_name" content="GeneBlue&#39;s Blog">
-<meta property="og:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 0X01 基本步骤这里介绍使用IDA对so文件的动态调试，其他调试工具的使用，以后再做补充。 IDA从6.1版本开始支持Android原生程序的动态调试。  将ida目录下的android_server拷贝到android的目录中  adb push android_server /data/loc">
+<meta property="og:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 指定为 ip 协议时的一些规则项字段">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-11-11T06:51:57.304Z">
+<meta property="og:updated_time" content="2019-12-14T12:09:21.681Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="so文件的调试方法">
-<meta name="twitter:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 0X01 基本步骤这里介绍使用IDA对so文件的动态调试，其他调试工具的使用，以后再做补充。 IDA从6.1版本开始支持Android原生程序的动态调试。  将ida目录下的android_server拷贝到android的目录中  adb push android_server /data/loc">
+<meta name="twitter:title" content="suricata 规则之 IP Keywords">
+<meta name="twitter:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 指定为 ip 协议时的一些规则项字段">
 
-<link rel="canonical" href="http://yoursite.com/2015/03/18/so文件的调试方法/">
+<link rel="canonical" href="http://yoursite.com/2019/12/14/suricata/suricata-rule-ip-keywords/">
 
 
 <script id="page-configurations">
@@ -78,7 +78,7 @@
   };
 </script>
 
-  <title>so文件的调试方法 | GeneBlue's Blog</title>
+  <title>suricata 规则之 IP Keywords | GeneBlue's Blog</title>
   
 
 
@@ -186,7 +186,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/03/18/so文件的调试方法/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/14/suricata/suricata-rule-ip-keywords/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -199,7 +199,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          so文件的调试方法
+          suricata 规则之 IP Keywords
         </h2>
 
         <div class="post-meta">
@@ -208,16 +208,10 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
+              
 
-              <time title="Created: 2015-03-18 12:09:08" itemprop="dateCreated datePublished" datetime="2015-03-18T12:09:08+08:00">2015-03-18</time>
+              <time title="Created: 2019-12-14 14:02:08 / Modified: 20:09:21" itemprop="dateCreated datePublished" datetime="2019-12-14T14:02:08+08:00">2019-12-14</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-11-11 14:51:57" itemprop="dateModified" datetime="2019-11-11T14:51:57+08:00">2019-11-11</time>
-              </span>
 
           
 
@@ -231,41 +225,81 @@
 
       
         <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<h3 id="0X01-基本步骤"><a href="#0X01-基本步骤" class="headerlink" title="0X01 基本步骤"></a>0X01 基本步骤</h3><p>这里介绍使用IDA对so文件的动态调试，其他调试工具的使用，以后再做补充。</p>
-<p>IDA从6.1版本开始支持Android原生程序的动态调试。</p>
-<ul>
-<li><p>将ida目录下的android_server拷贝到android的目录中</p>
-<p> adb push android_server /data/local/tmp/</p>
-</li>
-</ul>
-<pre><code>adb shell 进入模拟器
+<p>指定为 ip 协议时的一些规则项字段</p>
+<a id="more"></a>
 
+<h3 id="IP-Keywords"><a href="#IP-Keywords" class="headerlink" title="IP Keywords"></a>IP Keywords</h3><h4 id="ttl"><a href="#ttl" class="headerlink" title="ttl"></a>ttl</h4><p>ttl 用于指定 ip 包的最大存活时间，可以指定想匹配的 ttl 时间，比如：</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">ttl:</span><span class="number">10</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
 
-cd /data/local/tmp/</code></pre><a id="more"></a>
-<pre><code>chmod 755 android_server
+<h4 id="ipopts"><a href="#ipopts" class="headerlink" title="ipopts"></a>ipopts</h4><p>对 ip 协议比较熟悉的话，会知道 ip 包中会有一些 options 项，可以设定指定项来匹配指定的 ip 包：</p>
+<table>
+<thead>
+<tr>
+<th>IP Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rr</td>
+<td>Record Route</td>
+</tr>
+<tr>
+<td>eol</td>
+<td>End of List</td>
+</tr>
+<tr>
+<td>nop</td>
+<td>no Op</td>
+</tr>
+<tr>
+<td>ts</td>
+<td>time stamp</td>
+</tr>
+<tr>
+<td>sec</td>
+<td>ip Security</td>
+</tr>
+<tr>
+<td>esec</td>
+<td>IP Extended Security</td>
+</tr>
+<tr>
+<td>lsrr</td>
+<td>Loose Source Routing</td>
+</tr>
+<tr>
+<td>ssrr</td>
+<td>Strict Source Routing</td>
+</tr>
+<tr>
+<td>satid</td>
+<td>Stream Identifier</td>
+</tr>
+<tr>
+<td>any</td>
+<td>any Ip options are set</td>
+</tr>
+</tbody></table>
+<p>例如：</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">ipopts:</span> lsrr<span class="comment">;</span></span><br></pre></td></tr></table></figure>
 
+<h4 id="sameip"><a href="#sameip" class="headerlink" title="sameip"></a>sameip</h4><p>sameip 关键字用于匹配源 IP 和目的 IP 相同的包：</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sameip<span class="comment">;</span></span><br></pre></td></tr></table></figure>
 
-./android_server  
+<h4 id="ip-proto"><a href="#ip-proto" class="headerlink" title="ip_proto"></a>ip_proto</h4><p>ip_proto 关键字可用于匹配包头中的 ip 协议，检测基于 ip 协议的其他协议，比如 TCP 协议在 IP header 中的协议号是 6。完整的协议号列表可以参见 <a href="https://en.wikipedia.org/wiki/List_of_IP_protocol_numbers" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/List_of_IP_protocol_numbers</a>. 可以指定协议号，也可以指定协议名缩写，比如：</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">ip_proto:</span><span class="number">6</span><span class="comment">;</span></span><br><span class="line"><span class="symbol">ip_proto:</span>TCP<span class="comment">;</span></span><br></pre></td></tr></table></figure>
 
-注意程序的执行必须要在root权限下，不然在attach的时候找不到要附加的so文件
+<h4 id="id"><a href="#id" class="headerlink" title="id"></a>id</h4><p>id 指定匹配 IP 协议中 Identification 项的数值，比如：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">id</span>:<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
 
-可以看到正在监听端口 23946</code></pre><ul>
-<li><p>端口转发</p>
-<p>  adb forward tcp:23946 tcp:23946</p>
-<p>  将pc上端口数据转发到手机的端口</p>
-</li>
-<li><p>调试前配置</p>
-<p> 在debugger中选择attach并选择Remote ARMLinux/Android debugger选项，在出现的配置窗口中填上localhost 并选择端口23946</p>
-</li>
-<li><p>选取so文件</p>
-<p> 配置完毕后，在出现的文件选择列表中，选取要attach的文件即可。</p>
-</li>
-</ul>
-<h3 id="0X02-注意"><a href="#0X02-注意" class="headerlink" title="0X02 注意"></a>0X02 注意</h3><ul>
-<li><p>使用32位的IDA，64位IDA在连接android_server的时候会出现<code>incompatible debugging server</code>的错误哦</p>
-</li>
-<li><p>以root权限运行android_server,不然只能attach上极少的进程</p>
-</li>
+<h4 id="geoip"><a href="#geoip" class="headerlink" title="geoip"></a>geoip</h4><p>geoip 关键字用于匹配源ip，目的 ip，或者两者的 ip 归属地，suricata 使用 MaxMind 的 GeoIP2 api：</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">geoip: src,<span class="keyword">RU</span>;</span><br><span class="line">geoip: both,CN,<span class="keyword">RU</span>;</span><br><span class="line">geoip: dst,CN,<span class="keyword">RU</span>,<span class="keyword">IR</span>;</span><br><span class="line">geoip: both,<span class="keyword">US</span>,<span class="keyword">CA</span>,UK;</span><br><span class="line">geoip: any,CN,<span class="keyword">IR</span>;</span><br></pre></td></tr></table></figure>
+
+<p>使用 api 需要编译 libmaxminddb，详情见文档。</p>
+<h4 id="fragbits"><a href="#fragbits" class="headerlink" title="fragbits"></a>fragbits</h4><p>fragbits 关键字匹配 ip header 中的flags，搭配 fragoffset 关键字使用，这个使用频率应该比较低，详情见文档</p>
+<h4 id="tos"><a href="#tos" class="headerlink" title="tos"></a>tos</h4><p>匹配 ip header 中的 tos 字段</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://suricata.readthedocs.io/en/latest/rules/header-keywords.html" target="_blank" rel="noopener">ip keywords doc</a></li>
 </ul>
 
     </div>
@@ -276,24 +310,21 @@ cd /data/local/tmp/</code></pre><a id="more"></a>
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Android-Security/" rel="tag"># Android Security</a>
+              <a href="/tags/suricata/" rel="tag"># suricata</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
-                <a href="/2015/02/27/Xposed插件编写流程/" rel="next" title="Xposed插件编写流程">
-                  <i class="fa fa-chevron-left"></i> Xposed插件编写流程
+                <a href="/2019/12/05/suricata/suricata-rule-meta-keywords/" rel="next" title="suricata 规则之 Meta Keywords">
+                  <i class="fa fa-chevron-left"></i> suricata 规则之 Meta Keywords
                 </a>
             </div>
 
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-                <a href="/2015/03/20/DEX文件格式/" rel="prev" title="Dex文件格式">
-                  Dex文件格式 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
       </footer>
@@ -332,7 +363,7 @@ cd /data/local/tmp/</code></pre><a id="more"></a>
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0X01-基本步骤"><span class="nav-number">1.</span> <span class="nav-text">0X01 基本步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0X02-注意"><span class="nav-number">2.</span> <span class="nav-text">0X02 注意</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#IP-Keywords"><span class="nav-number">1.</span> <span class="nav-text">IP Keywords</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ttl"><span class="nav-number">1.1.</span> <span class="nav-text">ttl</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ipopts"><span class="nav-number">1.2.</span> <span class="nav-text">ipopts</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sameip"><span class="nav-number">1.3.</span> <span class="nav-text">sameip</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ip-proto"><span class="nav-number">1.4.</span> <span class="nav-text">ip_proto</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#id"><span class="nav-number">1.5.</span> <span class="nav-text">id</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#geoip"><span class="nav-number">1.6.</span> <span class="nav-text">geoip</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fragbits"><span class="nav-number">1.7.</span> <span class="nav-text">fragbits</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tos"><span class="nav-number">1.8.</span> <span class="nav-text">tos</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">2.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
