@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Author: GeneBlueBlog: https://geneblue.github.io/ linux 下 /proc/[pid]/pagemap 文件保存了当前进程虚拟内存页的映射信息。用户态程序可以根据该文件计算出虚拟页映射到哪个物理页。 对于每一个虚拟页，pagemap 使用 64bit 的值表示，该值表示以下信息（fs/proc/task_mmu.c pagemap_read）">
+<meta name="keywords" content="android sec">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pagemap 解析">
+<meta property="og:url" content="http://yoursite.com/2017/05/10/android/sec--android-pagemap/index.html">
+<meta property="og:site_name" content="GeneBlue&#39;s Blog">
+<meta property="og:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ linux 下 /proc/[pid]/pagemap 文件保存了当前进程虚拟内存页的映射信息。用户态程序可以根据该文件计算出虚拟页映射到哪个物理页。 对于每一个虚拟页，pagemap 使用 64bit 的值表示，该值表示以下信息（fs/proc/task_mmu.c pagemap_read）">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-10-14T04:02:22.759Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="pagemap 解析">
+<meta name="twitter:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ linux 下 /proc/[pid]/pagemap 文件保存了当前进程虚拟内存页的映射信息。用户态程序可以根据该文件计算出虚拟页映射到哪个物理页。 对于每一个虚拟页，pagemap 使用 64bit 的值表示，该值表示以下信息（fs/proc/task_mmu.c pagemap_read）">
+
+<link rel="canonical" href="http://yoursite.com/2017/05/10/android/sec--android-pagemap/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>pagemap 解析 | GeneBlue's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">GeneBlue's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/10/android/sec--android-pagemap/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GeneBlue's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          pagemap 解析
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-05-10 12:02:08" itemprop="dateCreated datePublished" datetime="2017-05-10T12:02:08+08:00">2017-05-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-10-14 12:02:22" itemprop="dateModified" datetime="2020-10-14T12:02:22+08:00">2020-10-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+<p>linux 下 <code>/proc/[pid]/pagemap</code> 文件保存了当前进程虚拟内存页的映射信息。用户态程序可以根据该文件计算出虚拟页映射到哪个物理页。</p>
+<p>对于每一个虚拟页，pagemap 使用 64bit 的值表示，该值表示以下信息（<code>fs/proc/task_mmu.c pagemap_read</code>）</p>
+<a id="more"></a>
+
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">* Bits 0-54 <span class="built_in"> page </span>frame number (PFN) <span class="keyword">if</span> present</span><br><span class="line">* Bits 0-4   swap<span class="built_in"> type </span><span class="keyword">if</span> swapped</span><br><span class="line">* Bits 5-54  swap offset <span class="keyword">if</span> swapped</span><br><span class="line">* Bit  55    pte is soft-dirty (see Documentation/vm/soft-dirty.txt)</span><br><span class="line">* Bit  56   <span class="built_in"> page </span>exclusively mapped (since 4.2)</span><br><span class="line">* Bits 57-60 zero</span><br><span class="line">* Bit  61   <span class="built_in"> page </span>is file-page <span class="keyword">or</span> shared-anon (since 3.5)</span><br><span class="line">* Bit  62   <span class="built_in"> page </span>swapped</span><br><span class="line">* Bit  63   <span class="built_in"> page </span>present</span><br></pre></td></tr></table></figure>
+
+<p>为了安全性的考虑，自 <code>Linux 4.0</code> 开始，只有拥有 <code>CAP_SYS_ADMIN</code> 权限的进程才能读取 PFN 值，在 <code>4.0</code> 和 <code>4.1</code> 上无权限进程会得到 <code>-EPERM</code> 错误。从 <code>4.2</code> 开始，如果进程没有 <code>CAP_SYS_ADMIN</code> 权限，<code>pagemap</code> 中的 PFN 字段直接为 0。这主要是因为，PFN 值有助于 <code>Rowhammer</code> 漏洞的利用。</p>
+<p>如果内存页在 swap 中，那 PFN 将被解析成两部分，一部分为 swap type，表示 swap 中的文件号，另一部分为 swap offset，表示在 swap 中的偏移。没有被映射的 page，PFN 为 null。可以利用这些值来判断一个虚拟页有没有被映射，是不是在 swap 中。</p>
+<p>可以使用 <code>/proc/pid/maps</code> 先判断哪些内存被映射了，再去计算 PFN 值，这样可以提高效率。</p>
+<p>获取了 PFN ，就可以根据 PFN 的值从 <code>/proc/kpagecount</code>, <code>/proc/kpageflag</code>, <code>/proc/kpagecgroup</code> 中获取内存页的其他信息。</p>
+<p>那么给定一个虚拟地址 vaddr，如何从 pagemap 中读取该虚拟地址所属页对应的 PFN 值？如何计算该虚拟地址对应的物理地址 paddr？</p>
+<p>用代码表示：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __aarch64__</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PFN_MIN 0x40000</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PHYS_OFFSET 0xffffffc000000000</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> data;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> offset = (vaddr / getpagesize()) * <span class="keyword">sizeof</span>(<span class="keyword">uint64_t</span>);</span><br><span class="line"><span class="keyword">int</span> fd = <span class="built_in">open</span>(<span class="string">"/proc/self/pagemap"</span>, O_RDONLY);</span><br><span class="line">pread(fd, &amp;data, <span class="keyword">sizeof</span>(<span class="keyword">uint64_t</span>), offset);</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> PFN = data &amp; <span class="number">0x7fffffffffffff</span>; <span class="comment">// 0-54bits</span></span><br><span class="line"><span class="keyword">int</span> swapped = (data &gt;&gt; <span class="number">62</span>) &amp; <span class="number">1</span>;</span><br><span class="line"><span class="keyword">int</span> present = (data &gt;&gt; <span class="number">63</span>) &amp; <span class="number">1</span>;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> paddr = PFN * getpagesize() + address % getpagesize();</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> kaddr = PHYS_OFFSET + getpagesize() * (PFN - PFN_MIN);</span><br></pre></td></tr></table></figure>
+
+<p>pagemap文件是按照虚拟页的序号排列映射信息的，所以可以得到 vaddr 所属的虚拟内存页在 pagemap 中的偏移 offset，所以可以获取虚拟内存页的映射信息 data，根据 pagemap 64bit信息的组织，就可以获取 PFN 值了，然后就可以获取物理地址 paddr 和内核 physmap 区的 kaddr</p>
+<p>physmap 区直接映射了物理内存，我们在用户态 mmap 的内存并存放的数据也会出现在 physmap 中，2014年发表的 ret2dir 的攻击文章就是基于这一特性。ret2dir 会在另一篇文章中详细讲解。</p>
+<p>为了验证physmap 区确实映射了我们的数据，可以将上述 kaddr 内存的值打印出来，如果就是在放置在用户态虚拟地址的数据，说明我们计算的 kaddr 是正确的。</p>
+<p>以下是写的驱动获取的值：</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[get_kaddr_value] kaddr=<span class="number">0xffffffc0368d3000</span> <span class="number">0xdeadbe00</span></span><br><span class="line">[get_kaddr_value] kaddr=<span class="number">0xffffffc052f05000</span> <span class="number">0xdeadc000</span></span><br><span class="line">[get_kaddr_value] kaddr=<span class="number">0xffffffc036b32000</span> <span class="number">0xdeadc200</span></span><br><span class="line">[get_kaddr_value] kaddr=<span class="number">0xffffffc03565c000</span> <span class="number">0xdeadc400</span></span><br><span class="line">[get_kaddr_value] kaddr=<span class="number">0xffffffc0359a9000</span> <span class="number">0xdeadc600</span></span><br><span class="line">[get_kaddr_value] kaddr=<span class="number">0xffffffc05286d000</span> <span class="number">0xdeadc800</span></span><br><span class="line">[get_kaddr_value] kaddr=<span class="number">0xffffffc053377000</span> <span class="number">0xdeadca00</span></span><br><span class="line">[get_kaddr_value] kaddr=<span class="number">0xffffffc03bdc5000</span> <span class="number">0xdeadcc00</span></span><br><span class="line">[get_kaddr_value] kaddr=<span class="number">0xffffffc029e1b000</span> <span class="number">0xdeadce00</span></span><br><span class="line">[get_kaddr_value] kaddr=<span class="number">0xffffffc057760000</span> <span class="number">0xdeadd000</span></span><br><span class="line">[get_kaddr_value] kaddr=<span class="number">0xffffffc0339fd000</span> <span class="number">0xdeadd200</span></span><br><span class="line">[get_kaddr_value] kaddr=<span class="number">0xffffffc038c0e000</span> <span class="number">0xdeadd400</span></span><br><span class="line">[get_kaddr_value] kaddr=<span class="number">0xffffffc0338bd000</span> <span class="number">0xdeadd600</span></span><br><span class="line">[get_kaddr_value] kaddr=<span class="number">0xffffffc03d3bd000</span> <span class="number">0xdeadd800</span></span><br><span class="line">[get_kaddr_value] kaddr=<span class="number">0xffffffc03c73d000</span> <span class="number">0xdeadda00</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://www.kernel.org/doc/Documentation/vm/pagemap.txt" target="_blank" rel="noopener">pagemap.txt</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android-sec/" rel="tag"># android sec</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2017/04/02/android/sec--linux-kernel-arm64-virtual-address-space/" rel="next" title="ARM64 Linux 内核虚拟地址空间">
+                  <i class="fa fa-chevron-left"></i> ARM64 Linux 内核虚拟地址空间
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2017/06/30/android/vul--android-moto-bootloader-initroot-cve201610277/" rel="prev" title="CVE-2016-10277 Moto bootloader initroot">
+                  CVE-2016-10277 Moto bootloader initroot <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="GeneBlue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">GeneBlue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GeneBlue</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
