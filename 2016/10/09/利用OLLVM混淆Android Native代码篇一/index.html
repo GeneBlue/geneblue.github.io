@@ -51,13 +51,13 @@
   };
 </script>
 
-  <meta name="description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 这里将会用两篇文章解释OLLVM混淆Android Native代码的方法和原理。篇一主要聚焦NDK中OLLVM的编译构建和主要混淆模式的使用，并简要解释各混淆模式的效果；篇二主要研究默认混淆模式的实现并尝试编写调试自定义Pass。">
+  <meta name="description" content="Author: geneblueBlog: https://geneblue.github.io/ 这里将会用两篇文章解释OLLVM混淆Android Native代码的方法和原理。篇一主要聚焦NDK中OLLVM的编译构建和主要混淆模式的使用，并简要解释各混淆模式的效果；篇二主要研究默认混淆模式的实现并尝试编写调试自定义Pass。">
 <meta name="keywords" content="Android OLLVM Obfuscator">
 <meta property="og:type" content="article">
 <meta property="og:title" content="利用OLLVM混淆Android Native代码篇一">
 <meta property="og:url" content="http://yoursite.com/2016/10/09/利用OLLVM混淆Android Native代码篇一/index.html">
-<meta property="og:site_name" content="GeneBlue&#39;s Blog">
-<meta property="og:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 这里将会用两篇文章解释OLLVM混淆Android Native代码的方法和原理。篇一主要聚焦NDK中OLLVM的编译构建和主要混淆模式的使用，并简要解释各混淆模式的效果；篇二主要研究默认混淆模式的实现并尝试编写调试自定义Pass。">
+<meta property="og:site_name" content="geneblue&#39;s blog">
+<meta property="og:description" content="Author: geneblueBlog: https://geneblue.github.io/ 这里将会用两篇文章解释OLLVM混淆Android Native代码的方法和原理。篇一主要聚焦NDK中OLLVM的编译构建和主要混淆模式的使用，并简要解释各混淆模式的效果；篇二主要研究默认混淆模式的实现并尝试编写调试自定义Pass。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBe7d4bdaca22d904105ea6276774e800f?method=download&shareKey=7eb6434b2ec3f2a3b5b050f67759a27f">
 <meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB5c6f58ac0d559a7394aa08a908423dca?method=download&shareKey=98002ff6cd5d0dd4641e45e4973c8c92">
@@ -70,10 +70,10 @@
 <meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBcacddad3f2412d4f02241bc685a15817?method=download&shareKey=a40dbd7a690261c1c221e9f7214beb92">
 <meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB1a5484d34d1e3512f9068e86f298be46?method=download&shareKey=c89aaee308011754fe593b71eefd230c">
 <meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBf0b93097fb27022a763528da4a235d71?method=download&shareKey=547a4041f9e092455398f59c931dd2ea">
-<meta property="og:updated_time" content="2019-11-11T06:52:15.714Z">
+<meta property="og:updated_time" content="2022-01-16T14:20:19.404Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="利用OLLVM混淆Android Native代码篇一">
-<meta name="twitter:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 这里将会用两篇文章解释OLLVM混淆Android Native代码的方法和原理。篇一主要聚焦NDK中OLLVM的编译构建和主要混淆模式的使用，并简要解释各混淆模式的效果；篇二主要研究默认混淆模式的实现并尝试编写调试自定义Pass。">
+<meta name="twitter:description" content="Author: geneblueBlog: https://geneblue.github.io/ 这里将会用两篇文章解释OLLVM混淆Android Native代码的方法和原理。篇一主要聚焦NDK中OLLVM的编译构建和主要混淆模式的使用，并简要解释各混淆模式的效果；篇二主要研究默认混淆模式的实现并尝试编写调试自定义Pass。">
 <meta name="twitter:image" content="https://note.youdao.com/yws/api/personal/file/WEBe7d4bdaca22d904105ea6276774e800f?method=download&shareKey=7eb6434b2ec3f2a3b5b050f67759a27f">
 
 <link rel="canonical" href="http://yoursite.com/2016/10/09/利用OLLVM混淆Android Native代码篇一/">
@@ -90,7 +90,7 @@
   };
 </script>
 
-  <title>利用OLLVM混淆Android Native代码篇一 | GeneBlue's Blog</title>
+  <title>利用OLLVM混淆Android Native代码篇一 | geneblue's blog</title>
   
 
 
@@ -134,7 +134,7 @@
     <div>
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">GeneBlue's Blog</span>
+        <span class="site-title">geneblue's blog</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -202,12 +202,12 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="name" content="geneblue">
       <meta itemprop="description" content="Personal Blog">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="GeneBlue's Blog">
+      <meta itemprop="name" content="geneblue's blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -228,7 +228,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-11-11 14:52:15" itemprop="dateModified" datetime="2019-11-11T14:52:15+08:00">2019-11-11</time>
+                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
               </span>
 
           
@@ -242,7 +242,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+        <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
 <p>这里将会用两篇文章解释OLLVM混淆Android Native代码的方法和原理。篇一主要聚焦NDK中OLLVM的编译构建和主要混淆模式的使用，并简要解释各混淆模式的效果；篇二主要研究默认混淆模式的实现并尝试编写调试自定义Pass。</p>
 <a id="more"></a>
 
@@ -465,9 +465,9 @@ test    r8b, 1</code></pre><p>当然，上述介绍的三种混淆模式可以�
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <img class="site-author-image" itemprop="image" alt="GeneBlue"
+  <img class="site-author-image" itemprop="image" alt="geneblue"
     src="/images/avatar.gif">
-  <p class="site-author-name" itemprop="name">GeneBlue</p>
+  <p class="site-author-name" itemprop="name">geneblue</p>
   <div class="site-description" itemprop="description">Personal Blog</div>
 </div>
 <div class="site-state-wrap motion-element">
@@ -475,14 +475,14 @@ test    r8b, 1</code></pre><p>当然，上述介绍的三种混淆模式可以�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">30</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -519,11 +519,11 @@ test    r8b, 1</code></pre><p>当然，上述介绍的三种混淆模式可以�
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">GeneBlue</span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
 </div>
 
         

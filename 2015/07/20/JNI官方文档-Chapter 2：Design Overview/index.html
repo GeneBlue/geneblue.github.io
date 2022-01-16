@@ -51,19 +51,19 @@
   };
 </script>
 
-  <meta name="description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 本篇主要关注JNI设计中的主要问题。这里讲述的大多数问题都与本地方法有关。Invocation API的介绍在Chapter 5中。 JNI Interface Functions and Pointers本地代码通过JNI函数可以获取JVM的一些特性。JNI函数可以通过一个接口指针获取。该接口指针">
+  <meta name="description" content="Author: geneblueBlog: https://geneblue.github.io/ 本篇主要关注JNI设计中的主要问题。这里讲述的大多数问题都与本地方法有关。Invocation API的介绍在Chapter 5中。 JNI Interface Functions and Pointers本地代码通过JNI函数可以获取JVM的一些特性。JNI函数可以通过一个接口指针获取。该接口指针">
 <meta name="keywords" content="Java JNI">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JNI官方文档-Chapter 2：Design Overview">
 <meta property="og:url" content="http://yoursite.com/2015/07/20/JNI官方文档-Chapter 2：Design Overview/index.html">
-<meta property="og:site_name" content="GeneBlue&#39;s Blog">
-<meta property="og:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 本篇主要关注JNI设计中的主要问题。这里讲述的大多数问题都与本地方法有关。Invocation API的介绍在Chapter 5中。 JNI Interface Functions and Pointers本地代码通过JNI函数可以获取JVM的一些特性。JNI函数可以通过一个接口指针获取。该接口指针">
+<meta property="og:site_name" content="geneblue&#39;s blog">
+<meta property="og:description" content="Author: geneblueBlog: https://geneblue.github.io/ 本篇主要关注JNI设计中的主要问题。这里讲述的大多数问题都与本地方法有关。Invocation API的介绍在Chapter 5中。 JNI Interface Functions and Pointers本地代码通过JNI函数可以获取JVM的一些特性。JNI函数可以通过一个接口指针获取。该接口指针">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://7vzu7u.com1.z0.glb.clouddn.com/JNI-chapter%202-2-1.png ">
-<meta property="og:updated_time" content="2019-11-11T06:51:40.696Z">
+<meta property="og:updated_time" content="2022-01-16T14:20:19.403Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JNI官方文档-Chapter 2：Design Overview">
-<meta name="twitter:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 本篇主要关注JNI设计中的主要问题。这里讲述的大多数问题都与本地方法有关。Invocation API的介绍在Chapter 5中。 JNI Interface Functions and Pointers本地代码通过JNI函数可以获取JVM的一些特性。JNI函数可以通过一个接口指针获取。该接口指针">
+<meta name="twitter:description" content="Author: geneblueBlog: https://geneblue.github.io/ 本篇主要关注JNI设计中的主要问题。这里讲述的大多数问题都与本地方法有关。Invocation API的介绍在Chapter 5中。 JNI Interface Functions and Pointers本地代码通过JNI函数可以获取JVM的一些特性。JNI函数可以通过一个接口指针获取。该接口指针">
 <meta name="twitter:image" content="http://7vzu7u.com1.z0.glb.clouddn.com/JNI-chapter%202-2-1.png ">
 
 <link rel="canonical" href="http://yoursite.com/2015/07/20/JNI官方文档-Chapter 2：Design Overview/">
@@ -80,7 +80,7 @@
   };
 </script>
 
-  <title>JNI官方文档-Chapter 2：Design Overview | GeneBlue's Blog</title>
+  <title>JNI官方文档-Chapter 2：Design Overview | geneblue's blog</title>
   
 
 
@@ -124,7 +124,7 @@
     <div>
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">GeneBlue's Blog</span>
+        <span class="site-title">geneblue's blog</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -192,12 +192,12 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="name" content="geneblue">
       <meta itemprop="description" content="Personal Blog">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="GeneBlue's Blog">
+      <meta itemprop="name" content="geneblue's blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -218,7 +218,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-11-11 14:51:40" itemprop="dateModified" datetime="2019-11-11T14:51:40+08:00">2019-11-11</time>
+                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
               </span>
 
           
@@ -232,7 +232,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+        <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
 <p>本篇主要关注JNI设计中的主要问题。这里讲述的大多数问题都与本地方法有关。Invocation API的介绍在Chapter 5中。</p>
 <h3 id="JNI-Interface-Functions-and-Pointers"><a href="#JNI-Interface-Functions-and-Pointers" class="headerlink" title="JNI Interface Functions and Pointers"></a>JNI Interface Functions and Pointers</h3><p>本地代码通过JNI函数可以获取JVM的一些特性。JNI函数可以通过一个接口指针获取。该接口指针是一个双重指针（指向指针的指针）。指针指向了一个指针数组，指针数组中的每一个成员都指向一个接口函数。每一个接口函数都在数组中预定义了一个偏移地址。下图可以表明接口指针的组织关系。</p>
 <a id="more"></a>
@@ -479,9 +479,9 @@ PopLocalFrame()</code></pre>
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <img class="site-author-image" itemprop="image" alt="GeneBlue"
+  <img class="site-author-image" itemprop="image" alt="geneblue"
     src="/images/avatar.gif">
-  <p class="site-author-name" itemprop="name">GeneBlue</p>
+  <p class="site-author-name" itemprop="name">geneblue</p>
   <div class="site-description" itemprop="description">Personal Blog</div>
 </div>
 <div class="site-state-wrap motion-element">
@@ -489,14 +489,14 @@ PopLocalFrame()</code></pre>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">30</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -533,11 +533,11 @@ PopLocalFrame()</code></pre>
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">GeneBlue</span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
 </div>
 
         

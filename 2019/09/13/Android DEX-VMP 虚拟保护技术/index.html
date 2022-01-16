@@ -51,13 +51,13 @@
   };
 </script>
 
-  <meta name="description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 过去的一年，一直在忙于 Android 代码保护方面的工作。从这一年多的经验来看，Android平台的代码保护技术已经发展到相对较为稳定的阶段了。目前，市场上的加固产品比较成熟，但各家的 DEX-VMP 技术并没有发展到同一高度，其中兼容性，稳定性参差不一。 该文试图解释清楚 DEX-VMP 技术的">
+  <meta name="description" content="Author: geneblueBlog: https://geneblue.github.io/ 过去的一年，一直在忙于 Android 代码保护方面的工作。从这一年多的经验来看，Android平台的代码保护技术已经发展到相对较为稳定的阶段了。目前，市场上的加固产品比较成熟，但各家的 DEX-VMP 技术并没有发展到同一高度，其中兼容性，稳定性参差不一。 该文试图解释清楚 DEX-VMP 技术的">
 <meta name="keywords" content="Android VMP DEX">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android DEX-VMP 虚拟保护技术">
 <meta property="og:url" content="http://yoursite.com/2019/09/13/Android DEX-VMP 虚拟保护技术/index.html">
-<meta property="og:site_name" content="GeneBlue&#39;s Blog">
-<meta property="og:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 过去的一年，一直在忙于 Android 代码保护方面的工作。从这一年多的经验来看，Android平台的代码保护技术已经发展到相对较为稳定的阶段了。目前，市场上的加固产品比较成熟，但各家的 DEX-VMP 技术并没有发展到同一高度，其中兼容性，稳定性参差不一。 该文试图解释清楚 DEX-VMP 技术的">
+<meta property="og:site_name" content="geneblue&#39;s blog">
+<meta property="og:description" content="Author: geneblueBlog: https://geneblue.github.io/ 过去的一年，一直在忙于 Android 代码保护方面的工作。从这一年多的经验来看，Android平台的代码保护技术已经发展到相对较为稳定的阶段了。目前，市场上的加固产品比较成熟，但各家的 DEX-VMP 技术并没有发展到同一高度，其中兼容性，稳定性参差不一。 该文试图解释清楚 DEX-VMP 技术的">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB6257433f62df857cab1cb04a997a1093?method=download&shareKey=f07da1da1c99a6a7b7a982920d22ce3d">
 <meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBc9611c867e699c63d5cb19fe0ee65a4b?method=download&shareKey=2007fce0d8835820ce396364350e5fb6">
@@ -67,10 +67,10 @@
 <meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBa7c624129966f69861d6ec8886f757e8?method=download&shareKey=0d39c68028df6280b7ff30c089081302">
 <meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB8fb5c78dd931a972d21f28dad92efaa1?method=download&shareKey=96d1ace7d2dce421cbafb781a8853cfc">
 <meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBa3b0866c34087bbc648d46f57809f5a6?method=download&shareKey=d3b392da2ce09b3fd3f2840f5a41e34b">
-<meta property="og:updated_time" content="2019-11-11T06:50:59.303Z">
+<meta property="og:updated_time" content="2022-01-16T14:20:19.404Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android DEX-VMP 虚拟保护技术">
-<meta name="twitter:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 过去的一年，一直在忙于 Android 代码保护方面的工作。从这一年多的经验来看，Android平台的代码保护技术已经发展到相对较为稳定的阶段了。目前，市场上的加固产品比较成熟，但各家的 DEX-VMP 技术并没有发展到同一高度，其中兼容性，稳定性参差不一。 该文试图解释清楚 DEX-VMP 技术的">
+<meta name="twitter:description" content="Author: geneblueBlog: https://geneblue.github.io/ 过去的一年，一直在忙于 Android 代码保护方面的工作。从这一年多的经验来看，Android平台的代码保护技术已经发展到相对较为稳定的阶段了。目前，市场上的加固产品比较成熟，但各家的 DEX-VMP 技术并没有发展到同一高度，其中兼容性，稳定性参差不一。 该文试图解释清楚 DEX-VMP 技术的">
 <meta name="twitter:image" content="https://note.youdao.com/yws/api/personal/file/WEB6257433f62df857cab1cb04a997a1093?method=download&shareKey=f07da1da1c99a6a7b7a982920d22ce3d">
 
 <link rel="canonical" href="http://yoursite.com/2019/09/13/Android DEX-VMP 虚拟保护技术/">
@@ -87,7 +87,7 @@
   };
 </script>
 
-  <title>Android DEX-VMP 虚拟保护技术 | GeneBlue's Blog</title>
+  <title>Android DEX-VMP 虚拟保护技术 | geneblue's blog</title>
   
 
 
@@ -131,7 +131,7 @@
     <div>
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">GeneBlue's Blog</span>
+        <span class="site-title">geneblue's blog</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -199,12 +199,12 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="name" content="geneblue">
       <meta itemprop="description" content="Personal Blog">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="GeneBlue's Blog">
+      <meta itemprop="name" content="geneblue's blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -225,7 +225,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-11-11 14:50:59" itemprop="dateModified" datetime="2019-11-11T14:50:59+08:00">2019-11-11</time>
+                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
               </span>
 
           
@@ -239,7 +239,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+        <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
 <p>过去的一年，一直在忙于 Android 代码保护方面的工作。从这一年多的经验来看，Android平台的代码保护技术已经发展到相对较为稳定的阶段了。目前，市场上的加固产品比较成熟，但各家的 DEX-VMP 技术并没有发展到同一高度，其中兼容性，稳定性参差不一。</p>
 <p>该文试图解释清楚 DEX-VMP 技术的基本原理，也算是对之前工作的总结。</p>
 <a id="more"></a>
@@ -456,9 +456,9 @@
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <img class="site-author-image" itemprop="image" alt="GeneBlue"
+  <img class="site-author-image" itemprop="image" alt="geneblue"
     src="/images/avatar.gif">
-  <p class="site-author-name" itemprop="name">GeneBlue</p>
+  <p class="site-author-name" itemprop="name">geneblue</p>
   <div class="site-description" itemprop="description">Personal Blog</div>
 </div>
 <div class="site-state-wrap motion-element">
@@ -466,14 +466,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">30</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -510,11 +510,11 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">GeneBlue</span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
 </div>
 
         

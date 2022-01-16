@@ -53,13 +53,13 @@
 
   <meta name="description" content="Personal Blog">
 <meta property="og:type" content="website">
-<meta property="og:title" content="GeneBlue&#39;s Blog">
+<meta property="og:title" content="geneblue&#39;s blog">
 <meta property="og:url" content="http://yoursite.com/index.html">
-<meta property="og:site_name" content="GeneBlue&#39;s Blog">
+<meta property="og:site_name" content="geneblue&#39;s blog">
 <meta property="og:description" content="Personal Blog">
 <meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="GeneBlue&#39;s Blog">
+<meta name="twitter:title" content="geneblue&#39;s blog">
 <meta name="twitter:description" content="Personal Blog">
 
 <link rel="canonical" href="http://yoursite.com/">
@@ -76,7 +76,7 @@
   };
 </script>
 
-  <title>GeneBlue's Blog</title>
+  <title>geneblue's blog</title>
   
 
 
@@ -120,7 +120,7 @@
     <div>
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">GeneBlue's Blog</span>
+        <span class="site-title">geneblue's blog</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -184,16 +184,98 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/14/suricata/suricata-rule-ip-keywords/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/11/16/ml/01-anomaly-detection-algo-iforest/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="name" content="geneblue">
       <meta itemprop="description" content="Personal Blog">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="GeneBlue's Blog">
+      <meta itemprop="name" content="geneblue's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/11/16/ml/01-anomaly-detection-algo-iforest/" class="post-title-link" itemprop="url">iForest异常检测算法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-11-16 12:02:08" itemprop="dateCreated datePublished" datetime="2021-11-16T12:02:08+08:00">2021-11-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-16 22:20:46" itemprop="dateModified" datetime="2022-01-16T22:20:46+08:00">2022-01-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+<div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEB4746355bbf0970fab257cd8e04a4cc2f?method=download&shareKey=4cd6f3384419c589e6362ee7cc57d81b" width="1000" height="575" alt="iforest-00" align="center">
+</div>
+
+<hr>
+<div align="center">
+<img src="https://note.youdao.com/yws/api/personal/file/WEB097a4c320c54f00d92dac622ca7048c8?method=download&shareKey=eace992ae83d28f76784db569a08b363" width="384" height="288" alt="anomaly detection" align="center">
+</div>
+
+<p>我们先看一个问题，上图中你能找出哪些是异常的点？为什么认为这些是异常点呢？你有多少种方法能找出异常点？</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/11/16/ml/01-anomaly-detection-algo-iforest/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/14/suricata/suricata-rule-ip-keywords/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="geneblue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geneblue's blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -207,10 +289,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2019-12-14 14:02:08 / Modified: 20:09:21" itemprop="dateCreated datePublished" datetime="2019-12-14T14:02:08+08:00">2019-12-14</time>
+              <time title="Created: 2019-12-14 14:02:08" itemprop="dateCreated datePublished" datetime="2019-12-14T14:02:08+08:00">2019-12-14</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
+              </span>
 
           
 
@@ -223,7 +311,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+          <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
 <p>指定为 ip 协议时的一些规则项字段</p>
           <!--noindex-->
             <div class="post-button">
@@ -255,12 +343,12 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="name" content="geneblue">
       <meta itemprop="description" content="Personal Blog">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="GeneBlue's Blog">
+      <meta itemprop="name" content="geneblue's blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -282,7 +370,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-12-10 17:04:29" itemprop="dateModified" datetime="2019-12-10T17:04:29+08:00">2019-12-10</time>
+                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
               </span>
 
           
@@ -296,7 +384,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+          <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
 <p><code>Meta Keywords</code> 可以理解为是 <code>suricata</code> 的基本关键字，不与任何协议绑定，在任何规则中都可以使用</p>
           <!--noindex-->
             <div class="post-button">
@@ -328,12 +416,12 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="name" content="geneblue">
       <meta itemprop="description" content="Personal Blog">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="GeneBlue's Blog">
+      <meta itemprop="name" content="geneblue's blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -355,7 +443,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-12-10 16:03:13" itemprop="dateModified" datetime="2019-12-10T16:03:13+08:00">2019-12-10</time>
+                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
               </span>
 
           
@@ -369,7 +457,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+          <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
 <p>所谓规则 <code>rule</code> 或者签名 <code>signature</code> 就是 <code>suricata</code> 引擎在处理网络数据时，以此判断网络请求是否是恶意的，并分别对请求采取什么措施。</p>
 <p>一条简单的规则如下：</p>
 <figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alert<span class="built_in"> ip </span>any any -&gt; any any (msg: <span class="string">"HELLO"</span>; content: <span class="string">"HELLO"</span>; )</span><br></pre></td></tr></table></figure>
@@ -403,12 +491,12 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="name" content="geneblue">
       <meta itemprop="description" content="Personal Blog">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="GeneBlue's Blog">
+      <meta itemprop="name" content="geneblue's blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -430,7 +518,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-12-10 15:37:51" itemprop="dateModified" datetime="2019-12-10T15:37:51+08:00">2019-12-10</time>
+                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
               </span>
 
           
@@ -444,84 +532,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+          <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
 <p><code>suricata</code> 是一款免费，开源的 <code>IDS</code> 入侵检测引擎，而且支持 <code>ips</code>（入侵防御系统），<code>nsm</code>（网络安全监控）和离线 <code>pcap</code> 处理。另一款知名的开源 <code>IDS</code> 是 <code>Snort</code>，网络上的一般说法是 <code>suricata</code> 相较于 <code>Snort</code> 最大优势是支持多线程，另外支持 <code>ipv6</code> 并兼容 <code>Snort</code> 规则。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2019/12/05/suricata/suricata-install-on-ubuntu/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/23/cve-2019-2215-binder/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="GeneBlue">
-      <meta itemprop="description" content="Personal Blog">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="GeneBlue's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/10/23/cve-2019-2215-binder/" class="post-title-link" itemprop="url">CVE-2019-2215 Binder 内核提权漏洞简要分析</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2019-10-23 12:02:08" itemprop="dateCreated datePublished" datetime="2019-10-23T12:02:08+08:00">2019-10-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-02-22 19:33:22" itemprop="dateModified" datetime="2020-02-22T19:33:22+08:00">2020-02-22</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<p>距离上一个 binder 漏洞（水滴 <code>CVE-2019-2025</code>）只过去寥寥数月，在国庆期间，Android 内核又被爆出一个 binder 内核提权漏洞。宇宙最强安全团队 <code>google pj0</code> 已经给出了漏洞细节，详情可以看<a href="https://bugs.chromium.org/p/project-zero/issues/detail?id=1942" target="_blank" rel="noopener">这里</a>。看来 binder 模块还是值得长期关注的。这篇文章主要解释 google poc 的利用原理。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/10/23/cve-2019-2215-binder/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -581,9 +596,9 @@
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <img class="site-author-image" itemprop="image" alt="GeneBlue"
+  <img class="site-author-image" itemprop="image" alt="geneblue"
     src="/images/avatar.gif">
-  <p class="site-author-name" itemprop="name">GeneBlue</p>
+  <p class="site-author-name" itemprop="name">geneblue</p>
   <div class="site-description" itemprop="description">Personal Blog</div>
 </div>
 <div class="site-state-wrap motion-element">
@@ -591,14 +606,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">30</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -635,11 +650,11 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">GeneBlue</span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
 </div>
 
         

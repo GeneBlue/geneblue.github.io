@@ -51,18 +51,18 @@
   };
 </script>
 
-  <meta name="description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 环境123金立f103android5.0.2Linux version 3.10.65+ (android@BIANYI-26) (gcc version 4.9 20140514 (mtk-20150408) (GCC) ) #1 SMP PREEMPT Wed May 11 16:52:18">
+  <meta name="description" content="Author: geneblueBlog: https://geneblue.github.io/ 环境123金立f103android5.0.2Linux version 3.10.65+ (android@BIANYI-26) (gcc version 4.9 20140514 (mtk-20150408) (GCC) ) #1 SMP PREEMPT Wed May 11 16:52:18">
 <meta name="keywords" content="Android Kernel">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MediaTek M4U Driver Arbitrary Memory Overwrite">
 <meta property="og:url" content="http://yoursite.com/2017/10/12/MediaTek_M4U_Driver_Arbitrary_Memory_Overwrite/index.html">
-<meta property="og:site_name" content="GeneBlue&#39;s Blog">
-<meta property="og:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 环境123金立f103android5.0.2Linux version 3.10.65+ (android@BIANYI-26) (gcc version 4.9 20140514 (mtk-20150408) (GCC) ) #1 SMP PREEMPT Wed May 11 16:52:18">
+<meta property="og:site_name" content="geneblue&#39;s blog">
+<meta property="og:description" content="Author: geneblueBlog: https://geneblue.github.io/ 环境123金立f103android5.0.2Linux version 3.10.65+ (android@BIANYI-26) (gcc version 4.9 20140514 (mtk-20150408) (GCC) ) #1 SMP PREEMPT Wed May 11 16:52:18">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-11-11T06:51:54.345Z">
+<meta property="og:updated_time" content="2022-01-16T14:20:19.404Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MediaTek M4U Driver Arbitrary Memory Overwrite">
-<meta name="twitter:description" content="Author: GeneBlueBlog: https://geneblue.github.io/ 环境123金立f103android5.0.2Linux version 3.10.65+ (android@BIANYI-26) (gcc version 4.9 20140514 (mtk-20150408) (GCC) ) #1 SMP PREEMPT Wed May 11 16:52:18">
+<meta name="twitter:description" content="Author: geneblueBlog: https://geneblue.github.io/ 环境123金立f103android5.0.2Linux version 3.10.65+ (android@BIANYI-26) (gcc version 4.9 20140514 (mtk-20150408) (GCC) ) #1 SMP PREEMPT Wed May 11 16:52:18">
 
 <link rel="canonical" href="http://yoursite.com/2017/10/12/MediaTek_M4U_Driver_Arbitrary_Memory_Overwrite/">
 
@@ -78,7 +78,7 @@
   };
 </script>
 
-  <title>MediaTek M4U Driver Arbitrary Memory Overwrite | GeneBlue's Blog</title>
+  <title>MediaTek M4U Driver Arbitrary Memory Overwrite | geneblue's blog</title>
   
 
 
@@ -122,7 +122,7 @@
     <div>
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">GeneBlue's Blog</span>
+        <span class="site-title">geneblue's blog</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -190,12 +190,12 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="GeneBlue">
+      <meta itemprop="name" content="geneblue">
       <meta itemprop="description" content="Personal Blog">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="GeneBlue's Blog">
+      <meta itemprop="name" content="geneblue's blog">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -216,7 +216,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-11-11 14:51:54" itemprop="dateModified" datetime="2019-11-11T14:51:54+08:00">2019-11-11</time>
+                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
               </span>
 
           
@@ -230,7 +230,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p><strong>Author: GeneBlue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+        <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
 <h3 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h3><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">金立<span class="selector-tag">f103</span></span><br><span class="line"><span class="selector-tag">android5</span><span class="selector-class">.0</span><span class="selector-class">.2</span></span><br><span class="line"><span class="selector-tag">Linux</span> <span class="selector-tag">version</span> <span class="selector-tag">3</span><span class="selector-class">.10</span><span class="selector-class">.65</span>+ (android<span class="variable">@BIANYI-26</span>) (gcc version <span class="number">4.9</span> <span class="number">20140514</span> (mtk-<span class="number">20150408</span>) (GCC) ) <span class="selector-id">#1</span> <span class="selector-tag">SMP</span> <span class="selector-tag">PREEMPT</span> <span class="selector-tag">Wed</span> <span class="selector-tag">May</span> <span class="selector-tag">11</span> <span class="selector-tag">16</span><span class="selector-pseudo">:52</span><span class="selector-pseudo">:18</span> <span class="selector-tag">CST</span> <span class="selector-tag">2016</span></span><br></pre></td></tr></table></figure>
 
 <a id="more"></a>
@@ -321,9 +321,9 @@
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <img class="site-author-image" itemprop="image" alt="GeneBlue"
+  <img class="site-author-image" itemprop="image" alt="geneblue"
     src="/images/avatar.gif">
-  <p class="site-author-name" itemprop="name">GeneBlue</p>
+  <p class="site-author-name" itemprop="name">geneblue</p>
   <div class="site-description" itemprop="description">Personal Blog</div>
 </div>
 <div class="site-state-wrap motion-element">
@@ -331,14 +331,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">30</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -375,11 +375,11 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">GeneBlue</span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
 </div>
 
         
