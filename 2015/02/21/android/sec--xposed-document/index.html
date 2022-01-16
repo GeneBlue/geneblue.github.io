@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 英文原版地址：这里 注：文档去掉了Xposed Module建立的过程，上述地址介绍的比较详细且容易看懂。有些地方翻译的比较生硬，还是查看对应的英文文档比较好。  Development tutorial Xposed原理 在Android运行时空间里（Android runtime)有一个非常重">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Xposed翻译文档">
+<meta property="og:url" content="http://yoursite.com/2015/02/21/android/sec--xposed-document/index.html">
+<meta property="og:site_name" content="geneblue&#39;s blog">
+<meta property="og:description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 英文原版地址：这里 注：文档去掉了Xposed Module建立的过程，上述地址介绍的比较详细且容易看懂。有些地方翻译的比较生硬，还是查看对应的英文文档比较好。  Development tutorial Xposed原理 在Android运行时空间里（Android runtime)有一个非常重">
+<meta property="og:locale">
+<meta property="article:published_time" content="2015-02-21T04:02:08.000Z">
+<meta property="article:modified_time" content="2022-01-16T15:49:52.430Z">
+<meta property="article:author" content="geneblue">
+<meta property="article:tag" content="android sec">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2015/02/21/android/sec--xposed-document/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Xposed翻译文档 | geneblue's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">geneblue's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/02/21/android/sec--xposed-document/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="geneblue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geneblue's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          Xposed翻译文档
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2015-02-21 12:02:08" itemprop="dateCreated datePublished" datetime="2015-02-21T12:02:08+08:00">2015-02-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<p>英文原版地址：<a
+target="_blank" rel="noopener" href="https://github.com/rovo89/XposedBridge/wiki/Development-tutorial">这里</a></p>
+<p>注：文档去掉了Xposed
+Module建立的过程，上述地址介绍的比较详细且容易看懂。有些地方翻译的比较生硬，还是查看对应的英文文档比较好。</p>
+<hr />
+<h3 id="development-tutorial">Development tutorial</h3>
+<h4 id="xposed原理">Xposed原理</h4>
+<p>在Android运行时空间里（Android
+runtime)有一个非常重要的进程是“Zygote”。每个Android应用程序的启动都是由Zygote进程fork而出的。当手机启动的时候，Zygote进程就会由/init.rc脚本启动。最终由/system/bin/app_process进程完成Zygote进程的启动，app_process进程会加载一些必要的类库并初始化一些方法。</p>
+<span id="more"></span>
+<p>Xposed会参与到上述Zygote的启动过程。当安装完Xposed框架后，一个修改的并被扩展的app_process可执行程序会被拷贝到/system/bin目录下，原有的app_process文件会被更名为app_process.orig（卸载Xposed后会恢复原有的app_process文件）。这个扩展的app_process程序会添加额外的jar包到环境变量中去并且会在恰当的地方调用方法。例如，在VM刚被创建之后，Zygote的main方法会被调用。在main方法中，Xposed会成为Zygote的一部分并可以在它的上下文做一些处理。</p>
+<p>被加载的jar包位于/data/data/de.robv.android.xposed.installer/bin/XposedBridge.jar
+上述描述的过程会在XposedBridge类的main方法中体现，Zygote进程早期启动时，这个main方法会被调用。一些初始化过程和模块也会被处理。</p>
+<h4 id="方法的hook替换">方法的hook/替换</h4>
+<p>Xposed真正起作用的部分是能够hook方法的调用。当你通过反编译对APK文件做修改的时候，你可以直接在任何你想在的地方插入或改变命令。但是，最终你需要重编译并签名该APK文件。当使用Xposed中的hook方法后，你不必再修改APK源码。反而，你可以使用
+before 和after 方法注入自己的代码。before和after
+方法都是很小的java代码单元。</p>
+<p>XposedBridge有一个私有的本地方法
+hookMethodNative。这个方法也是在那个扩展的app_process中实现的。这样会将hookMethodNative这个方法类型改变为“本地”方法并且会链接这个方法的实现到它的泛型方法。也就是说每次被hook的方法被调用时，泛型方法就会被调用而且调用者并不知道。在hookMethodNative方法中，XposedBridge中的handleHookedMethod方法通过方法的参数，this引用等被调用了。然后这个方法会调用回调函数，这个回调函数已经为这个方法调用注册过了。这些可以为调用改变参数，可以改变
+instance/static
+变量，调用其它方法，在返回结果中做一些处理等或者跳过任何部分。这是很复杂的。</p>
+<h4
+id="使用反射reflection来查找并hook一个方法">使用反射reflection来查找并hook一个方法</h4>
+<p>在编写Xposed
+Module程序时，一般在入口类(xposed_init文件中声明的类）中使用反射进入到要hook的程序进程。</p>
+<p>findAndHookMethod这个helper类会使用classLoader来定位要hook的具体函数。如果要hook的函数带有参数，还要在findAndHookMethod的参数列表中列出来，参数列表的最后一个参数是XC_MethodHook
+类。对于较小的修改，可以使用匿名类，但对于较大的代码修改，最好创建一个普通的类并给出类的实例。最终，方法的hook会有findAndHookMethod函数完成。
+在XC_MethodHook中有两个方法（beforeHookedMethod and
+afterHookedMethod)可以被override。这两个方法分别是在被hook的原方法
+前或后 被执行。beforeHookedMethod方法可以通过 param.args 篡改
+要hook的方法的参数，甚至可以通过发送自己的返回值阻止原方法的调用。afterHookedMethod方法可以在得到原方法的返回值的基础上做其他处理，当然也就可以做到返回值的虚假。在这两个方法中，我们还可以增添自己的代码到要Hook的方法中去执行。
+如果想要整个替换掉方法，可以使用XC_MethodHook的子类XC_MethodReplacement，使用这个类时只要override
+replaceHookedMethod方法即可。</p>
+<hr />
+<h3 id="helpers">Helpers</h3>
+<p>下面介绍Xposed中的helper
+方法，使用这个方法可以让我们更方便地开发Xposed Module程序。</p>
+<h4 id="在类-xposedbridge中">在类 XposedBridge中</h4>
+<h5 id="log方法">log方法</h5>
+<p>log方法比较简单，它可以将log信息输出到标准的logcat程序中，也能输出到/data/xposed/debug.log文件中。它可以捕获log信息或者一个异常。对于异常，它会打印栈跟踪信息stack
+trace。</p>
+<h5
+id="hookallmethods和hookallconstructors方法">hookAllMethods和hookAllConstructors方法</h5>
+<p>如果想通过明确的函数名或者一个类的构造函数
+来hook所有的方法，我们可以使用这两个方法。如果要hook的类有不同的变体，这将是很有用的，但你想执行的代码（before/after）已经被调用了。注意其他不同的ROM可能也会有不同的变体，那么他们也会被hook。特别要留意你得到的回调函数的参数。</p>
+<h4 id="在类xposedhelpers中">在类XposedHelpers中</h4>
+<p>推荐将这个类添加到Eclipse的favorites下作为static
+imports。具体过程是：Windows=&gt;Preferences=&gt;Java=&gt;Editor=&gt;Content
+Assist=&gt;Favorites=&gt;New
+Type,键入de.robv.android.xposed.XposedHelpers。通过这种做法，Eclipse会自动在你写代码时提示这个类中的方法，并将这个类以静态方式import到你的类中。</p>
+<h5
+id="findmehtodfindconstructorfindfield方法">findMehtod/findConstructor/findField方法</h5>
+<p>上述三种方法可以不适用反射技术来检索methods，constructors和fields。当然，你可以使用“best
+match”通过确切的参数类型来查找methods和constructors。例如：调用findMethodBestMatch(Class&lt;?&gt;
+clazz,String methodName,Object… args)</p>
+<h5
+id="callmethodcallstaticmethodnewinstance方法">callMethod/callStaticMethod/newInstance方法</h5>
+<p>通过利用上述的findxxx
+方法，可以很容易地调用方法或创建一个类的实例。调用者无需对此使用反射。在这之前不许检索方法，仅仅使用上述三个方法就可以做到即时调用。参数类型会自动地从实际参数值和被调用的best-matching方法中拷贝过来。假使你想要精确地为一个参数指定类型，那么需要创建一个
+Class&lt;?&gt;数组并传递给callMethod/callStaticMethod/newInstance方法。你可以丢弃数组中一些null值仅仅使用类的实际参数，但是数组的长度不得不与参数的数量想匹配。</p>
+<h5
+id="getxxxfieldsetxxxfieldgetstaticxxxfieldsetstaticxxxfield方法">getxxxField/setxxxField/getStaticxxxField/setStaticxxxField方法</h5>
+<p>上述四种方法常被使用来获取或设置实例的内容和类的变量。只需要获得对对象的引用，就可以获得对象的field的名称和类型。如果你想要
+get/set
+一个静态的字段，并且没有对象的引用，那么这时就可以使用getStaticxxx和setStaticxxx方法。当你获得一个对象的引用时，就可以使用getxxx和setxxx方法，因为没必要再区分静态和实例字段。</p>
+<h5
+id="getadditionalxxxfieldsetadditionalxxxfield方法">getAdditionalxxxField/setAdditionalxxxField方法</h5>
+<p>上面的两个方法可以让你要么与一个对象的实例关联任何值，要么与整个类关联任何值。这些值都是以键值对的形式存储在map中，所以你可以为每个对象保存许多值。键名key可以是string类型的，包括对象真实的字段名。请注意你不能通过调用getAdditionalInstanceField方法来检索一个以setAdditionalStaticField方法存储的值。使用getAdditionalStaticField方法可以。</p>
+<p>#####assetAsByteArray方法
+这个方法可以将一个asset资源以字节数组的形式返回。如果想要加载module的资源，可以通过以下的方法实现：</p>
+<pre><code>public class XposedTweakbox implements IXposedHookZygoteInit &#123;
+  @Override
+  public void initZygote(StartupParam startupParam) throws Throwable &#123;
+      Resources tweakboxRes = XModuleResources.createInstance(startupParam.modulePath, null);
+      byte[] crtPatch = assetAsByteArray(tweakboxRes, &quot;crtfix_samsung_d506192d5049a4042fb84c0265edfe42.bsdiff&quot;);
+...</code></pre>
+<h5 id="getmd5sum方法">getMD5Sum方法</h5>
+<p>这个方法可以返回文件系统中的一个文件的md5值。这需要app有对文件读取的权限。</p>
+<h5 id="getprocesspid方法">getProcessPid方法</h5>
+<p>这个方法可以通过它的/proc/[pid]/cmdline的第一部分找到一个进程并且以字符串的形式返回PID。</p>
+<hr />
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android-sec/" rel="tag"># android sec</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2015/02/10/android/sec--xposed-demo-analyze/" rel="next" title="Xposed demo分析">
+                  <i class="fa fa-chevron-left"></i> Xposed demo分析
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2015/02/27/android/sec--xposed-plugin-tutorial/" rel="prev" title="Xposed插件编写流程">
+                  Xposed插件编写流程 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#development-tutorial"><span class="nav-number">1.</span> <span class="nav-text">Development tutorial</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#xposed%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.</span> <span class="nav-text">Xposed原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E7%9A%84hook%E6%9B%BF%E6%8D%A2"><span class="nav-number">1.2.</span> <span class="nav-text">方法的hook&#x2F;替换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%8F%8D%E5%B0%84reflection%E6%9D%A5%E6%9F%A5%E6%89%BE%E5%B9%B6hook%E4%B8%80%E4%B8%AA%E6%96%B9%E6%B3%95"><span class="nav-number">1.3.</span> <span class="nav-text">使用反射reflection来查找并hook一个方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#helpers"><span class="nav-number">2.</span> <span class="nav-text">Helpers</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8%E7%B1%BB-xposedbridge%E4%B8%AD"><span class="nav-number">2.1.</span> <span class="nav-text">在类 XposedBridge中</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#log%E6%96%B9%E6%B3%95"><span class="nav-number">2.1.1.</span> <span class="nav-text">log方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#hookallmethods%E5%92%8Chookallconstructors%E6%96%B9%E6%B3%95"><span class="nav-number">2.1.2.</span> <span class="nav-text">hookAllMethods和hookAllConstructors方法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8%E7%B1%BBxposedhelpers%E4%B8%AD"><span class="nav-number">2.2.</span> <span class="nav-text">在类XposedHelpers中</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#findmehtodfindconstructorfindfield%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.1.</span> <span class="nav-text">findMehtod&#x2F;findConstructor&#x2F;findField方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#callmethodcallstaticmethodnewinstance%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.2.</span> <span class="nav-text">callMethod&#x2F;callStaticMethod&#x2F;newInstance方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#getxxxfieldsetxxxfieldgetstaticxxxfieldsetstaticxxxfield%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.3.</span> <span class="nav-text">getxxxField&#x2F;setxxxField&#x2F;getStaticxxxField&#x2F;setStaticxxxField方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#getadditionalxxxfieldsetadditionalxxxfield%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.4.</span> <span class="nav-text">getAdditionalxxxField&#x2F;setAdditionalxxxField方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#getmd5sum%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.5.</span> <span class="nav-text">getMD5Sum方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#getprocesspid%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.6.</span> <span class="nav-text">getProcessPid方法</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="geneblue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">geneblue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

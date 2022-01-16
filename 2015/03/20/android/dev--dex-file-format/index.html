@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 为了更好了解DEX文件格式，写了个java版的DEX解析器，可以打印出一个dex文件中的字符串，字段和类中调用了哪些方法。具体代码见这里 0X01 准备工作 java文件为Hello.java: public class Hello &amp;#123;    public int foo(int a,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dex文件格式">
+<meta property="og:url" content="http://yoursite.com/2015/03/20/android/dev--dex-file-format/index.html">
+<meta property="og:site_name" content="geneblue&#39;s blog">
+<meta property="og:description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 为了更好了解DEX文件格式，写了个java版的DEX解析器，可以打印出一个dex文件中的字符串，字段和类中调用了哪些方法。具体代码见这里 0X01 准备工作 java文件为Hello.java: public class Hello &amp;#123;    public int foo(int a,">
+<meta property="og:locale">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB0ef986a25d4c34b9666ebfd549e0eb19?method=download&shareKey=a75f054483173cc3e79f8d7a28fa0f15">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB5e6bbac67f4de9380f411497f9fc0036?method=download&shareKey=3f12c8b18a053e6d50e9fc19cbd7dc33">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBd14193fefc50e5b33038d27d78964942?method=download&shareKey=979eba13601aee56eae6c2f52f18112a">
+<meta property="article:published_time" content="2015-03-20T04:26:08.000Z">
+<meta property="article:modified_time" content="2022-01-16T15:49:52.429Z">
+<meta property="article:author" content="geneblue">
+<meta property="article:tag" content="android dev">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://note.youdao.com/yws/api/personal/file/WEB0ef986a25d4c34b9666ebfd549e0eb19?method=download&shareKey=a75f054483173cc3e79f8d7a28fa0f15">
+
+<link rel="canonical" href="http://yoursite.com/2015/03/20/android/dev--dex-file-format/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Dex文件格式 | geneblue's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">geneblue's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/03/20/android/dev--dex-file-format/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="geneblue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geneblue's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          Dex文件格式
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2015-03-20 12:26:08" itemprop="dateCreated datePublished" datetime="2015-03-20T12:26:08+08:00">2015-03-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<p>为了更好了解DEX文件格式，写了个java版的DEX解析器，可以打印出一个dex文件中的字符串，字段和类中调用了哪些方法。具体代码见<a
+target="_blank" rel="noopener" href="https://github.com/GeneBlue/DexFunctions">这里</a></p>
+<h3 id="x01-准备工作">0X01 准备工作</h3>
+<p>java文件为Hello.java:</p>
+<pre><code>public class Hello &#123;
+   public int foo(int a, int b) &#123;
+       return (a + b) * (a - b);
+   &#125;
+
+   public static void main(String[] argc) &#123;
+       Hello hello = new Hello();
+       System.out.println(hello.foo(5, 3));
+   &#125;
+&#125;</code></pre>
+<span id="more"></span>
+<p>将java文件编译成class字节码文件，然后将class字节码转换成dex字节码文件，命令如下：</p>
+<p>javac -source 1.6 -target 1.6 Hello.java
+//这里需要指定JDK的版本号，不然会出错</p>
+<p>dx.bat --dex --output=Hello.dex Hello.class</p>
+<h3 id="x02-整体分析">0X02 整体分析</h3>
+<p>DEX文件的结构图如下：</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB0ef986a25d4c34b9666ebfd549e0eb19?method=download&shareKey=a75f054483173cc3e79f8d7a28fa0f15"  alt="dex"/></p>
+</div>
+<p>从上图可以看出DEX文件结构共包含9个部分，MapSection是包含在DataSection中的。</p>
+<p>将生成的Hello.dex文件用任意的16进制编辑器打开后就会得到如下的编码：</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB5e6bbac67f4de9380f411497f9fc0036?method=download&shareKey=3f12c8b18a053e6d50e9fc19cbd7dc33"  alt="dex"/></p>
+</div>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBd14193fefc50e5b33038d27d78964942?method=download&shareKey=979eba13601aee56eae6c2f52f18112a"  alt="dex"/></p>
+</div>
+<h3 id="x03-详细分析">0X03 详细分析</h3>
+<h4 id="dexheader">DexHeader</h4>
+<table>
+<tbody>
+<tr>
+<td>
+<em>字段名称</em>
+</td>
+<td>
+<em>偏移值</em>
+</td>
+<td>
+<em>长度</em>
+</td>
+<td>
+<em>描述</em>
+</td>
+</tr>
+<tr>
+<td>
+magic
+</td>
+<td>
+0x0
+</td>
+<td>
+8
+</td>
+<td>
+魔数字段，值为“dex/n035/0”标识文件类型 目前android dex文件版本为035
+</td>
+</tr>
+<tr>
+<td>
+signature
+</td>
+<td>
+0xC
+</td>
+<td>
+20
+</td>
+<td>
+SHA-1签名值
+</td>
+</tr>
+<tr>
+<td>
+file_size
+</td>
+<td>
+0x20
+</td>
+<td>
+4
+</td>
+<td>
+此dex文件的大小
+</td>
+</tr>
+<tr>
+<td>
+header_size
+</td>
+<td>
+0x24
+</td>
+<td>
+4
+</td>
+<td>
+dex文件头长度，035版本是0x70个字节
+</td>
+</tr>
+<tr>
+<td>
+endian_tag
+</td>
+<td>
+0x28
+</td>
+<td>
+4
+</td>
+<td>
+表明数据存储方式是大端还是小端，默认值为0x78563412
+</td>
+</tr>
+<tr>
+<td>
+link_size
+</td>
+<td>
+0x2C
+</td>
+<td>
+4
+</td>
+<td>
+连接段的大小，如果为0就表示是静态连接。
+</td>
+</tr>
+<tr>
+<td>
+link_of
+</td>
+<td>
+0x30
+</td>
+<td>
+4
+</td>
+<td>
+连接段的开始位置，从本文件头开始算起。如果连接段的大小为0，这里也是0
+</td>
+</tr>
+<tr>
+<td>
+map_off
+</td>
+<td>
+0x34
+</td>
+<td>
+4
+</td>
+<td>
+map数据基地址
+</td>
+</tr>
+<tr>
+<td>
+string_ids_size
+</td>
+<td>
+0x38
+</td>
+<td>
+4
+</td>
+<td>
+字符串列表的字符串个数。
+</td>
+</tr>
+<tr>
+<td>
+string_ids_off
+</td>
+<td>
+0x3C
+</td>
+<td>
+4
+</td>
+<td>
+字符串列表表基地址。
+</td>
+</tr>
+<tr>
+<td>
+type_ids_size
+</td>
+<td>
+0x40
+</td>
+<td>
+4
+</td>
+<td>
+类型列表里类型个数。
+</td>
+</tr>
+<tr>
+<td>
+type_ids_off
+</td>
+<td>
+0x44
+</td>
+<td>
+4
+</td>
+<td>
+类型列表基地址。
+</td>
+</tr>
+<tr>
+<td>
+proto_ids_size
+</td>
+<td>
+0x48
+</td>
+<td>
+4
+</td>
+<td>
+原型列表里原型个数。
+</td>
+</tr>
+<tr>
+<td>
+proto_ids_off
+</td>
+<td>
+0x4C
+</td>
+<td>
+4
+</td>
+<td>
+原型列表基地址。
+</td>
+</tr>
+<tr>
+<td>
+field_ids_size
+</td>
+<td>
+0x50
+</td>
+<td>
+4
+</td>
+<td>
+字段列表里字段个数。
+</td>
+</tr>
+<tr>
+<td>
+field_ids_off
+</td>
+<td>
+0x54
+</td>
+<td>
+4
+</td>
+<td>
+字段列表基地址。
+</td>
+</tr>
+<tr>
+<td>
+method_ids_size
+</td>
+<td>
+0x58
+</td>
+<td>
+4
+</td>
+<td>
+方法列表里方法个数。
+</td>
+</tr>
+<tr>
+<td>
+method_ids_off
+</td>
+<td>
+0x5C
+</td>
+<td>
+4
+</td>
+<td>
+方法列表基地址。
+</td>
+</tr>
+<tr>
+<td>
+class_defs_size
+</td>
+<td>
+0x60
+</td>
+<td>
+4
+</td>
+<td>
+类定义类表中类的个数。
+</td>
+</tr>
+<tr>
+<td>
+class_defs_off
+</td>
+<td>
+0x64
+</td>
+<td>
+4
+</td>
+<td>
+类定义列表基地址。
+</td>
+</tr>
+<tr>
+<td>
+data_size
+</td>
+<td>
+0x68
+</td>
+<td>
+4
+</td>
+<td>
+数据段的大小，必须以4字节对齐。
+</td>
+</tr>
+<tr>
+<td>
+data_off
+</td>
+<td>
+0x6C
+</td>
+<td>
+4
+</td>
+<td>
+数据段基地址。
+</td>
+</tr>
+</tbody>
+</table>
+<p>需要注意的是DexHeader中描述的从DexStringTable到DexClassDefTable的size并不是指这个Table的字节数，而是这些Table中各个量的个数。</p>
+<p>checksum字段是从0x12处开始至dex文件尾的校验和，采用的是adler32算法。</p>
+<p>signature字段是从0x32处开始至dex文件尾的sha-1签名</p>
+<h4 id="dexstringtable">DexStringTable</h4>
+<p>从上面的DexHeader结构处的具体值可以看出，DexStringTable的描述数据是
+10 00 00 00 70 00 00
+00，也就是存在0x10个类型的值，DexStringTable的偏移地址是0x70
+在此表中并未储存任何数据，只是保存了这些字符串数据在Data段中的偏移地址。每4个字节表示一个字符串地址，其结构声明DexStringId为:</p>
+<pre><code>struct DexStringId&#123;
+    u4  stringDataOff;     //字符串数据偏移
+&#125;;</code></pre>
+<p>从数据中可以看出，第一个字符串的偏移地址是0x1CA，即从该地址处开始使用MUTF-8编码方式开始解读字符串，关于MUTF-8编码是Android中自定义的一种编码方式。对于一个字符串由两部分编码组成uleb128和utf-8，uleb128编码指定该字符串中含有多少个字符，utf-8编码使用1-3个字节表示一个字符。</p>
+<p>通过分析一个较大的dex文件的字符串信息可知，字符串在dex文件中存储是按照字典顺序排列的，通常在开始处是换行符和空格符之类的，注意在dex中排列在一起的多个空格符被当作一个字符串（多个空格组成的字符串）来看待</p>
+<h4 id="dexprototable">DexProtoTable</h4>
+<p>这里存放着方法声明的结构体，根据DexHeader中提供的数据04 00 00 00 CC
+00 00 00
+可知，共有0x04个方法声明，此表的偏移地址是0xcc。结构体信息如下：</p>
+<pre><code>  struct DexProtoId&#123;
+   u4 shortIdx;        //方法声明字符串，指向DexStringId列表的索引
+   u4 returnTypeIdx;   //方法返回类型字符串，指向DexTypeId列表的索引
+   u4 parametersOff;   //方法的参数列表，指向DexTypeList的偏移，这是一个结构体,当指向的偏移地址为0时表示
+  &#125;;                      //没有参数信息</code></pre>
+<p>DexTypeList的结构信息如下：</p>
+<pre><code>   struct DexTypeList&#123;
+   u4 size;                  //表示DexTypeItem的个数，也就是参数的个数
+   DexTypeItem list[1];   //这是个结构
+   &#125;;</code></pre>
+<p>DexTypeItem的结构信息如下：</p>
+<pre><code>  struct DexTypeItem&#123;
+   u2 typeIdx;               //指向DexTypeId列表的序号，这里的序号值仅跟着上述结构中的size地址后
+  &#125;;</code></pre>
+<p>上面数据段中的红色区域就是方法声明的参数列表信息，共计有3个参数列表，可以看出这里对数据做了对齐处理。</p>
+<h4 id="dexfieldtable">DexFieldTable</h4>
+<p>这个表中记录的数据全部是字段的索引值，指明了字段所在的类，字段的类型以及字段名。其结构如下：</p>
+<pre><code> struct  DexFieldId&#123;
+        u2  classIdx;            //类的类型，指向DexTypeId列表的索引
+        u2  typeIdx;            //字段的类型，指向DexTypeId列表的索引
+        u4  nameIdx;         //字段名，指向DexStringId列表的索引
+  &#125;;</code></pre>
+<h4 id="dexmethodtable">DexMethodTable</h4>
+<p>这个表和DexFieldTable表基本相同，记录的数据也都是索引值，指明了方法所在的类，方法的声明和方法名。其结构如下：</p>
+<pre><code> struct  DexMethodId&#123;
+        u2  classIdx;            //类的类型，指向DexTypeId列表的索引
+        u2  protoldx;            //声明的类型，指向DexProtoId列表的索引
+        u4  nameIdx;         //字段名，指向DexStringId列表的索引
+  &#125;;</code></pre>
+<h4 id="dexclassdeftable">DexClassDefTable</h4>
+<p>DexHeader中给出该表的数据描述是01 00 00 00 2C 01 00 00
+，说明该表存在一个类定义结构，偏移地址是0x01c2。该表中存放的结构体为DexClassDef,共计32个byte:</p>
+<pre><code> struct DexClassDef&#123;
+     u4  classIdx;        //类的类型，指向DexTypeId列表的索引
+     u4  accessFlags;     //访问标志
+     u4  superclassIdx;   //父类类型，指向DexTypeId列表的索引
+     u4  interfacesOff;   //接口，指向DexTypeList的偏移
+     u4  sourceFileIdx;   //源文件名，指向DexStringId列表的索引
+     u4  annotationsOff;  //注解，指向DexAnnotationsDirectoryItem结构，
+     u4  classDataOff;    //指向DexClassData结构的偏移，类的数据部分
+     u4  statiValuesOff;  //指向DexEncodedArray结构的偏移，记录类中的静态数据，为0表示无静态数据
+ &#125;;</code></pre>
+<p>accessFlags字段是类的访问标志，它是以ACC_开头的一个枚举值。
+interfacesOff字段会指向一个DexTypeList结构，否则值为0
+DexClassData结构的声明为，结构大小最多56byte：</p>
+<pre><code>       struct DexClassData&#123;
+              DexClassDataHeader   header;                     //指定字段与方法的个数                  
+              DexField*                       staticFields;             //静态字段，DexField结构
+              DexField*                       instanceFields;        //实例字段，DexField结构
+              DexMethod*                 directMethods;       //直接方法，DexMethod结构
+              DexMethod*                 virtualMethods;      //虚方法，DexMethod结构
+       &#125;;</code></pre>
+<p>DexClassDataHeader结构声明为，结构大小最多为16byte：</p>
+<pre><code>       sturct  DexClassDataHeader&#123;
+              u4  staticFieldsSize;             //静态字段个数
+              u4  instanceFieldsSize;       //实例字段个数
+              u4  directMethodsSize;      //直接方法个数
+              u4   virualMethodsSize;     //虚方法个数
+        &#125;;</code></pre>
+<p>注意：DexClassData结构和DexClassDataHeader结构均定义在DexClass.h文件中，该文件中所有结构的u4类型的字段其实都是uleb128类型的。
+DexField结构描述了字段的类型和访问标志，其声明为：</p>
+<pre><code>        struct  DexField&#123;
+               u4  fieldIdx;              //指向DexFieldId的索引
+               u4  accessFlags;      //访问标志，与DexClassDef结构中accessFlags字段的类型相同
+         &#125;;</code></pre>
+<p>DexMethod结构描述方法的原型，名称，访问标志和代码的数据块，其声明为：</p>
+<pre><code>        struct  DexMethod&#123;
+               u4   methodIdx;        //这是一个相对于上一个方法的偏移值
+               u4  accessFlags;        //访问表示，与上述相同
+               u4  codeOff;              //指向DexCode结构的偏移
+        &#125; ;</code></pre>
+<p>需要注意的是methodIdx字段，在dex文件中类中的方法是按照字母表的顺序排列的，methodIdx字段并不是指向DexMethodId的索引，它只是相对于上一个方法的偏移值，比如说：第一个方法此处值为1表明是DexMethodIdx[1],第二个方法此处值也是1，这个1是相对于第一个方法的偏移表明是DexMethodIdx[2]。</p>
+<p>DexCode结构描述了方法详尽的信息和方法中指令的内容，其声明为：</p>
+<pre><code>       struct  DexCode&#123;
+              u2  registersSize;        //使用的寄存器的个数
+              u2  insSize;                  //参数的个数
+              u2 outsSize;     //调用其它方法时使用的寄存器的个数
+              u2  triesSize;               //Try/Catch的个数
+              u4  debugInfoOff;      //指向调试信息的偏移
+              u4  insnsSize;              //指令集个数，以2字节为单位
+              u2  insns[1];                  //指令集
+        &#125;;</code></pre>
+<p>详细的指令参见delavik opcode。</p>
+<h4 id="dexmapsection">DexMapSection</h4>
+<p>最终来看看，该段中放了什么东西。在DexHeader中给出该段的偏移地址0x0290,该段其实是一个映射表，虚拟机在解析dex文件时会将其映射成DexMapList数据结构。其结构是：</p>
+<pre><code>        struct DexMapList&#123;
+               u4  size;                           //表示下面会存储多少个DexMapItem结构
+               DexMapItem  list[1];     //DexMapItem结构
+         &#125;;</code></pre>
+<p>DexMapItem的结构声明为：</p>
+<pre><code>         struct DexMapItem&#123;
+                u2  type;            //枚举常量，对应dex中数据类型
+                u2  unused;       //未使用，便于字节对齐
+                u4  size;             //指定类型的个数
+                u4  offset;         //指定类型数据的文件偏移
+         &#125;;</code></pre>
+<p>type枚举常量的具体表示如下：</p>
+<pre><code> enum &#123;
+    kDexTypeHeaderItem                   = 0x0000;
+    kDexTypeStringIdItem                 = 0x0001;
+    kDexTypeTypeIdItem                   = 0x0002;
+    kDexTypeProtoIdItem                  = 0x0003;
+    kDexTypeFieldIdItem                  = 0x0004;
+    kDexTypeMethodIdItem                 = 0x0005;
+    kDexTypeClassDefItem                 = 0x0006;
+    kDexTypeMapList                      = 0x1000;
+    kDexTypeTypeList                     = 0x1001;
+    kDexTypeAnnotationSetRefList         = 0x1002;
+    kDexTypeAnnotationSetItem            = 0x1003;
+    kDexTypeClassDataItem                = 0x2000;
+    kDexTypeCodeItem                     = 0x2001;
+    kDexTypeStringDataItem               = 0x2002;
+    kDexTypeDebugInfoItem                = 0x2003;
+    kDexTypeAnnotationItem               = 0x2004;
+    kDexTypeEncodeArrayItem              = 0x2005;
+    kDexTypeAnnotationsDirectoryItem     = 0x2006;
+  &#125;;</code></pre>
+<h3 id="x04-附录">0X04 附录</h3>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="http://zhiwei.li/text/2010/12/dex%E6%96%87%E4%BB%B6%E7%AD%BE%E5%90%8D%E5%92%8C%E6%A0%A1%E9%AA%8C%E5%92%8C/">dex文件签名和校验和</a></li>
+<li><a
+target="_blank" rel="noopener" href="http://blog.csdn.net/androidsecurity/article/details/9428861">Android
+DEX安全攻防战</a></li>
+<li><a
+target="_blank" rel="noopener" href="http://blog.csdn.net/androidsecurity/article/details/8664778">Dex文件结构</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android-dev/" rel="tag"># android dev</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2015/03/18/android/sec--debug-android-so-lib/" rel="next" title="so文件的调试方法">
+                  <i class="fa fa-chevron-left"></i> so文件的调试方法
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2015/04/20/android/dev--android-dev-errors/" rel="prev" title="Android开发中错误解决（持续更新）">
+                  Android开发中错误解决（持续更新） <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#x01-%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">0X01 准备工作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#x02-%E6%95%B4%E4%BD%93%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">0X02 整体分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#x03-%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">0X03 详细分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#dexheader"><span class="nav-number">3.1.</span> <span class="nav-text">DexHeader</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dexstringtable"><span class="nav-number">3.2.</span> <span class="nav-text">DexStringTable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dexprototable"><span class="nav-number">3.3.</span> <span class="nav-text">DexProtoTable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dexfieldtable"><span class="nav-number">3.4.</span> <span class="nav-text">DexFieldTable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dexmethodtable"><span class="nav-number">3.5.</span> <span class="nav-text">DexMethodTable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dexclassdeftable"><span class="nav-number">3.6.</span> <span class="nav-text">DexClassDefTable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dexmapsection"><span class="nav-number">3.7.</span> <span class="nav-text">DexMapSection</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#x04-%E9%99%84%E5%BD%95"><span class="nav-number">4.</span> <span class="nav-text">0X04 附录</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="geneblue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">geneblue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

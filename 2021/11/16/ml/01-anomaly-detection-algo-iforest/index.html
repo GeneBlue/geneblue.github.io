@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 5.4.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -51,14 +51,13 @@
   };
 </script>
 
-  <meta name="description" content="Author: geneblueBlog: https://geneblue.github.io/          我们先看一个问题，上图中你能找出哪些是异常的点？为什么认为这些是异常点呢？你有多少种方法能找出异常点？">
-<meta name="keywords" content="ml">
+  <meta name="description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F;        我们先看一个问题，上图中你能找出哪些是异常的点？为什么认为这些是异常点呢？你有多少种方法能找出异常点？">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iForest异常检测算法">
 <meta property="og:url" content="http://yoursite.com/2021/11/16/ml/01-anomaly-detection-algo-iforest/index.html">
 <meta property="og:site_name" content="geneblue&#39;s blog">
-<meta property="og:description" content="Author: geneblueBlog: https://geneblue.github.io/          我们先看一个问题，上图中你能找出哪些是异常的点？为什么认为这些是异常点呢？你有多少种方法能找出异常点？">
-<meta property="og:locale" content="zh-Hans">
+<meta property="og:description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F;        我们先看一个问题，上图中你能找出哪些是异常的点？为什么认为这些是异常点呢？你有多少种方法能找出异常点？">
+<meta property="og:locale">
 <meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB4746355bbf0970fab257cd8e04a4cc2f?method=download&shareKey=4cd6f3384419c589e6362ee7cc57d81b">
 <meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB097a4c320c54f00d92dac622ca7048c8?method=download&shareKey=eace992ae83d28f76784db569a08b363">
 <meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBa7ef65ddb191c0022edd4c3631308ddd?method=download&shareKey=8c39bb5df66b9b2364b2f37d8681a7f7">
@@ -75,10 +74,11 @@
 <meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBd87dcfc128b6a78293b3007c9ed1de7d?method=download&shareKey=527e5289db6b4eb0795cb6bd011c02cc">
 <meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB7f12b942c25c7e164bdb893fe54c657b?method=download&shareKey=767400a7808a5382e27f8add0cb1356d">
 <meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB6fbe30e7d1beedf77fad9af77dbc575a?method=download&shareKey=98a8c4a332e977d4ba0412865cc80908">
-<meta property="og:updated_time" content="2022-01-16T14:20:46.768Z">
+<meta property="article:published_time" content="2021-11-16T04:02:08.000Z">
+<meta property="article:modified_time" content="2022-01-16T15:37:41.541Z">
+<meta property="article:author" content="geneblue">
+<meta property="article:tag" content="ml">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="iForest异常检测算法">
-<meta name="twitter:description" content="Author: geneblueBlog: https://geneblue.github.io/          我们先看一个问题，上图中你能找出哪些是异常的点？为什么认为这些是异常点呢？你有多少种方法能找出异常点？">
 <meta name="twitter:image" content="https://note.youdao.com/yws/api/personal/file/WEB4746355bbf0970fab257cd8e04a4cc2f?method=download&shareKey=4cd6f3384419c589e6362ee7cc57d81b">
 
 <link rel="canonical" href="http://yoursite.com/2021/11/16/ml/01-anomaly-detection-algo-iforest/">
@@ -233,7 +233,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 22:20:46" itemprop="dateModified" datetime="2022-01-16T22:20:46+08:00">2022-01-16</time>
+                <time title="Modified: 2022-01-16 23:37:41" itemprop="dateModified" datetime="2022-01-16T23:37:41+08:00">2022-01-16</time>
               </span>
 
           
@@ -247,145 +247,180 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<div align="center">
-<img src="https://note.youdao.com/yws/api/personal/file/WEB4746355bbf0970fab257cd8e04a4cc2f?method=download&shareKey=4cd6f3384419c589e6362ee7cc57d81b" width="1000" height="575" alt="iforest-00" align="center">
+        <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB4746355bbf0970fab257cd8e04a4cc2f?method=download&shareKey=4cd6f3384419c589e6362ee7cc57d81b" width = "1000" height = "575" alt="iforest-00" align=center /></p>
 </div>
-
-<hr>
-<div align="center">
-<img src="https://note.youdao.com/yws/api/personal/file/WEB097a4c320c54f00d92dac622ca7048c8?method=download&shareKey=eace992ae83d28f76784db569a08b363" width="384" height="288" alt="anomaly detection" align="center">
+<hr />
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB097a4c320c54f00d92dac622ca7048c8?method=download&shareKey=eace992ae83d28f76784db569a08b363" width = "384" height = "288" alt="anomaly detection" align=center /></p>
 </div>
-
 <p>我们先看一个问题，上图中你能找出哪些是异常的点？为什么认为这些是异常点呢？你有多少种方法能找出异常点？</p>
-<a id="more"></a>
-
-<p>什么叫异常？异常在这里指的是分布稀疏且距离高密度样本点较远的点，也叫离群点，这种检测叫离群点检测（outliner detection）</p>
+<span id="more"></span>
+<p>什么叫异常？异常在这里指的是分布稀疏且距离高密度样本点较远的点，也叫离群点，这种检测叫离群点检测（outliner
+detection）</p>
 <p>异常检测是数据挖掘中一类问题，在众多数据处理场景使用到，比如在业务风控领域：异常账户，异常设备，异常流量的检测；在数据清洗中，可以用来过滤噪声数据；在金融交易中，可以检测信用卡欺诈。</p>
-<hr>
-<h3 id="iForest简介"><a href="#iForest简介" class="headerlink" title="iForest简介"></a>iForest简介</h3><p>iForest(Isolation Forest) 孤立森林算法是由莫纳什大学的刘飞博士在周志华和陈开明教授的指导下完成的。第一版是在 2008 年 IEEE ICDM 国际数据挖掘大会发表，第二版改进版是在 2012 年的 TKDD 上发表，文后均附有两篇论文的下载链接。</p>
-<p>iForest 是无监督算法，主要用于在连续结构化数据集中快速检测出异常数据。这里将异常定义为 “容易被孤立的离群点(more likely to be separated)”，即分布稀疏且距离高密度样本点较远的点。</p>
-<h3 id="iForest-原理"><a href="#iForest-原理" class="headerlink" title="iForest 原理"></a>iForest 原理</h3><p>Isolation Forest 两个单词意味孤立和森林。</p>
-<h4 id="isolation"><a href="#isolation" class="headerlink" title="isolation"></a>isolation</h4><div align="center">
-<img src="https://note.youdao.com/yws/api/personal/file/WEBa7ef65ddb191c0022edd4c3631308ddd?method=download&shareKey=8c39bb5df66b9b2364b2f37d8681a7f7" width="350" height="350" alt="iforest-08" align="center">
+<hr />
+<h3 id="iforest简介">iForest简介</h3>
+<p>iForest(Isolation Forest)
+孤立森林算法是由莫纳什大学的刘飞博士在周志华和陈开明教授的指导下完成的。第一版是在
+2008 年 IEEE ICDM 国际数据挖掘大会发表，第二版改进版是在 2012 年的 TKDD
+上发表，文后均附有两篇论文的下载链接。</p>
+<p>iForest
+是无监督算法，主要用于在连续结构化数据集中快速检测出异常数据。这里将异常定义为
+"容易被孤立的离群点(more likely to be
+separated)"，即分布稀疏且距离高密度样本点较远的点。</p>
+<h3 id="iforest-原理">iForest 原理</h3>
+<p>Isolation Forest 两个单词意味孤立和森林。</p>
+<h4 id="isolation">isolation</h4>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBa7ef65ddb191c0022edd4c3631308ddd?method=download&shareKey=8c39bb5df66b9b2364b2f37d8681a7f7" width = "350" height = "350" alt="iforest-08" align=center /></p>
 </div>
-
-
 <p>我们先以切蛋糕来粗略的理解算法思想。</p>
-<p>孤立是指从剩余样本中分割出一个样本(separating an instance from the rest of the instances)，从而将异常点尽快的 *”孤立”* 出来；森林是指当样本集随机分割时会构建一棵树，为了消除掉维度选择的随机性，我们需要构建 T 棵树，最后统一计算结果并对样本打分，这 T 棵树便组成了森林。</p>
-<p>基本思想：<br>iForest 使用二叉树结构对样本做孤立(将样本挂载到叶子节点上)，因为异常样本大概率先被孤立出来，所以异常样本在树中的节点位置距离 root 节点更近，正常样本被孤立在树的更深层节点中。这里的树被成为 Isolation Tree，也叫 iTree。构建 T 棵 iTrees 后，异常点距离 root 节点的平均长度要比正常点距离 root 节点的平均长度更短。</p>
-<div align="center">
-<img src="https://note.youdao.com/yws/api/personal/file/WEBacc6d8b5f1c334d38994f93785dd1700?method=download&shareKey=518a4ba081ac2a0b10e431976086b359" width="408" height="232" alt="isolation" align="center">
+<p>孤立是指从剩余样本中分割出一个样本(separating an instance from the
+rest of the instances)，从而将异常点尽快的 <em>"孤立"</em>
+出来；森林是指当样本集随机分割时会构建一棵树，为了消除掉维度选择的随机性，我们需要构建
+T 棵树，最后统一计算结果并对样本打分，这 T 棵树便组成了森林。</p>
+<p>基本思想： iForest
+使用二叉树结构对样本做孤立(将样本挂载到叶子节点上)，因为异常样本大概率先被孤立出来，所以异常样本在树中的节点位置距离
+root 节点更近，正常样本被孤立在树的更深层节点中。这里的树被成为
+Isolation Tree，也叫 iTree。构建 T 棵 iTrees 后，异常点距离 root
+节点的平均长度要比正常点距离 root 节点的平均长度更短。</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBacc6d8b5f1c334d38994f93785dd1700?method=download&shareKey=518a4ba081ac2a0b10e431976086b359" width = "408" height = "232" alt="isolation" align=center /></p>
 </div>
-
-
-
-<p>比如上图，观察发现 <code>$x_0$</code> 需要 4 次分割就可以孤立出来，显然要想将 <code>$x_i$</code> 分割孤立开来需要更多的分割次数。</p>
-<p>单棵 iTree 的训练步骤：</p>
-<ul>
-<li>step1: 从样本集中随机选择 n 个样本作为子样本 <code>X = {x_1, ..., x_n}</code>，将其放入到 iTree 的根节点</li>
-<li>step2: 随机选择一个维度 q，并随机选择一个切割点 p，<code>$min(x_{ij}, j= q, x_{ij}\in X) &lt; p &lt; max(x_{ij}, j= q, x_{ij}\in X)$</code>，即 p 值选定在当前节点数据中 q 维的最大和最小值之间</li>
-<li>step3: 切割点 p 即可认为是一个超平面，将当前节点数据空间切分成2个子空间，将当前节点样本集中 <code>$&lt; p$</code> 点的放在当前节点的左分支，<code>$\ge p$</code> 点的放在当前节点的右分支</li>
-<li>step4: 在左右分支节点递归步骤2，3，直到叶子节点只剩一个样本数据，或者 iTree 生长到设定高度</li>
-</ul>
-<p>伪码表示为：</p>
-<div align="center">
-<img src="https://note.youdao.com/yws/api/personal/file/WEB8ed38e4ac8be4e25621c771d86bba0b9?method=download&shareKey=e40cdffb5ce7a5800c1386c9e05a2506" width="333" height="316" alt="iTree" align="center">
+<p>比如上图，观察发现 <span class="math inline">\(x_0\)</span> 需要 4
+次分割就可以孤立出来，显然要想将 <span
+class="math inline">\(x_i\)</span> 分割孤立开来需要更多的分割次数。</p>
+<p>单棵 iTree 的训练步骤： - step1: 从样本集中随机选择 n
+个样本作为子样本 <code>X = &#123;x_1, ..., x_n&#125;</code>，将其放入到 iTree
+的根节点 - step2: 随机选择一个维度 q，并随机选择一个切割点 p，<span
+class="math inline">\(min(x_{ij}, j= q, x_{ij}\in X) &lt; p &lt;
+max(x_{ij}, j= q, x_{ij}\in X)\)</span>，即 p 值选定在当前节点数据中 q
+维的最大和最小值之间 - step3: 切割点 p
+即可认为是一个超平面，将当前节点数据空间切分成2个子空间，将当前节点样本集中
+<span class="math inline">\(&lt; p\)</span>
+点的放在当前节点的左分支，<span class="math inline">\(\ge p\)</span>
+点的放在当前节点的右分支 - step4:
+在左右分支节点递归步骤2，3，直到叶子节点只剩一个样本数据，或者 iTree
+生长到设定高度</p>
+伪码表示为：
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB8ed38e4ac8be4e25621c771d86bba0b9?method=download&shareKey=e40cdffb5ce7a5800c1386c9e05a2506" width = "333" height = "316" alt="iTree" align=center /></p>
 </div>
-
-
-
 <p>这里插一个例子，不从人类的视觉，只从提供的数据来看，哪个动物最特别呢？</p>
-<div align="center">
-<img src="https://note.youdao.com/yws/api/personal/file/WEB7657ec9591dc50cc52122dc28e3f2eae?method=download&shareKey=d4ef5d5a8a9b71973d24046427eeca3a" width="500" height="275" alt="iforest-09" align="center">
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB7657ec9591dc50cc52122dc28e3f2eae?method=download&shareKey=d4ef5d5a8a9b71973d24046427eeca3a" width = "500" height = "275" alt="iforest-09" align=center /></p>
 </div>
-
-
 <p>我们整理上面的动物的特征数据如下：</p>
-<div align="center">
-<img src="https://note.youdao.com/yws/api/personal/file/WEB3a816e593d7e23832329b9cd6eabc6b2?method=download&shareKey=8f88aacc054401ee71b2d857c70eadd2" width="601" height="486" alt="ifroest-10" align="center">
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB3a816e593d7e23832329b9cd6eabc6b2?method=download&shareKey=8f88aacc054401ee71b2d857c70eadd2" width = "601" height = "486" alt="ifroest-10" align=center /></p>
 </div>
-
 <p>按照 itree 的构建步骤得到二叉树如下：</p>
-<div align="center">
-<img src="https://note.youdao.com/yws/api/personal/file/WEB152bc1d103b9ad621269c0460b3e825a?method=download&shareKey=a0557f88e9b9fbad8f83f0a188f3151f" width="503" height="592" alt="iforest-11" align="center">
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB152bc1d103b9ad621269c0460b3e825a?method=download&shareKey=a0557f88e9b9fbad8f83f0a188f3151f" width = "503" height = "592" alt="iforest-11" align=center /></p>
 </div>
-
-
-
 <p>按照 itree 的构建步骤，这棵树的结果与我们第一直觉不相符。</p>
-<h4 id="forest"><a href="#forest" class="headerlink" title="forest"></a>forest</h4><p>俗话说：三个臭皮匠赛过诸葛亮。</p>
-<div align="center">
-<img src="https://note.youdao.com/yws/api/personal/file/WEBd8b42b4005a55dac0ec019ac9c6d0761?method=download&shareKey=88e9966f153e9af915283d21234a34f6
-" width="418" height="349" alt="iforest-12" align="center">
+<h4 id="forest">forest</h4>
+<p>俗话说：三个臭皮匠赛过诸葛亮。</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBd8b42b4005a55dac0ec019ac9c6d0761?method=download&shareKey=88e9966f153e9af915283d21234a34f6
+" width = "418" height = "349" alt="iforest-12" align=center /></p>
 </div>
-
-
-
-<p>iTree 的训练过程是完全随机的，随机选择一个维度 q，随机选择选定维度范围内的分割值 p，这种随机性让单棵 iTree 的结果也是随机的，即单棵 iTree 中异常点不一定距离 iTree root 节点的长度更短。所以需要使用 ensemble 的方法使结果收敛，即从头开始切割，构建 T 棵 iTrees。</p>
-<div align="center">
-<img src="https://note.youdao.com/yws/api/personal/file/WEBf8ec21f40d20561172c422a14df7b632?method=download&shareKey=a483e86bfd1b30943ea5babc0968d173" width="293" height="280" alt="tree number" align="center">
+<p>iTree 的训练过程是完全随机的，随机选择一个维度
+q，随机选择选定维度范围内的分割值 p，这种随机性让单棵 iTree
+的结果也是随机的，即单棵 iTree 中异常点不一定距离 iTree root
+节点的长度更短。所以需要使用 ensemble
+的方法使结果收敛，即从头开始切割，构建 T 棵 iTrees。</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBf8ec21f40d20561172c422a14df7b632?method=download&shareKey=a483e86bfd1b30943ea5babc0968d173" width = "293" height = "280" alt="tree number" align=center /></p>
 </div>
-
-<p>实验发现，在构建 100+ iTrees 后，<code>$x_0$</code>, <code>$x_i$</code> 的平均路径长度将收敛。</p>
-<p>构建 T 棵 iTrees 后，然后就可以计算样本点 <code>$x_i$</code> 的平均路径长度 <code>$E(h(x))$</code>，伪码表示为：</p>
-<div align="center">
-<img src="https://note.youdao.com/yws/api/personal/file/WEBee791119a020069748f6f28e5d636bae?method=download&shareKey=73b8ee3a7d154573086a5f157d78afdc" width="333" height="239" alt="Length" align="center">
+<p>实验发现，在构建 100+ iTrees 后，<span
+class="math inline">\(x_0\)</span>, <span
+class="math inline">\(x_i\)</span> 的平均路径长度将收敛。</p>
+构建 T 棵 iTrees 后，然后就可以计算样本点 <span
+class="math inline">\(x_i\)</span> 的平均路径长度 <span
+class="math inline">\(E(h(x))\)</span>，伪码表示为：
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBee791119a020069748f6f28e5d636bae?method=download&shareKey=73b8ee3a7d154573086a5f157d78afdc" width = "333" height = "239" alt="Length" align=center /></p>
 </div>
-
-
-<p>接下来就可以计算平均异常分数 <code>$s$</code>，<code>$s$</code> 的计算结果是平均高度的归一化处理(通过某种计算公式映射到0~1区间)。</p>
-<p><code>$s(x, n) = 2^{-\frac{E(h(x))}{c(n)}}$</code></p>
-<p><code>$c(n) = \begin{cases} 2H(n-1)-2(n-1)/n &amp; n &gt; 2 \\ 1 &amp; n = 2 \\ 0 &amp; otherwise \end{cases}$</code></p>
-<p><code>$h(x)$</code> 是 <code>$x$</code> 在每棵 iTree 上的高度(长度)，<code>$E(h(x))$</code> 是 <code>$x$</code> 在 T 棵 iTree 上平均高度(长度)，<code>$c(n)$</code> 为给定样本 <code>$n$</code> 时路径长度的平均值。<code>$s$</code>, <code>$h(x)$</code>, <code>$c(n)$</code> 三者将其绘图如下：</p>
-<div align="center">
-<img src="https://note.youdao.com/yws/api/personal/file/WEB86e1dd5a1823ca009a58156736e68a4e?method=download&shareKey=51b8b4d907b2cb53d412bd9fb8407f07" width="326" height="276" alt="E(h(x))" align="center">
+<p>接下来就可以计算平均异常分数 <span
+class="math inline">\(s\)</span>，<span class="math inline">\(s\)</span>
+的计算结果是平均高度的归一化处理(通过某种计算公式映射到0~1区间)。</p>
+<p><span class="math inline">\(s(x, n) =
+2^{-\frac{E(h(x))}{c(n)}}\)</span></p>
+<p><span class="math inline">\(c(n) = \begin{cases} 2H(n-1)-2(n-1)/n
+&amp; n &gt; 2 \\ 1 &amp; n = 2 \\ 0 &amp; otherwise
+\end{cases}\)</span></p>
+<p><span class="math inline">\(h(x)\)</span> 是 <span
+class="math inline">\(x\)</span> 在每棵 iTree 上的高度(长度)，<span
+class="math inline">\(E(h(x))\)</span> 是 <span
+class="math inline">\(x\)</span> 在 T 棵 iTree 上平均高度(长度)，<span
+class="math inline">\(c(n)\)</span> 为给定样本 <span
+class="math inline">\(n\)</span> 时路径长度的平均值。<span
+class="math inline">\(s\)</span>, <span
+class="math inline">\(h(x)\)</span>, <span
+class="math inline">\(c(n)\)</span> 三者将其绘图如下：</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB86e1dd5a1823ca009a58156736e68a4e?method=download&shareKey=51b8b4d907b2cb53d412bd9fb8407f07" width = "326" height = "276" alt="E(h(x))" align=center /></p>
 </div>
-
-<p>可以看出，当 <code>$E(h(x)) \to c(n), s \to 0.5$</code>; <code>$E(h(x)) \to 0, s \to 1$</code>; <code>$E(h(x)) \to n-1, s \to 0$</code>; </p>
+<p>可以看出，:</p>
 <ul>
-<li><code>$s$</code> 接近 1 时，表明样本点均是异常点；</li>
-<li>如果 <code>$s$</code> 比 0.5 小很多，这些样本是正常样本；</li>
-<li>如果所有样本 <code>$s$</code> 值与 0.5 近似，说明在样本集中不不存异常点。</li>
+<li><p><span class="math inline">\(E(h(x)) \to c(n), s \to
+0.5\)</span>;</p></li>
+<li><p><span class="math inline">\(E(h(x)) \to 0, s \to
+1\)</span>;</p></li>
+<li><p><span class="math inline">\(E(h(x)) \to n-1, s \to
+0\)</span>;</p></li>
+<li><p><span class="math inline">\(s\)</span> 接近 1
+时，表明样本点均是异常点；</p></li>
+<li><p>如果 <span class="math inline">\(s\)</span> 比 0.5
+小很多，这些样本是正常样本；</p></li>
+<li><p>如果所有样本 <span class="math inline">\(s\)</span> 值与 0.5
+近似，说明在样本集中不不存异常点。</p></li>
 </ul>
-<h3 id="思考几个问题"><a href="#思考几个问题" class="headerlink" title="思考几个问题"></a>思考几个问题</h3><ul>
+<h3 id="思考几个问题">思考几个问题</h3>
+<ul>
 <li>训练集中不包含 anomaly 样本是否影响检测</li>
 <li>Anomaly 样本的特征值与正常样本差异不大可以吗</li>
 <li>Anomaly 样本在数据集中占据大比例可以吗</li>
 <li>超高纬数据，iForest 是否可以处理</li>
 </ul>
-<h3 id="iForest-优点和其局限性"><a href="#iForest-优点和其局限性" class="headerlink" title="iForest 优点和其局限性"></a>iForest 优点和其局限性</h3><h4 id="Swamping-与-Masking-问题"><a href="#Swamping-与-Masking-问题" class="headerlink" title="Swamping 与 Masking 问题"></a>Swamping 与 Masking 问题</h4><div align="center">
-<img src="https://note.youdao.com/yws/api/personal/file/WEBd87dcfc128b6a78293b3007c9ed1de7d?method=download&shareKey=527e5289db6b4eb0795cb6bd011c02cc" width="321" height="348" alt="large samples" align="center">
+<h3 id="iforest-优点和其局限性">iForest 优点和其局限性</h3>
+<h4 id="swamping-与-masking-问题">Swamping 与 Masking 问题</h4>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBd87dcfc128b6a78293b3007c9ed1de7d?method=download&shareKey=527e5289db6b4eb0795cb6bd011c02cc" width = "321" height = "348" alt="large samples" align=center /></p>
 </div>
-
-<div align="center">
-<img src="https://note.youdao.com/yws/api/personal/file/WEB7f12b942c25c7e164bdb893fe54c657b?method=download&shareKey=767400a7808a5382e27f8add0cb1356d" width="319" height="354" alt="large samples" align="center">
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB7f12b942c25c7e164bdb893fe54c657b?method=download&shareKey=767400a7808a5382e27f8add0cb1356d" width = "319" height = "354" alt="large samples" align=center /></p>
 </div>
-
-
 <ul>
 <li>Swamping：错误的将正常样本归类为异常样本。当正常样本与异常样本相近时，那么从样本中区分处异常样本的难度将增加。</li>
 <li>Masking: 指样本集中存在太多的异常样本。</li>
 </ul>
-<p>以上两种特性都可能是因为训练样本集过大的原因，上图 a 中使用 4096 个样本训练，模型 AUC(Area Under Curve) 指标是 0.67；b 使用 128 个样本训练，模型 AUC 指标是 0.91，采用小样本训练能更好的缓解 Swamping 和 Masking 影响。</p>
-<p>作者在实验中发现训练样本的大小达到 <code>$2^8$</code>  即 256 个样本之后，再增加训练样本并不会对改善检测性能；同样的，tree 数量也并不是越多越好，在 100 棵 iTree 左右，性能则稳定下来。</p>
-<h4 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h4><p><strong>优点：</strong></p>
-<ul>
-<li>iForest 是无监督算法，不需要提前标记训练集的输出标签</li>
-<li>iForest 具有线性时间复杂度，不需要计算距离，密度指标，可以用在海量数据集上面。构建的树的数量越多，算法越稳定，当然一定的树数量后，计算结果就收敛了。</li>
-<li>由于每棵树都是独立生成，可以部署在分布式系统上来加速运算。</li>
-</ul>
-<p><strong>缺点：</strong></p>
-<ul>
-<li>iForest 不适用于高维数据。每次切数据空间都是随机选择维度，如果维度较多，在树构建完后，可能有的维度还没有被随机选择过，这就会影响算法结果。而且当维度较多时，并不是每个维度都会人工检验过对检测具有正向作用。</li>
-<li>iForest 只适用于处理全局稀疏点。</li>
-</ul>
-<h3 id="使用-sklearn-实现-iForest-算法"><a href="#使用-sklearn-实现-iForest-算法" class="headerlink" title="使用 sklearn 实现 iForest 算法"></a>使用 sklearn 实现 iForest 算法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">from sklearn.ensemble import IsolationForest</span><br><span class="line">import numpy as np</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line">import pickle</span><br><span class="line"></span><br><span class="line">if __name__ == &apos;__main__&apos;:</span><br><span class="line">    # 生成训练集</span><br><span class="line">    seed = 42</span><br><span class="line">    rng = np.random.RandomState(seed)</span><br><span class="line"></span><br><span class="line">    X = 0.3 * rng.randn(100, 2)</span><br><span class="line">    X_train = np.r_[X + 2, X - 2]</span><br><span class="line"></span><br><span class="line">    X = 0.3 * rng.randn(20, 2)</span><br><span class="line">    X_test = np.r_[X + 2, X - 2]</span><br><span class="line"></span><br><span class="line">    X_outliers = rng.uniform(low=-4, high=4, size=(20, 2))</span><br><span class="line"></span><br><span class="line">    # 使用 iforest 拟合</span><br><span class="line">    clf = IsolationForest(max_samples=100, random_state=rng, contamination=&apos;auto&apos;)</span><br><span class="line">    clf.fit(X_train)</span><br><span class="line"></span><br><span class="line">    # 模型文件保存</span><br><span class="line">    s = pickle.dumps(clf)</span><br><span class="line">    model_file = open(&quot;./iforest-model&quot;, &quot;wb+&quot;)</span><br><span class="line">    model_file.write(s)</span><br><span class="line">    model_file.close()</span><br><span class="line"></span><br><span class="line">    # 使用模型文件预测</span><br><span class="line">    model_file_2 = open(&quot;./iforest-model&quot;, &quot;rb+&quot;)</span><br><span class="line">    s2 = model_file_2.read()</span><br><span class="line">    model_file_2.close()</span><br><span class="line"></span><br><span class="line">    clf2 = pickle.loads(s2)</span><br><span class="line">    y_pred_train = clf2.predict(X_train)</span><br><span class="line">    y_pred_test = clf2.predict(X_test)</span><br><span class="line">    y_pred_outliers = clf2.predict(X_outliers)</span><br><span class="line"></span><br><span class="line">    print(y_pred_test)</span><br><span class="line">    print(y_pred_outliers)</span><br><span class="line"></span><br><span class="line">    # 绘图</span><br><span class="line">    # print(np.linspace(-5, 5, 50))</span><br><span class="line">    xx, yy = np.meshgrid(np.linspace(-5, 5, 50), np.linspace(-5, 5, 50))</span><br><span class="line">    # print(xx.ravel())</span><br><span class="line"></span><br><span class="line">    Z = clf.decision_function(np.c_[xx.ravel(), yy.ravel()])</span><br><span class="line">    Z = Z.reshape(xx.shape)</span><br><span class="line"></span><br><span class="line">    plt.title(&quot;IsolationForest&quot;)</span><br><span class="line">    plt.contourf(xx, yy, Z, camp=plt.cm.Blues_r)</span><br><span class="line">    b1 = plt.scatter(X_train[:, 0], X_train[:, 1], c=&apos;white&apos;,</span><br><span class="line">                     s=20, edgecolor=&apos;k&apos;)</span><br><span class="line">    b2 = plt.scatter(X_test[:, 0], X_test[:, 1], c=&apos;green&apos;,</span><br><span class="line">                     s=20, edgecolor=&apos;k&apos;)</span><br><span class="line">    c = plt.scatter(X_outliers[:, 0], X_outliers[:, 1], c=&apos;red&apos;,</span><br><span class="line">                    s=20, edgecolor=&apos;k&apos;)</span><br><span class="line">    plt.axis(&apos;tight&apos;)</span><br><span class="line">    plt.xlim((-5, 5))</span><br><span class="line">    plt.ylim((-5, 5))</span><br><span class="line">    plt.legend([b1, b2, c],</span><br><span class="line">               [&quot;training observations&quot;,</span><br><span class="line">                &quot;new regular observations&quot;, &quot;new abnormal observations&quot;],</span><br><span class="line">               loc=&quot;upper left&quot;)</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
-
-<div align="center">
-<img src="https://note.youdao.com/yws/api/personal/file/WEB6fbe30e7d1beedf77fad9af77dbc575a?method=download&shareKey=98a8c4a332e977d4ba0412865cc80908" width="640" height="480" alt="iforest-13" align="center">
+<p>以上两种特性都可能是因为训练样本集过大的原因，上图 a 中使用 4096
+个样本训练，模型 AUC(Area Under Curve) 指标是 0.67；b 使用 128
+个样本训练，模型 AUC 指标是 0.91，采用小样本训练能更好的缓解 Swamping 和
+Masking 影响。</p>
+<p>作者在实验中发现训练样本的大小达到 <span
+class="math inline">\(2^8\)</span> 即 256
+个样本之后，再增加训练样本并不会对改善检测性能；同样的，tree
+数量也并不是越多越好，在 100 棵 iTree 左右，性能则稳定下来。</p>
+<h4 id="优缺点">优缺点</h4>
+<p><strong>优点：</strong> - iForest
+是无监督算法，不需要提前标记训练集的输出标签 - iForest
+具有线性时间复杂度，不需要计算距离，密度指标，可以用在海量数据集上面。构建的树的数量越多，算法越稳定，当然一定的树数量后，计算结果就收敛了。
+- 由于每棵树都是独立生成，可以部署在分布式系统上来加速运算。</p>
+<p><strong>缺点：</strong> - iForest
+不适用于高维数据。每次切数据空间都是随机选择维度，如果维度较多，在树构建完后，可能有的维度还没有被随机选择过，这就会影响算法结果。而且当维度较多时，并不是每个维度都会人工检验过对检测具有正向作用。
+- iForest 只适用于处理全局稀疏点。</p>
+<h3 id="使用-sklearn-实现-iforest-算法">使用 sklearn 实现 iForest
+算法</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">from sklearn.ensemble import IsolationForest</span><br><span class="line">import numpy as np</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line">import pickle</span><br><span class="line"></span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line">    # 生成训练集</span><br><span class="line">    seed = 42</span><br><span class="line">    rng = np.random.RandomState(seed)</span><br><span class="line"></span><br><span class="line">    X = 0.3 * rng.randn(100, 2)</span><br><span class="line">    X_train = np.r_[X + 2, X - 2]</span><br><span class="line"></span><br><span class="line">    X = 0.3 * rng.randn(20, 2)</span><br><span class="line">    X_test = np.r_[X + 2, X - 2]</span><br><span class="line"></span><br><span class="line">    X_outliers = rng.uniform(low=-4, high=4, size=(20, 2))</span><br><span class="line"></span><br><span class="line">    # 使用 iforest 拟合</span><br><span class="line">    clf = IsolationForest(max_samples=100, random_state=rng, contamination=&#x27;auto&#x27;)</span><br><span class="line">    clf.fit(X_train)</span><br><span class="line"></span><br><span class="line">    # 模型文件保存</span><br><span class="line">    s = pickle.dumps(clf)</span><br><span class="line">    model_file = open(&quot;./iforest-model&quot;, &quot;wb+&quot;)</span><br><span class="line">    model_file.write(s)</span><br><span class="line">    model_file.close()</span><br><span class="line"></span><br><span class="line">    # 使用模型文件预测</span><br><span class="line">    model_file_2 = open(&quot;./iforest-model&quot;, &quot;rb+&quot;)</span><br><span class="line">    s2 = model_file_2.read()</span><br><span class="line">    model_file_2.close()</span><br><span class="line"></span><br><span class="line">    clf2 = pickle.loads(s2)</span><br><span class="line">    y_pred_train = clf2.predict(X_train)</span><br><span class="line">    y_pred_test = clf2.predict(X_test)</span><br><span class="line">    y_pred_outliers = clf2.predict(X_outliers)</span><br><span class="line"></span><br><span class="line">    print(y_pred_test)</span><br><span class="line">    print(y_pred_outliers)</span><br><span class="line"></span><br><span class="line">    # 绘图</span><br><span class="line">    # print(np.linspace(-5, 5, 50))</span><br><span class="line">    xx, yy = np.meshgrid(np.linspace(-5, 5, 50), np.linspace(-5, 5, 50))</span><br><span class="line">    # print(xx.ravel())</span><br><span class="line"></span><br><span class="line">    Z = clf.decision_function(np.c_[xx.ravel(), yy.ravel()])</span><br><span class="line">    Z = Z.reshape(xx.shape)</span><br><span class="line"></span><br><span class="line">    plt.title(&quot;IsolationForest&quot;)</span><br><span class="line">    plt.contourf(xx, yy, Z, camp=plt.cm.Blues_r)</span><br><span class="line">    b1 = plt.scatter(X_train[:, 0], X_train[:, 1], c=&#x27;white&#x27;,</span><br><span class="line">                     s=20, edgecolor=&#x27;k&#x27;)</span><br><span class="line">    b2 = plt.scatter(X_test[:, 0], X_test[:, 1], c=&#x27;green&#x27;,</span><br><span class="line">                     s=20, edgecolor=&#x27;k&#x27;)</span><br><span class="line">    c = plt.scatter(X_outliers[:, 0], X_outliers[:, 1], c=&#x27;red&#x27;,</span><br><span class="line">                    s=20, edgecolor=&#x27;k&#x27;)</span><br><span class="line">    plt.axis(&#x27;tight&#x27;)</span><br><span class="line">    plt.xlim((-5, 5))</span><br><span class="line">    plt.ylim((-5, 5))</span><br><span class="line">    plt.legend([b1, b2, c],</span><br><span class="line">               [&quot;training observations&quot;,</span><br><span class="line">                &quot;new regular observations&quot;, &quot;new abnormal observations&quot;],</span><br><span class="line">               loc=&quot;upper left&quot;)</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB6fbe30e7d1beedf77fad9af77dbc575a?method=download&shareKey=98a8c4a332e977d4ba0412865cc80908" width = "640" height = "480" alt="iforest-13" align=center /></p>
 </div>
-
 <ul>
 <li>n_estimators：itree 的数量，默认 100</li>
 <li>max_samples： 最大样本数，建议 &lt; 512</li>
@@ -393,16 +428,32 @@
 <li>n_jobs：fit 和 predict 时的并行线程控制</li>
 <li>random_state：随机数配置，可以配置常数，也可以配置伪随机数实例</li>
 </ul>
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
-<li><a href="https://cs.nju.edu.cn/zhouzh/zhouzh.files/publication/icdm08b.pdf?q=isolation-forest" target="_blank" rel="noopener">Isolation Forest</a></li>
-<li><a href="https://cs.nju.edu.cn/zhouzh/zhouzh.files/publication/tkdd11.pdf" target="_blank" rel="noopener">Isolation-Based Anomaly Detection</a></li>
-<li><a href="https://en.wikipedia.org/wiki/Isolation_forest" target="_blank" rel="noopener">Isolation forest WIKI</a></li>
-<li><a href="https://www.cnblogs.com/wj-1314/p/10461816.html" target="_blank" rel="noopener">Python机器学习笔记：异常点检测算法——Isolation Forest</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/74508141" target="_blank" rel="noopener">异常检测算法 – 孤立森林（Isolation Forest）剖析</a></li>
-<li><a href="https://scikit-learn.org/stable/auto_examples/ensemble/plot_isolation_forest.html" target="_blank" rel="noopener">sklearn IsolationForest example</a></li>
-<li><a href="https://www.runoob.com/matplotlib/matplotlib-tutorial.html" target="_blank" rel="noopener">Matplotlib 教程</a></li>
-<li><a href="https://www.youtube.com/watch?v=qNDcPUeCEPI&t=98s" target="_blank" rel="noopener">iforest youtube video</a></li>
-<li><a href="https://www.cnblogs.com/wzyj/p/9696357.html" target="_blank" rel="noopener">Isolation forest 的spark 分布式实现</a></li>
+<h3 id="参考">参考</h3>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://cs.nju.edu.cn/zhouzh/zhouzh.files/publication/icdm08b.pdf?q=isolation-forest">Isolation
+Forest</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://cs.nju.edu.cn/zhouzh/zhouzh.files/publication/tkdd11.pdf">Isolation-Based
+Anomaly Detection</a></li>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Isolation_forest">Isolation
+forest WIKI</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://www.cnblogs.com/wj-1314/p/10461816.html">Python机器学习笔记：异常点检测算法——Isolation
+Forest</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/74508141">异常检测算法 --
+孤立森林（Isolation Forest）剖析</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://scikit-learn.org/stable/auto_examples/ensemble/plot_isolation_forest.html">sklearn
+IsolationForest example</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://www.runoob.com/matplotlib/matplotlib-tutorial.html">Matplotlib
+教程</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=qNDcPUeCEPI&amp;t=98s">iforest
+youtube video</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wzyj/p/9696357.html">Isolation
+forest 的spark 分布式实现</a></li>
 </ul>
 
     </div>
@@ -420,8 +471,8 @@
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
-                <a href="/2019/12/14/suricata/suricata-rule-ip-keywords/" rel="next" title="suricata 规则之 IP Keywords">
-                  <i class="fa fa-chevron-left"></i> suricata 规则之 IP Keywords
+                <a href="/2021/01/04/osx/sec--MachO-file-format/" rel="next" title="聊聊 Mach-O 文件格式">
+                  <i class="fa fa-chevron-left"></i> 聊聊 Mach-O 文件格式
                 </a>
             </div>
 
@@ -466,7 +517,8 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#iForest简介"><span class="nav-number">1.</span> <span class="nav-text">iForest简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iForest-原理"><span class="nav-number">2.</span> <span class="nav-text">iForest 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#isolation"><span class="nav-number">2.1.</span> <span class="nav-text">isolation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#forest"><span class="nav-number">2.2.</span> <span class="nav-text">forest</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思考几个问题"><span class="nav-number">3.</span> <span class="nav-text">思考几个问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iForest-优点和其局限性"><span class="nav-number">4.</span> <span class="nav-text">iForest 优点和其局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Swamping-与-Masking-问题"><span class="nav-number">4.1.</span> <span class="nav-text">Swamping 与 Masking 问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#优缺点"><span class="nav-number">4.2.</span> <span class="nav-text">优缺点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用-sklearn-实现-iForest-算法"><span class="nav-number">5.</span> <span class="nav-text">使用 sklearn 实现 iForest 算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#iforest%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">iForest简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iforest-%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">iForest 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#isolation"><span class="nav-number">2.1.</span> <span class="nav-text">isolation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#forest"><span class="nav-number">2.2.</span> <span class="nav-text">forest</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%9D%E8%80%83%E5%87%A0%E4%B8%AA%E9%97%AE%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">思考几个问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iforest-%E4%BC%98%E7%82%B9%E5%92%8C%E5%85%B6%E5%B1%80%E9%99%90%E6%80%A7"><span class="nav-number">4.</span> <span class="nav-text">iForest 优点和其局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#swamping-%E4%B8%8E-masking-%E9%97%AE%E9%A2%98"><span class="nav-number">4.1.</span> <span class="nav-text">Swamping 与 Masking 问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-number">4.2.</span> <span class="nav-text">优缺点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-sklearn-%E5%AE%9E%E7%8E%B0-iforest-%E7%AE%97%E6%B3%95"><span class="nav-number">5.</span> <span class="nav-text">使用 sklearn 实现 iForest
+算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -482,14 +534,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -558,30 +610,88 @@
   <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/muse.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
 
 
 
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
 
   
 

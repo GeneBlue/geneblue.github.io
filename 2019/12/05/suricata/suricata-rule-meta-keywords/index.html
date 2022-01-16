@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 5.4.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -51,18 +51,18 @@
   };
 </script>
 
-  <meta name="description" content="Author: geneblueBlog: https://geneblue.github.io/ Meta Keywords 可以理解为是 suricata 的基本关键字，不与任何协议绑定，在任何规则中都可以使用">
-<meta name="keywords" content="suricata">
+  <meta name="description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; Meta Keywords 可以理解为是 suricata 的基本关键字，不与任何协议绑定，在任何规则中都可以使用">
 <meta property="og:type" content="article">
 <meta property="og:title" content="suricata 规则之 Meta Keywords">
 <meta property="og:url" content="http://yoursite.com/2019/12/05/suricata/suricata-rule-meta-keywords/index.html">
 <meta property="og:site_name" content="geneblue&#39;s blog">
-<meta property="og:description" content="Author: geneblueBlog: https://geneblue.github.io/ Meta Keywords 可以理解为是 suricata 的基本关键字，不与任何协议绑定，在任何规则中都可以使用">
-<meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2022-01-16T14:20:19.404Z">
+<meta property="og:description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; Meta Keywords 可以理解为是 suricata 的基本关键字，不与任何协议绑定，在任何规则中都可以使用">
+<meta property="og:locale">
+<meta property="article:published_time" content="2019-12-05T06:02:08.000Z">
+<meta property="article:modified_time" content="2022-01-16T15:36:42.647Z">
+<meta property="article:author" content="geneblue">
+<meta property="article:tag" content="suricata">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="suricata 规则之 Meta Keywords">
-<meta name="twitter:description" content="Author: geneblueBlog: https://geneblue.github.io/ Meta Keywords 可以理解为是 suricata 的基本关键字，不与任何协议绑定，在任何规则中都可以使用">
 
 <link rel="canonical" href="http://yoursite.com/2019/12/05/suricata/suricata-rule-meta-keywords/">
 
@@ -216,7 +216,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
+                <time title="Modified: 2022-01-16 23:36:42" itemprop="dateModified" datetime="2022-01-16T23:36:42+08:00">2022-01-16</time>
               </span>
 
           
@@ -230,48 +230,64 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<p><code>Meta Keywords</code> 可以理解为是 <code>suricata</code> 的基本关键字，不与任何协议绑定，在任何规则中都可以使用</p>
-<a id="more"></a>
-
-<h3 id="Meta-Keywords"><a href="#Meta-Keywords" class="headerlink" title="Meta Keywords"></a>Meta Keywords</h3><h4 id="msg-message"><a href="#msg-message" class="headerlink" title="msg(message)"></a>msg(message)</h4><p><code>msg</code> 关键字用来记录当规则匹配到时，对数据包的文本描述信息，然后记录在日志中</p>
-<p>比如：</p>
-<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">msg:</span> <span class="string">"ATTACK-RESPONSES 403 Forbidden"</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
-
-<p>注意，按照惯例，<code>msg</code> 消息都是以大写字母开头，这样在日志记录中，从视觉上比较容易识别；<code>msg</code> 一般是规则的第一个关键字</p>
-<h4 id="sid-signature-ID"><a href="#sid-signature-ID" class="headerlink" title="sid(signature ID)"></a>sid(signature ID)</h4><p><code>sid</code> 签名标识符，数值类型，为每个规则定义一个 <code>id</code> 号，不能重复<br><br>比如：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">sid:</span> <span class="number">123</span><span class="string">;</span></span><br></pre></td></tr></table></figure>
-
-<p>一般，<code>sid</code>位于最后关键字（如果有 rev 关键字，则位于倒数第二个），这也是为了书写上的规范吧</p>
-<h4 id="rev-revision"><a href="#rev-revision" class="headerlink" title="rev (revision)"></a>rev (revision)</h4><p>用于表示规则的版本号</p>
-<p>比如：</p>
-<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">rev:</span><span class="number">123</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="gid-group-ID"><a href="#gid-group-ID" class="headerlink" title="gid(group ID)"></a>gid(group ID)</h4><p><code>gid</code> 关键字不是很常用，默认是 1</p>
-<h4 id="classtype"><a href="#classtype" class="headerlink" title="classtype"></a>classtype</h4><p><code>classtype</code> 指定该规则触发时，属于哪种报警分类信息，当前的攻击属于什么威胁。具体的警报分类查看文件 <code>/etc/suricata/classification.config</code>，比如：</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">config classification: rpc-portmap-decode,Decode of an RPC Query,2</span><br><span class="line">config classification: shellcode-detect,Executable code was detected,1</span><br><span class="line">config classification: string-detect,A suspicious string was detected,3</span><br></pre></td></tr></table></figure>
-
-<p>每一条报警分类信息，包含 短名，具体描述和警报优先级，严重事件优先级为1，在规则中，指定短名即可：</p>
-<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">classtype:<span class="function"><span class="keyword">rpc</span>-portmap-decode</span>;</span><br></pre></td></tr></table></figure>
-
-<p>我们也可以在 <code>classification.config</code> 中增加自己的警报信息。</p>
-<h4 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h4><p><code>reference</code> 引用，给出规则触发时的额外参考信息，参考信息一般是 <code>url</code>，方便起见，也可以给一个 <code>cve</code> 号，<code>suricata</code> 会自动生成该 <code>cve</code> 在 <code>mitre</code> 站点的 <code>cve</code> 链接。</p>
-<p>形式：</p>
-<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">reference</span>: <span class="keyword">type</span>, <span class="keyword">reference</span></span><br></pre></td></tr></table></figure>
-
-<p>比如：</p>
-<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">reference</span>: url, www.info.com;</span><br><span class="line"><span class="keyword">reference</span>: cve, CVE<span class="number">-2014</span><span class="number">-1234</span>;</span><br></pre></td></tr></table></figure>
-
+        <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
+<p><code>Meta Keywords</code> 可以理解为是 <code>suricata</code>
+的基本关键字，不与任何协议绑定，在任何规则中都可以使用</p>
+<span id="more"></span>
+<h3 id="meta-keywords">Meta Keywords</h3>
+<h4 id="msgmessage">msg(message)</h4>
+<p><code>msg</code>
+关键字用来记录当规则匹配到时，对数据包的文本描述信息，然后记录在日志中</p>
+<p>比如： <figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">msg:</span> <span class="string">&quot;ATTACK-RESPONSES 403 Forbidden&quot;</span><span class="comment">;</span></span><br></pre></td></tr></table></figure></p>
+<p>注意，按照惯例，<code>msg</code>
+消息都是以大写字母开头，这样在日志记录中，从视觉上比较容易识别；<code>msg</code>
+一般是规则的第一个关键字</p>
+<h4 id="sidsignature-id">sid(signature ID)</h4>
+<p><code>sid</code> 签名标识符，数值类型，为每个规则定义一个
+<code>id</code> 号，不能重复  比如： <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">sid</span>: <span class="number">123</span>;</span><br></pre></td></tr></table></figure>
+一般，<code>sid</code>位于最后关键字（如果有 rev
+关键字，则位于倒数第二个），这也是为了书写上的规范吧</p>
+<h4 id="rev-revision">rev (revision)</h4>
+<p>用于表示规则的版本号</p>
+<p>比如： <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">rev</span>:<span class="number">123</span>;</span><br></pre></td></tr></table></figure></p>
+<h4 id="gidgroup-id">gid(group ID)</h4>
+<p><code>gid</code> 关键字不是很常用，默认是 1</p>
+<h4 id="classtype">classtype</h4>
+<p><code>classtype</code>
+指定该规则触发时，属于哪种报警分类信息，当前的攻击属于什么威胁。具体的警报分类查看文件
+<code>/etc/suricata/classification.config</code>，比如：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">config classification: rpc-portmap-decode,Decode of an RPC Query,<span class="number">2</span></span><br><span class="line">config classification: shellcode-detect,Executable code was detected,<span class="number">1</span></span><br><span class="line">config classification: string-detect,A suspicious string was detected,<span class="number">3</span></span><br></pre></td></tr></table></figure>
+<p>每一条报警分类信息，包含
+短名，具体描述和警报优先级，严重事件优先级为1，在规则中，指定短名即可：</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">classtype:</span>rpc-portmap-decode<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+<p>我们也可以在 <code>classification.config</code>
+中增加自己的警报信息。</p>
+<h4 id="reference">reference</h4>
+<p><code>reference</code>
+引用，给出规则触发时的额外参考信息，参考信息一般是
+<code>url</code>，方便起见，也可以给一个 <code>cve</code>
+号，<code>suricata</code> 会自动生成该 <code>cve</code> 在
+<code>mitre</code> 站点的 <code>cve</code> 链接。</p>
+<p>形式： <figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">reference</span>: <span class="keyword">type</span>, <span class="keyword">reference</span></span><br></pre></td></tr></table></figure></p>
+<p>比如： <figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ref</span>erence: url, www.info.com;</span><br><span class="line"><span class="built_in">ref</span>erence: cve, CVE<span class="number">-2014</span><span class="number">-1234</span>;</span><br></pre></td></tr></table></figure></p>
 <p><code>/etc/suricata/reference.config</code> 中记录了各种 type</p>
-<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">$ cat /etc/suricata/reference.<span class="built_in">config</span></span><br><span class="line"><span class="meta"># config reference: system URL</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">config</span> reference: bugtraq   http:<span class="comment">//www.securityfocus.com/bid/</span></span><br><span class="line"><span class="built_in">config</span> reference: bid	    http:<span class="comment">//www.securityfocus.com/bid/</span></span><br><span class="line"><span class="built_in">config</span> reference: cve       http:<span class="comment">//cve.mitre.org/cgi-bin/cvename.cgi?name=</span></span><br><span class="line"><span class="meta">#config reference: cve       http:<span class="comment">//cvedetails.com/cve/</span></span></span><br><span class="line"><span class="built_in">config</span> reference: secunia   http:<span class="comment">//www.secunia.com/advisories/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#whitehats is unfortunately gone</span></span><br><span class="line"><span class="built_in">config</span> reference: arachNIDS http:<span class="comment">//www.whitehats.com/info/IDS</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">config</span> reference: McAfee    http:<span class="comment">//vil.nai.com/vil/content/v_</span></span><br><span class="line"><span class="built_in">config</span> reference: nessus    http:<span class="comment">//cgi.nessus.org/plugins/dump.php3?id=</span></span><br><span class="line"><span class="built_in">config</span> reference: url       http:<span class="comment">//</span></span><br><span class="line"><span class="built_in">config</span> reference: et        http:<span class="comment">//doc.emergingthreats.net/</span></span><br><span class="line"><span class="built_in">config</span> reference: etpro     http:<span class="comment">//doc.emergingthreatspro.com/</span></span><br><span class="line"><span class="built_in">config</span> reference: telus     http:<span class="comment">//</span></span><br><span class="line"><span class="built_in">config</span> reference: osvdb     http:<span class="comment">//osvdb.org/show/osvdb/</span></span><br><span class="line"><span class="built_in">config</span> reference: threatexpert http:<span class="comment">//www.threatexpert.com/report.aspx?md5=</span></span><br><span class="line"><span class="built_in">config</span> reference: md5	    http:<span class="comment">//www.threatexpert.com/report.aspx?md5=</span></span><br><span class="line"><span class="built_in">config</span> reference: exploitdb http:<span class="comment">//www.exploit-db.com/exploits/</span></span><br><span class="line"><span class="built_in">config</span> reference: openpacket https:<span class="comment">//www.openpacket.org/capture/grab/</span></span><br><span class="line"><span class="built_in">config</span> reference: securitytracker http:<span class="comment">//securitytracker.com/id?</span></span><br><span class="line"><span class="built_in">config</span> reference: secunia   http:<span class="comment">//secunia.com/advisories/</span></span><br><span class="line"><span class="built_in">config</span> reference: xforce    http:<span class="comment">//xforce.iss.net/xforce/xfdb/</span></span><br><span class="line"><span class="built_in">config</span> reference: msft      http:<span class="comment">//technet.microsoft.com/security/bulletin/</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="priority"><a href="#priority" class="headerlink" title="priority"></a>priority</h4><p><code>priority</code> 优先级关键字是个数字，范围 1 到 255，1 到 4 使用比较频繁，1 为最高优先级，注意如果特意把该规则的 <code>priority</code> 设置为 1，则会覆盖 <code>classtype</code> 中的低优先级</p>
-<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">priority:</span><span class="number">1</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="metadata"><a href="#metadata" class="headerlink" title="metadata"></a>metadata</h4><p>记录非功能信息</p>
-<h4 id="target"><a href="#target" class="headerlink" title="target"></a>target</h4><p><code>target</code> 关键字指定警报的哪一侧是攻击的目标。</p>
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
-<li><a href="https://suricata.readthedocs.io/en/latest/rules/meta.html" target="_blank" rel="noopener">meta doc</a></li>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">$ cat <span class="regexp">/etc/</span>suricata/reference.config</span><br><span class="line"><span class="comment"># config reference: system URL</span></span><br><span class="line"></span><br><span class="line">config reference: bugtraq   http:<span class="regexp">//</span>www.securityfocus.com<span class="regexp">/bid/</span></span><br><span class="line">config reference: bid	    http:<span class="regexp">//</span>www.securityfocus.com<span class="regexp">/bid/</span></span><br><span class="line">config reference: cve       http:<span class="regexp">//</span>cve.mitre.org<span class="regexp">/cgi-bin/</span>cvename.cgi?name=</span><br><span class="line"><span class="comment">#config reference: cve       http://cvedetails.com/cve/</span></span><br><span class="line">config reference: secunia   http:<span class="regexp">//</span>www.secunia.com<span class="regexp">/advisories/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#whitehats is unfortunately gone</span></span><br><span class="line">config reference: arachNIDS http:<span class="regexp">//</span>www.whitehats.com<span class="regexp">/info/</span>IDS</span><br><span class="line"></span><br><span class="line">config reference: McAfee    http:<span class="regexp">//</span>vil.nai.com<span class="regexp">/vil/</span>content/v_</span><br><span class="line">config reference: nessus    http:<span class="regexp">//</span>cgi.nessus.org<span class="regexp">/plugins/</span>dump.php3?id=</span><br><span class="line">config reference: url       http:<span class="regexp">//</span></span><br><span class="line">config reference: et        http:<span class="regexp">//</span>doc.emergingthreats.net/</span><br><span class="line">config reference: etpro     http:<span class="regexp">//</span>doc.emergingthreatspro.com/</span><br><span class="line">config reference: telus     http:<span class="regexp">//</span></span><br><span class="line">config reference: osvdb     http:<span class="regexp">//</span>osvdb.org<span class="regexp">/show/</span>osvdb/</span><br><span class="line">config reference: threatexpert http:<span class="regexp">//</span>www.threatexpert.com/report.aspx?md5=</span><br><span class="line">config reference: md5	    http:<span class="regexp">//</span>www.threatexpert.com/report.aspx?md5=</span><br><span class="line">config reference: exploitdb http:<span class="regexp">//</span>www.exploit-db.com<span class="regexp">/exploits/</span></span><br><span class="line">config reference: openpacket https:<span class="regexp">//</span>www.openpacket.org<span class="regexp">/capture/g</span>rab/</span><br><span class="line">config reference: securitytracker http:<span class="regexp">//</span>securitytracker.com/id?</span><br><span class="line">config reference: secunia   http:<span class="regexp">//</span>secunia.com<span class="regexp">/advisories/</span></span><br><span class="line">config reference: xforce    http:<span class="regexp">//</span>xforce.iss.net<span class="regexp">/xforce/</span>xfdb/</span><br><span class="line">config reference: msft      http:<span class="regexp">//</span>technet.microsoft.com<span class="regexp">/security/</span>bulletin/</span><br></pre></td></tr></table></figure>
+<h4 id="priority">priority</h4>
+<p><code>priority</code> 优先级关键字是个数字，范围 1 到 255，1 到 4
+使用比较频繁，1 为最高优先级，注意如果特意把该规则的
+<code>priority</code> 设置为 1，则会覆盖 <code>classtype</code>
+中的低优先级</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">priority</span>:<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<h4 id="metadata">metadata</h4>
+<p>记录非功能信息</p>
+<h4 id="target">target</h4>
+<p><code>target</code> 关键字指定警报的哪一侧是攻击的目标。</p>
+<h3 id="参考">参考</h3>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://suricata.readthedocs.io/en/latest/rules/meta.html">meta
+doc</a></li>
 </ul>
 
     </div>
@@ -338,7 +354,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Meta-Keywords"><span class="nav-number">1.</span> <span class="nav-text">Meta Keywords</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#msg-message"><span class="nav-number">1.1.</span> <span class="nav-text">msg(message)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sid-signature-ID"><span class="nav-number">1.2.</span> <span class="nav-text">sid(signature ID)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rev-revision"><span class="nav-number">1.3.</span> <span class="nav-text">rev (revision)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gid-group-ID"><span class="nav-number">1.4.</span> <span class="nav-text">gid(group ID)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#classtype"><span class="nav-number">1.5.</span> <span class="nav-text">classtype</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reference"><span class="nav-number">1.6.</span> <span class="nav-text">reference</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#priority"><span class="nav-number">1.7.</span> <span class="nav-text">priority</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#metadata"><span class="nav-number">1.8.</span> <span class="nav-text">metadata</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#target"><span class="nav-number">1.9.</span> <span class="nav-text">target</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">2.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#meta-keywords"><span class="nav-number">1.</span> <span class="nav-text">Meta Keywords</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#msgmessage"><span class="nav-number">1.1.</span> <span class="nav-text">msg(message)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sidsignature-id"><span class="nav-number">1.2.</span> <span class="nav-text">sid(signature ID)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rev-revision"><span class="nav-number">1.3.</span> <span class="nav-text">rev (revision)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gidgroup-id"><span class="nav-number">1.4.</span> <span class="nav-text">gid(group ID)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#classtype"><span class="nav-number">1.5.</span> <span class="nav-text">classtype</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reference"><span class="nav-number">1.6.</span> <span class="nav-text">reference</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#priority"><span class="nav-number">1.7.</span> <span class="nav-text">priority</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#metadata"><span class="nav-number">1.8.</span> <span class="nav-text">metadata</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#target"><span class="nav-number">1.9.</span> <span class="nav-text">target</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">2.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -354,14 +370,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -430,9 +446,17 @@
   <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/muse.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
 
 
 
@@ -452,6 +476,8 @@
 
 
 
+
+  
 
   
 

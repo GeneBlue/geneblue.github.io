@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 过去的一年，一直在忙于 Android 代码保护方面的工作。从这一年多的经验来看，Android平台的代码保护技术已经发展到相对较为稳定的阶段了。目前，市场上的加固产品比较成熟，但各家的 DEX-VMP 技术并没有发展到同一高度，其中兼容性，稳定性参差不一。 该文试图解释清楚 DEX-VMP 技术">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android DEX-VMP 虚拟保护技术">
+<meta property="og:url" content="http://yoursite.com/2019/09/13/android/sec--android-dex-vmp/index.html">
+<meta property="og:site_name" content="geneblue&#39;s blog">
+<meta property="og:description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 过去的一年，一直在忙于 Android 代码保护方面的工作。从这一年多的经验来看，Android平台的代码保护技术已经发展到相对较为稳定的阶段了。目前，市场上的加固产品比较成熟，但各家的 DEX-VMP 技术并没有发展到同一高度，其中兼容性，稳定性参差不一。 该文试图解释清楚 DEX-VMP 技术">
+<meta property="og:locale">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB6257433f62df857cab1cb04a997a1093?method=download&shareKey=f07da1da1c99a6a7b7a982920d22ce3d">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBc9611c867e699c63d5cb19fe0ee65a4b?method=download&shareKey=2007fce0d8835820ce396364350e5fb6">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBaf6a6e6f036d29861b21e8db61c951d6?method=download&shareKey=1197e0cbc415de156d72509f982207c9">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB0ef986a25d4c34b9666ebfd549e0eb19?method=download&shareKey=a75f054483173cc3e79f8d7a28fa0f15">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBf8080e3d393217b82db81166dd77ddf1?method=download&shareKey=f256d8ce1a8f36823b82f37b69ac5658">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBa7c624129966f69861d6ec8886f757e8?method=download&shareKey=0d39c68028df6280b7ff30c089081302">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB8fb5c78dd931a972d21f28dad92efaa1?method=download&shareKey=96d1ace7d2dce421cbafb781a8853cfc">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBa3b0866c34087bbc648d46f57809f5a6?method=download&shareKey=d3b392da2ce09b3fd3f2840f5a41e34b">
+<meta property="article:published_time" content="2019-09-13T04:02:08.000Z">
+<meta property="article:modified_time" content="2022-01-16T15:49:52.430Z">
+<meta property="article:author" content="geneblue">
+<meta property="article:tag" content="android sec">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://note.youdao.com/yws/api/personal/file/WEB6257433f62df857cab1cb04a997a1093?method=download&shareKey=f07da1da1c99a6a7b7a982920d22ce3d">
+
+<link rel="canonical" href="http://yoursite.com/2019/09/13/android/sec--android-dex-vmp/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Android DEX-VMP 虚拟保护技术 | geneblue's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">geneblue's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/13/android/sec--android-dex-vmp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="geneblue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geneblue's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          Android DEX-VMP 虚拟保护技术
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-09-13 12:02:08" itemprop="dateCreated datePublished" datetime="2019-09-13T12:02:08+08:00">2019-09-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<p>过去的一年，一直在忙于 Android
+代码保护方面的工作。从这一年多的经验来看，Android平台的代码保护技术已经发展到相对较为稳定的阶段了。目前，市场上的加固产品比较成熟，但各家的
+DEX-VMP 技术并没有发展到同一高度，其中兼容性，稳定性参差不一。</p>
+<p>该文试图解释清楚 DEX-VMP 技术的基本原理，也算是对之前工作的总结。</p>
+<span id="more"></span>
+<h3 id="背景">背景</h3>
+<p>众所周知，Android 应用程序是由 java/Kotlin 语言编写而成，然后打包成
+APK 文件。java 代码被编译成 APK 中的 dex 文件，dalvik/art 虚拟机解释执行
+dex 中的字节码。攻击者可以使用反编译工具很容易的逆向分析 dex
+文件，理解代码关键逻辑，增加恶意代码，再打包回 APK
+文件。对于应用开发者来说，肯定不愿意看到自己辛苦开发的应用被恶意打包，或者代码中的关键逻辑（支付）被恶意篡改。</p>
+<p>为了对抗上述风险，Android
+平台的代码保护技术（加固技术）一直在蓬勃发展。可以看到，dex
+文件是代码加固的保护核心。</p>
+<p>最初的加固技术利用 Android 系统 DexClassLoader 动态加载机制，将保护的
+dex 文件解压解密后动态加载到内存中执行。该方式有效的抵抗了 APK
+文件的静态分析，使逆向分析者无法在 APK 文件中找到真实的 dex
+文件。然而此种方式存在很大的弊端，应用安装运行后，会将真实的 dex
+文件解密落地到文件系统。分析者观察 dex 文件路径，将其 copy
+出来即可。</p>
+<p>为了针对上述保护缺陷，第二代保护利用 hook 技术，在动态加载的时候将
+DexClassLoader 执行过中的 dex 内存替换成真实 dex 文件的内存，从而实现
+dex 的不落地加载。当然逆向分析技术也在不断发展，dex
+文件虽然不会解密落地，但在内存中是完整存在的。在应用运行起来后，内存搜索
+dex 将其 dump 下来即可。</p>
+<p>为了对抗上述逆向方式，第三代保护技术使用函数抽取的方式，让 dex
+在内存中一直是不完整状态。实现的大致思路是，对要保护的 dex
+文件预处理，将要保护的函数指令抽取出来加密存储，原位置填充 nop 指令，在
+dalvik/art 执行到抽取的函数时，使用 hook 技术拦截 libdalvik.so/libart.so
+中的指令读取部分，将函数对应的真实指令解密填充让 dalvik/art
+解释执行下去。随着逆向技术的发展，改造 dalvik ，遍历所有 dex
+方法，再内存重组 dex 是对抗此种加固保护的有效方式，dexhunter
+是其中的主要代表。</p>
+<p>随着内存脱壳机的出现，指令抽取的保护方式不再有效。java2cpp
+技术开始引入到加固保护中。java2cpp 也是对 dex 中的函数做处理，将函数中的
+dalvik 指令转换成等价的 cpp 代码（基于 JNI），再编译成 native so
+库，保护方法增加 native 属性。这样执行到该保护方法时就会转入到 native
+层执行对应的 cpp 代码。当保护较多方法时，cpp 代码编译的 so
+体积也在变大，这会存在包体积过大的问题。</p>
+<p>针对 java2cpp
+保护大量方法时安装包体积过大的问题，以及更高地提升代码保护的安全性，DEX-VMP
+技术在 Android 平台得以发展。这也是本文主要介绍的内容。</p>
+<h3 id="dex-vmp-概览">DEX-VMP 概览</h3>
+<p>DEX-VMP 原理理解起来比较容易，其针对的保护单位也是函数。将方法的
+dalvik 指令转换成等价的自定义指令，函数原指令替换成自定义 VM
+的调用入口指令，再将函数参数通过 VMP 入口传入到自定义 VM 中执行，自定义
+VM（XVM） 解释执行自定义指令，总体效果如下：</p>
+原函数：
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB6257433f62df857cab1cb04a997a1093?method=download&shareKey=f07da1da1c99a6a7b7a982920d22ce3d"  alt="dexvmp-ori-functions" width="544" height="462" title="dexvmp-ori-functions"/></p>
+</div>
+保护后：
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBc9611c867e699c63d5cb19fe0ee65a4b?method=download&shareKey=2007fce0d8835820ce396364350e5fb6"  alt="dexvmp-protect-functions" width="540" height="277" title="dexvmp-protect-functions"/></p>
+</div>
+XVM 入口：
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBaf6a6e6f036d29861b21e8db61c951d6?method=download&shareKey=1197e0cbc415de156d72509f982207c9"  alt="dexvmp-entry" width="428" height="80" title="dexvmp-entry"/></p>
+</div>
+<p>可以看到，原函数的代码逻辑不复存在，进而替换为 x.z(), x.v() 等 XVM
+入口，这些入口均是 native 方法，负责将参数传入到 XVM 中，XVM
+解释执行原代码的等价指令。</p>
+<p>实现 DEX-VMP 总体来说需要两步： - 对原 dex
+处理，找到要保护的方法，将原指令翻译成等价指令，加密存储，并将原指令替换为
+VMP入口指令 - 实现 VM，解释执行存储的等价指令</p>
+<p>实现 DEX-VMP，需要熟知 dex 文件格式，smali 指令 和 JNI
+调用方面的知识。</p>
+<h3 id="dex-vmp-设计与实现">DEX-VMP 设计与实现</h3>
+<p>为了简化过程，这里直接以 dalvik 的原生指令作为等价指令。</p>
+<h4 id="dex-文件结构">dex 文件结构</h4>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB0ef986a25d4c34b9666ebfd549e0eb19?method=download&shareKey=a75f054483173cc3e79f8d7a28fa0f15"  alt="dex-file-structure" width="294" height="506" title="dex-file-structure"/></p>
+</div>
+<p>对 dex 文件结构的介绍可以参考 <a
+target="_blank" rel="noopener" href="https://source.android.com/devices/tech/dalvik/dex-format">Dalvik
+可执行文件格式</a>，也可以自行搜索其他资料，这里不做详细介绍。</p>
+<p>DEX-VMP 中 string，field，method，class 等信息均要从 dex
+文件结构中去获取，因为 dalvik 字节码中包含的均是 id 信息，并不直接含有
+string，field 等。</p>
+<h4 id="dalvik-字节码">dalvik 字节码</h4>
+<p><a
+target="_blank" rel="noopener" href="https://source.android.com/devices/tech/dalvik/dalvik-bytecode">Dalvik
+字节码</a> 这里包含每条 dalvik 指令的详细解释。 <a
+target="_blank" rel="noopener" href="https://source.android.com/devices/tech/dalvik/instruction-formats.html">Dalvik
+可执行指令格式</a> 这里包含指令格式的解释。</p>
+<p>dalvik 共有 256 条指令，在 035 版本的 dex 文件中，0x3E ～ 0x43, 0x79
+~ 0x7A, 0xEE ~ 0xFF 指令未使用，这些指令预留给了高版本的 dex 格式。</p>
+<p>一个常见的指令如下所示：</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBf8080e3d393217b82db81166dd77ddf1?method=download&shareKey=f256d8ce1a8f36823b82f37b69ac5658"  alt="dex-file-structure" width="869" height="137" title="dex-file-structure"/></p>
+</div>
+<p>该条指令表示将一个 16 位的源寄存器的值赋值给一个 8
+位的目的寄存器中。</p>
+<p>红色方框中的 02 表示该指令序号，蓝色横线 2 表示该条指令需要占用 2
+个字的空间（1个字16bit），绿色横线 2 表示该指令使用到 2 个寄存器，x
+符号表示指令使用到的数据类型，其他类型参考下表</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBa7c624129966f69861d6ec8886f757e8?method=download&shareKey=0d39c68028df6280b7ff30c089081302"  alt="dalvik-insn" width="856" height="445" title="dalvik-insn"/></p>
+</div>
+<p>该指令对应的一个示例如下：</p>
+<figure class="highlight basic"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">02 </span><span class="number">03</span> <span class="number">13</span> <span class="number">00</span></span><br></pre></td></tr></table></figure>
+<p>当 dalvik 读取到 02 时，查找到 02 对应的是 move/from16
+这条指令，这条指令占据两个字大小，需要使用到两个寄存器，分别为
+v03，v0013，指令操作是将 v0013 的值拷贝给 v03。</p>
+<p>将上述描述代码化表示就是解释器的执行过程。</p>
+<h4 id="jni-调用">JNI 调用</h4>
+<p>JNI 是 java 本地调用接口（Java Native
+Interface），native（本地）代码就是指 c/c++ 代码。写过Android
+代码的同学都对这个比较熟悉，我们一般将一些性能或者安全要求较高的逻辑放到
+native 中，毕竟 c/c++ 代码的执行效率和逆向难度都要比纯 java 好很多。</p>
+<p>java 代码都可以等价为 JNI 的实现形式，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String value = String.valueOf(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>简单调用一个 String 类的 valueof() 方法，其对应的 JNI 代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">jint init = <span class="number">0</span>;</span><br><span class="line">jclass clz = env-&gt;FindClass(<span class="string">&quot;java/lang/String&quot;</span>);</span><br><span class="line">jmethodID mid = env-&gt;GetStaticMethodID(clz, <span class="string">&quot;valueOf&quot;</span>, <span class="string">&quot;(I)Ljava/lang/String;&quot;</span>);</span><br><span class="line">jobject value = env-&gt;CallStaticObjectMethodV(clz, mid, init);</span><br></pre></td></tr></table></figure>
+<p>以上代码功能完全一致，最终都是调用 java 层的 String.valueof()
+方法。第一份调用代码本身就在 java 层，第二份运行在 c/c++ 的 native
+层。可以看到 JNI 就是沟通 native 与 java 的桥梁。</p>
+<p>自动完成上述转换其实就是 java2c 的实现过程。当然 DEX-VMP 的实现也与
+JNI 调用息息相关。</p>
+<h4 id="dex-vmp-设计与实现-1">DEX-VMP 设计与实现</h4>
+<p>以下是一段示例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hello</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        String hello = <span class="string">&quot;This is a Demo&quot;</span>;</span><br><span class="line">        String result = hello.replaceAll(<span class="string">&quot;Demo&quot;</span>, <span class="string">&quot;Hello Demo&quot;</span>);</span><br><span class="line">        System.out.println(result);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="vm-结构选择">VM 结构选择</h5>
+<p>DEX-VMP 的实现和其他 VM，比如 JVM，DVM 的实现是很相似的。VM
+的实现都会面对结构选择问题，常见两类结构，栈结构和寄存器结构。JVM
+是典型的使用栈结构的
+VM，所有参数在调用之前都会有入栈操作，示例代码反编译如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">Compiled from <span class="string">&quot;Hello.java&quot;</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">Hello</span> </span>&#123;</span><br><span class="line">  <span class="keyword">public</span> com.Hello();</span><br><span class="line">    Code:</span><br><span class="line">       <span class="number">0</span>: aload_0</span><br><span class="line">       <span class="number">1</span>: invokespecial #<span class="number">1</span>                  <span class="comment">// Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span></span><br><span class="line">       <span class="number">4</span>: <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(java.lang.String[])</span></span>;</span><br><span class="line">    Code:</span><br><span class="line">       <span class="number">0</span>: ldc           #<span class="number">2</span>                  <span class="comment">// String This is a Demo</span></span><br><span class="line">       <span class="number">2</span>: astore_1</span><br><span class="line">       <span class="number">3</span>: aload_1</span><br><span class="line">       <span class="number">4</span>: ldc           #<span class="number">3</span>                  <span class="comment">// String Demo</span></span><br><span class="line">       <span class="number">6</span>: ldc           #<span class="number">4</span>                  <span class="comment">// String Hello Demo</span></span><br><span class="line">       <span class="number">8</span>: invokevirtual #<span class="number">5</span>                  <span class="comment">// Method java/lang/String.replaceAll:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;</span></span><br><span class="line">      <span class="number">11</span>: astore_2</span><br><span class="line">      <span class="number">12</span>: getstatic     #<span class="number">6</span>                  <span class="comment">// Field java/lang/System.out:Ljava/io/PrintStream;</span></span><br><span class="line">      <span class="number">15</span>: aload_2</span><br><span class="line">      <span class="number">16</span>: invokevirtual #<span class="number">7</span>                  <span class="comment">// Method java/io/PrintStream.println:(Ljava/lang/String;)V</span></span><br><span class="line">      <span class="number">19</span>: <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到在调用 invokevirtual 指令之前，会调用两个 ldc 指令，ldc
+指令负责将两个常量字符串从常量池送到栈顶，在 invokevirtual
+时再从栈顶弹出这两个值作为调用参数，这和 x86
+指令的调用约定是类似的，只不过 x86 的栈和指令执行是 cpu
+硬件约定好的，cpu 就是在解释执行每一条 x86 指令，我们可以把 VM
+的解释执行过程当作是一个虚拟的 CPU。</p>
+<p>Dalvik VM 是基于寄存器结构的，对应的一段 smali 如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">.class <span class="keyword">public</span> Lcom/Hello;</span><br><span class="line">.<span class="keyword">super</span> Ljava/lang/Object;</span><br><span class="line">.source <span class="string">&quot;Hello.java&quot;</span></span><br><span class="line"></span><br><span class="line"># direct methods</span><br><span class="line">.method <span class="keyword">public</span> constructor &lt;init&gt;()V</span><br><span class="line">    .locals <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    .prologue</span><br><span class="line">    .line <span class="number">3</span></span><br><span class="line">    invoke-direct &#123;p0&#125;, Ljava/lang/Object;-&gt;&lt;init&gt;()V</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span>-<span class="keyword">void</span></span><br><span class="line">.end method</span><br><span class="line"></span><br><span class="line">.<span class="function">method <span class="keyword">public</span> <span class="keyword">static</span> <span class="title">main</span><span class="params">([Ljava/lang/String;)</span>V</span></span><br><span class="line"><span class="function">    .locals 3</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    .prologue</span></span><br><span class="line"><span class="function">    .line 5</span></span><br><span class="line"><span class="function">    <span class="keyword">const</span>-string v0, &quot;This is a Demo&quot;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    .line 6</span></span><br><span class="line"><span class="function">    <span class="keyword">const</span>-string v1, &quot;Demo&quot;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    <span class="keyword">const</span>-string v2, &quot;Hello Demo&quot;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    invoke-virtual </span>&#123;v0, v1, v2&#125;, Ljava/lang/String;-&gt;replaceAll(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;</span><br><span class="line"></span><br><span class="line">    move-result-object v0</span><br><span class="line"></span><br><span class="line">    .line <span class="number">7</span></span><br><span class="line">    sget-object v1, Ljava/lang/System;-&gt;out:Ljava/io/PrintStream;</span><br><span class="line"></span><br><span class="line">    invoke-virtual &#123;v1, v0&#125;, Ljava/io/PrintStream;-&gt;println(Ljava/lang/String;)V</span><br><span class="line"></span><br><span class="line">    .line <span class="number">8</span></span><br><span class="line">    <span class="keyword">return</span>-<span class="keyword">void</span></span><br><span class="line">.end method</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>可以看到在调用 invoke-virtual 之前，是两个 const-string
+指令，这两个指令负责将字符串常量直接赋值给 v1，v2 寄存器，在调用
+invoke-virtual 时直接将寄存器传入即可，这和 arm
+指令的调用约定有一定的相似。</p>
+<p>在设计指令时，指令的调用约定就已经决定了后续的 VM
+实现是使用寄存器结构，还是栈结构，VM 是没有选择的。</p>
+<p>我们要实现的 XVM 因为是直接以 dalvik
+的原生指令作为执行指令，所以最简易的做法也是像 dalvik
+那样使用寄存器结构。</p>
+<h5 id="vmp-执行流程">VMP 执行流程</h5>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB8fb5c78dd931a972d21f28dad92efaa1?method=download&shareKey=96d1ace7d2dce421cbafb781a8853cfc" alt="dexvmp-structure" width="498" height="618" title="dexvmp-structure"/></p>
+</div>
+<p>如图，当 dalvik VM 执行到 DEX-VMP 保护的函数时，执行的是 VMP native
+入口函数，开始进入 VMP 的执行流程，VMP 首先会初始化 dex
+文件信息，接着获取该保护方法的一些信息，比如寄存器数量，待执行指令的内存位置等，然后初始化寄存器存储结构，最后进入到解释器中解释执行每一条指令。在解释执行的过程，如果执行到外部函数，比如示例代码中的
+replaceAll 就是一个外部函数，就会使用 JNI CallMethod
+的形式调用，让其切换回 dalvik VM，让 dalvik 去执行真正的 replaceAll
+函数。</p>
+<h5 id="dex-文件预处理">dex 文件预处理</h5>
+<p>如 DEX-VMP 概览章节所示的加固前后的对比图，很明显我们需要对 dex
+文件做预处理。dex
+预处理主要做两方面工作，保护方法的原指令拷贝出来并存储，保护方法的原指令替换成
+VMP 入口方法。将示例 java 代码编译成 dex 文件，放入 010editor 中可以查看
+main 方法对应的指令数据：</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBa3b0866c34087bbc648d46f57809f5a6?method=download&shareKey=d3b392da2ce09b3fd3f2840f5a41e34b"  alt="dex-demo-insns" width="671" height="361" title="dex-demo-insns"/></p>
+</div>
+<p>可以看到蓝色区域包含的 main
+方法所需要的寄存器数，内部参数，外部参数及指令长度。这些都是 VM
+需要的关键信息，需要存储起来。然后将指令替换为 DEX-VMP 的 native
+入口指令。</p>
+<p>有一些工具可以帮我们实现以上操作，比如 <a
+target="_blank" rel="noopener" href="https://github.com/JesusFreke/smali/tree/master/dexlib2">dexlib2</a>，使用该工具可以对指定方法构造
+dalvik
+指令，或获取方法的指令数据。该工具的具体使用方法大家可以自定搜索。</p>
+<p>在构造 native 入口函数时，我们需要将保护方法的所有参数都传入到 native
+层，注意非静态方法会有一个隐含的 this 参数。</p>
+<h5 id="vmp-寄存器结构设计">VMP 寄存器结构设计</h5>
+<p>我们的 VM
+是基于寄存器结构的，那么该如何管理这些寄存器呢？这里所指的寄存器和
+dalvik 中的一样，是虚拟概念，并不是指 cpu 真实的寄存器。</p>
+<p>从示例 main 函数的一些 hex 数据中，可以得到一些关键信息：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">                              <span class="attribute">0400</span> <span class="number">0100</span>  ....p...........</span><br><span class="line"><span class="attribute">0300</span> <span class="number">0000</span> <span class="number">8</span>e<span class="number">02</span> <span class="number">0000</span> <span class="number">1000</span> <span class="number">0000</span></span><br></pre></td></tr></table></figure>
+<p>如 010editor 中解析的那样，main 方法在执行过程中需要使用到 4
+个寄存器，传入参数 1 个，调用其他方法需要用的参数为 3 个， 没有使用 try
+结构，指令数据为 16 个字。</p>
+<p>dalvik 寄存器最大长度为
+32bit，我们可以直接申请一段内存来表示寄存器：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> *regs = (<span class="keyword">unsigned</span> <span class="keyword">int</span> *) <span class="built_in">calloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">unsigned</span> <span class="keyword">int</span>), <span class="number">4</span>);</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> *regs_bits_obj = (<span class="keyword">unsigned</span> <span class="keyword">int</span> *) <span class="built_in">calloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">unsigned</span> <span class="keyword">int</span>), <span class="number">4</span>);</span><br></pre></td></tr></table></figure>
+<p>regs 表示寄存器，4 个寄存器分别为 regs[0], regs[1], regs[2],
+regs[3]。regs_bits_obj 表示对应寄存器是否是 object，比如 regs[0] 是
+object，则 regs_bits_obj[0] = 1，非 object 的情况均为 0；</p>
+<p>每一个保护函数在进入 VM 后，我们就先创建好这样的寄存器单元，供 VM
+在解释执行阶段使用，执行完毕销毁即可。</p>
+<h5 id="vmp-dex-文件解析">VMP dex 文件解析</h5>
+<p>对 dex 文件格式比较熟悉的同学都知道，为了节省 dex 文件的体积，dex
+文件中大量采用索引，字符串会去重统一存放。string, type, proto, field,
+method 结构均使用索引来获取相应的字符信息。比如 method：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MethodId</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint16_t</span> class_idx;</span><br><span class="line">    <span class="keyword">uint16_t</span> proto_idx;</span><br><span class="line">    <span class="keyword">uint32_t</span> name_idx;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>通过具体索引，我们可以进一步查找该 method 所属 class 是哪一个，proto
+是哪一个，name 是哪个字符串。</p>
+<p>字节码指令中包含的也是索引，所以我们需要在 VM 中实现对 dex
+文件的解析，当解释到指令时，如果需要字符索引或其他索引，需要从对应 dex
+文件中获取。</p>
+<p>可以设计如下几个示例接口：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MethodId</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint16_t</span> class_idx;</span><br><span class="line">    <span class="keyword">uint16_t</span> proto_idx;</span><br><span class="line">    <span class="keyword">uint32_t</span> name_idx;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">const</span> <span class="keyword">char</span> *<span class="title">getStringFromDex</span><span class="params">(<span class="keyword">int</span> sidx)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">const</span> <span class="keyword">char</span> *<span class="title">getTypeFromDex</span><span class="params">(<span class="keyword">int</span> tidx)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">const</span> struct MethodId *<span class="title">getMethodIdFromDex</span><span class="params">(<span class="keyword">int</span> midx)</span></span></span><br><span class="line"><span class="function">...</span></span><br><span class="line"><span class="function"></span></span><br></pre></td></tr></table></figure>
+<p>对 dex 文件的详细解析可以查看源码 <a
+target="_blank" rel="noopener" href="https://android.googlesource.com/platform/dalvik/+/android-4.4.2_r2/libdex/DexFile.h">libdex/DexFile.h</a></p>
+<p>总之，要对 dex 文件格式熟悉。</p>
+<h5 id="vmp-实现示例">VMP 实现示例</h5>
+<p>我们就以示例 main 方法中的 const-string, invoke-virtual,
+move-result-object, sget-object, return-void
+这几条指令来实现一个简易的解释器</p>
+<p>先熟悉一下这几条指令的作用：</p>
+<p><strong>const-string vAA, string@BBBB</strong>
+通过给定的索引获取字符串引用，然后移到指定的寄存器中
+<strong>invoke-virtual {vC, vD, vE, vF, vG}, meth@BBBB</strong>
+调用指定方法，如果有结果的话可以与紧跟其后的 move-result-* 指令一起存储
+<strong>move-result-object vAA</strong> 将最新的 invoke-*
+指令的执行结果移到指定的寄存器中。该指令必须紧跟在结果不会被忽略的
+invoke-* 或者 filled-new-array 指令之后执行，否则无效。
+<strong>sget-object vAA field@BBBB</strong>
+获取已标识的字段，并将结果存储在寄存器中 <strong>return-void</strong>
+直接返回j</p>
+<p>示例 main 函数指令对应 dex 文件的 hex 数据：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">                              <span class="attribute">1a00</span> <span class="number">0</span>a<span class="number">00</span>  ................</span><br><span class="line"><span class="attribute">1a01</span> <span class="number">0100</span> <span class="number">1</span>a<span class="number">02</span> <span class="number">0200</span> <span class="number">6</span>e<span class="number">30</span> <span class="number">0400</span> <span class="number">1002</span> <span class="number">0</span>c<span class="number">00</span>  ........n<span class="number">0</span>......</span><br><span class="line"><span class="attribute">6201</span> <span class="number">0000</span> <span class="number">6</span>e<span class="number">20</span> <span class="number">0200</span> <span class="number">0100</span> <span class="number">0</span>e<span class="number">00</span> </span><br></pre></td></tr></table></figure>
+<p>一一对应的关系如下：</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">.method</span><span class="keyword"> public</span><span class="keyword"> static</span> main([<span class="class">Ljava/lang/String;</span>)V</span><br><span class="line">    // 1a00 0a00</span><br><span class="line">   <span class="built_in"> const-string </span>v0, <span class="string">&quot;This is a Demo&quot;</span></span><br><span class="line">    // 1a01 0100</span><br><span class="line">   <span class="built_in"> const-string </span>v1, <span class="string">&quot;Demo&quot;</span></span><br><span class="line">    // 1a02 0200</span><br><span class="line">   <span class="built_in"> const-string </span>v2, <span class="string">&quot;Hello Demo&quot;</span></span><br><span class="line">    // 6e30 0400 1002</span><br><span class="line">   <span class="built_in"> invoke-virtual </span>&#123;v0, v1, v2&#125;, <span class="class">Ljava/lang/String;</span>-&gt;replaceAll(<span class="class">Ljava/lang/String;</span><span class="class">Ljava/lang/String;</span>)<span class="class">Ljava/lang/String;</span></span><br><span class="line">    // 0c00</span><br><span class="line">   <span class="built_in"> move-result-object </span>v0</span><br><span class="line">    // 6201 0000</span><br><span class="line">   <span class="built_in"> sget-object </span>v1, <span class="class">Ljava/lang/System;</span>-&gt;out:<span class="class">Ljava/io/PrintStream;</span></span><br><span class="line">    // 6e20 0200 0100</span><br><span class="line">   <span class="built_in"> invoke-virtual </span>&#123;v1, v0&#125;, <span class="class">Ljava/io/PrintStream;</span>-&gt;println(<span class="class">Ljava/lang/String;</span>)V</span><br><span class="line">    // 0e00</span><br><span class="line">   <span class="built_in"> return-void</span></span><br><span class="line"><span class="built_in"></span><span class="keyword">.end method</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CONST_STRING        0x1A</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> INVOKE_VIRTUAL	    0x6E</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MOVE_RESULT_OBJECT	0x1C</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SGET_OBJECT	        0x62</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> RETURN_VOID	        0x0E</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">interper</span><span class="params">(JNIEnv *env, jobject *retValue)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> Instruction *next = currentInsnsPtr;</span><br><span class="line">    <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> Instruction *insn = next;</span><br><span class="line">        <span class="keyword">switch</span>(insn-&gt;Opcode()) &#123;</span><br><span class="line">            <span class="keyword">case</span> CONST_STRING:</span><br><span class="line">                <span class="keyword">int</span> sidx = insn-&gt;getVReg_B();</span><br><span class="line">                <span class="keyword">int</span> regidx = insn-&gt;getVReg_A();</span><br><span class="line">                <span class="keyword">const</span> <span class="keyword">char</span> *str = getStringFromDex(sidx);</span><br><span class="line">                jstring strObj = env-&gt;NewStringUTF(str);</span><br><span class="line">                regs[regidx] = (<span class="keyword">uintptr_t</span>) strObj;</span><br><span class="line">                next = insn-&gt;Next_2xx();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> INVOKE_VIRTUAL:</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">int</span> mid = insn-&gt;getVRegB();</span><br><span class="line">                <span class="keyword">const</span> MethodId* mld = getMethodIdFromDex(mid);</span><br><span class="line">                jclass clz = getClassFromDex(mld-&gt;class_id);</span><br><span class="line">                <span class="keyword">const</span> ProtoID *methodProto = getProtoIDFromDex(mld-&gt;proto_id);</span><br><span class="line">                <span class="keyword">const</span> <span class="keyword">char</span> *protoStr = getProtoStrFromDex(methodProto);</span><br><span class="line">                <span class="keyword">const</span> <span class="keyword">char</span> *methodName = getStringFromDex(mld-&gt;name_id);</span><br><span class="line">                </span><br><span class="line">                jmethodID retMid = env-&gt;GetMethodID(clz, methodName, methodProto);</span><br><span class="line">                </span><br><span class="line">                <span class="keyword">const</span> <span class="keyword">char</span> *shorty = getStringFromDex(methodProto-&gt;shorty_idx_);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// get invoke parameters</span></span><br><span class="line">                <span class="keyword">uint32_t</span> params[<span class="number">5</span>];</span><br><span class="line">                insn-&gt;getParams(params);</span><br><span class="line">                jvalue paramsValue[<span class="number">5</span>];</span><br><span class="line">                <span class="keyword">int</span> i = <span class="number">0</span>, j = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">const</span> <span class="keyword">char</span> *t = shorty + <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (!isStatic) &#123;</span><br><span class="line">                    paramsValue[j].l = (jobject) regs[params[i]];</span><br><span class="line">                    i++;</span><br><span class="line">                    j++;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">while</span> (*t) &#123;</span><br><span class="line">                    <span class="keyword">switch</span>(*t) &#123;</span><br><span class="line">                        <span class="keyword">case</span> <span class="string">&#x27;L&#x27;</span>:</span><br><span class="line">                        <span class="keyword">case</span> <span class="string">&#x27;[&#x27;</span>:</span><br><span class="line">                            paramsValue[j].l = (jobject) regs[params[i]];</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        <span class="keyword">case</span> <span class="string">&#x27;F&#x27;</span>:</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        ...</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// call function by jni</span></span><br><span class="line">                <span class="keyword">if</span> (retMid &amp;&amp; paramsValue) &#123;</span><br><span class="line">                    <span class="keyword">switch</span> (shorty[<span class="number">0</span>]) &#123;</span><br><span class="line">                        <span class="keyword">case</span> <span class="string">&#x27;V&#x27;</span>:</span><br><span class="line">                            env-&gt;CallVoidMethodA(paramsValue[<span class="number">0</span>].l, retMid, paramsValue + <span class="number">1</span>);</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        <span class="keyword">case</span> <span class="string">&#x27;L&#x27;</span>:</span><br><span class="line">                        <span class="keyword">case</span> <span class="string">&#x27;[&#x27;</span>:</span><br><span class="line">                            tmpObj = env-&gt;CallObjectMethodA(paramsValue[<span class="number">0</span>].l, retMid, paramsValue + <span class="number">1</span>);</span><br><span class="line">                            tmpIsObj = <span class="number">1</span>;</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                        <span class="keyword">case</span> <span class="string">&#x27;F&#x27;</span>:</span><br><span class="line">                        <span class="keyword">case</span> <span class="string">&#x27;D&#x27;</span>:</span><br><span class="line">                        <span class="keyword">case</span> <span class="string">&#x27;J&#x27;</span>:</span><br><span class="line">                        <span class="keyword">case</span> <span class="string">&#x27;I&#x27;</span>:</span><br><span class="line">                        <span class="keyword">case</span> <span class="string">&#x27;Z&#x27;</span>:</span><br><span class="line">                        <span class="keyword">case</span> <span class="string">&#x27;B&#x27;</span>:</span><br><span class="line">                        <span class="keyword">case</span> <span class="string">&#x27;S&#x27;</span>:</span><br><span class="line">                        <span class="keyword">case</span> <span class="string">&#x27;C&#x27;</span>:</span><br><span class="line">                            <span class="comment">// todo</span></span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                next = insn-&gt;Next_3xx();</span><br><span class="line">            &#125;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> MOVE_RESULT_OBJECT:</span><br><span class="line">                <span class="keyword">int</span> regidx = insn-&gt;getVRegA();</span><br><span class="line">                regs[regidx] = (<span class="keyword">uintptr_t</span>) tmpObj;</span><br><span class="line">                next = insn-&gt;Next_1xx();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> SGET_OBJECT:</span><br><span class="line">                <span class="keyword">int</span> regidx = insn-&gt;getVRegA();</span><br><span class="line">                <span class="keyword">int</span> fidx = insn-&gt;getVRegB();</span><br><span class="line">                <span class="keyword">const</span> FieldId *fld = getFieldIdFromDex(fidx);</span><br><span class="line">                jclass clz = getClassFromDex(fld-&gt;class_idx_);</span><br><span class="line">                jfieldID retFld = env-&gt;GetStaticFieldID(clz, getStringFromDex(fld-&gt;name_idx_),</span><br><span class="line">                                           getTypeFromDex(fld-&gt;type_idx_));</span><br><span class="line">                jobject retObj = env-&gt;GetStaticObjectField(clz, retFld);</span><br><span class="line">                regs[regidx] = (<span class="keyword">uintptr_t</span>) retObj;</span><br><span class="line">                next = insn-&gt;Next_2xx();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> RETURN_VOID:</span><br><span class="line">                retValue = <span class="literal">NULL</span>;</span><br><span class="line">                <span class="keyword">goto</span> end;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">goto</span> end;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">end:</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面是一个示例 demo，大家可以从其中看到解释器就是 while switch
+的程序结构，执行到 return 指令时退出循环。</p>
+<h3 id="多种保护支持">多种保护支持</h3>
+<p>dex 文件是 DEX-VMP 的主要保护目标。</p>
+<p>在 Android 项目中，有的时候我们并不需要开发完整的 app 程序，而是提供
+sdk
+给其他部门或者其他开发者使用，但又不希望其他开发人员很容易就逆向分析出
+sdk 的逻辑，那 DEX-VMP 也可以满足这样的需求吗。可以的。Android 上的 sdk
+一般有两种提供形式，jar 包和 aar 包。aar
+包是个压缩文件，代码逻辑依然是放在 jar 包中，所以解决 jar
+的加固即可。jar 加固的流程和 dex 加固比较相似，首先需要对 jar
+文件预处理，将 jar 包使用 android sdk 中的 dx 工具转换成对应的 dex
+文件，使用 dexlib2 将 dex 文件中待保护方法的 dalvik 字节码 move
+出来，原位置不保留任何字节码，该 dex 文件就是用来寻找
+string，method，field 等信息的 cache 文件， 再将 jar 中目标方法的字节码
+patch 成 vmp 的入口，原字节码丢弃掉。vmp 部分在初始化时，需要去寻找
+cache 文件完成初始化。这样我们提供给第三方的 sdk，会在原基础上增加 vmp
+so 文件，cache 文件，如果时提供 aar
+包，第三方使用者是看不出来区别的。</p>
+<p>支持了经 sdk 中的 jar 包，pc 上的 jar 文件加固支持也是同样的原理，把
+vmp 代码跨平台编译成 pc 上的即可。</p>
+<p>现在的一些大型 App 开始采用插件化开发。国内开源的 bundle 框架有
+Atlas，Replugin，VirtualApp 等，而且 Google 在 Android Q
+上也开始官方支持 bundle 开发，那么 bundle app
+的加固需求也随之而来。bundle app 的加固支持只要设置好 bundle app 对应的
+classloader ，设置好 bundle app cache 初始化即可。</p>
+<p>可以看到完备的 DEX-VMP 支持多种加固模式。</p>
+<h3 id="兼容性问题">兼容性问题</h3>
+<p>JNI reference 的限制。DEX-VMP 是基于 JNI 实现的，熟悉 JNI
+的同学都知道 JNI 中有 localreference 和 globalreference
+的概念，称为局部引用和全局应用。局部引用可以使用 env&gt;NewLocalRef() 和
+env-&gt;FindClass(),env-&gt;NewObject(),env-&gt;GetObjectClass()
+等接口获取，这些局部引用时存放在一个局部引用表中，Android VM
+中规定局部引用表的大小是 512。局部引用可以选择主动调用
+env-&gt;DeleteLocalRef() 释放，也可以在 native 函数返回时，由 dalvik/art
+VM 自动释放。这个表的容量只有 512，非常容易 overflow 造成
+crash，所以我们需要仔细对待每一个 localreference，能主动 free
+掉的，一定要主动 free 掉。全局引用的限制就没那么大了，全局引用表的容量有
+51200，我们可以把一些全局量设置为 global 类型，可以在整个 DEX-VMP
+的生命周期内使用，比较方便，而且正常情况下不会 overflow。</p>
+<p>JNI 实现不统一且可能存在 bug。每个版本的系统，VM 中 jni
+实现细节不尽相同，这点大家可以去 aosp 的代码中翻一翻。oracle 只是提供了
+JNI 的数据结构和函数接口定义，不提供具体实现。 dalvik/art 是自行实现 JNI
+的。在我们的大量测试中，发现 Android5.0 某个小版本中存在 JNI 实现
+bug，该 bug 的后果就是某个 JNI 函数调用完后，正常情况会返回一个 local
+reference，也就是返回给我们的结果是 jobject，我们使用完后主动 free
+掉即可，但该存在 bug 的 JNI 函数在其内部实现中会存在一个隐含的
+jobject（local reference）忘记 delete 掉。当多次调用该 JNI 函数时，local
+reference overflow 不可避免。这个 bug 在之后的 Android
+版本中更正过来。也就是说每个 Android 版本出来之后，我们都要看看 VMP
+会不会存在 JNI 兼容性方面的 BUG。</p>
+<p>特例系统 YunOS。YunOS 是阿里于 2011 年发布的手机系统，兼容 Android
+APK 格式的安装包。YunOS 没有采用 dalvik/art VM，而是自己实现了一套
+TVM。我们遇到过几款使用该系统的手机，主要集中在魅族的一些早期机型和一些不常见的手机品牌。TVM
+和 dakvik/art VM 在一些数据结构上有细微差异，比如 Struct
+Field。某些我们需要的数据可能会有偏移量上的差异。通过简单的逆向，适配好偏移即可。</p>
+<p>垮 VM 可能存在的兼容性问题。DEX-VMP 保护后的 App
+在其运行过程中，不停的在 dalvik/art VM 和 VMP
+之间切换。对于有的待保护代码，这样的切换可能会存在问题。比如如下代码：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">String</span> str;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">void</span> <span class="function"><span class="title">a</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    str = <span class="string">&quot;1111&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">void</span> <span class="function"><span class="title">b</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (str == <span class="string">&quot;1111&quot;</span>) &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;equal&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">main</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    a();</span><br><span class="line">    b();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述代码暂不论 "==" 比较字符串是否合理。这段代码在 dalvik/art VM 和
+JVM 上执行结果是 "equal"。如果只对方法 a() DEX-VMP 保护，结果还是
+"equal" 吗？对于这样的畸形代码，可以在预处理阶段统一 fix 掉。</p>
+<p>这些兼容性问题，有的可以转成 java 层的等价实现，然后翻译成对应的 JNI
+代码，这样就可以避免掉一些问题，比如存在 BUG 的某些 JNI
+函数。总之这些兼容性问题总是能够解决掉的。</p>
+<h3 id="性能问题">性能问题</h3>
+<p>性能问题一直是困扰 DEX-VMP
+大规模使用的主要因素。产生性能消耗的主要有两点，JNI 调用和 DEX-VMP 与
+系统 VM 的切换，其中，JNI 调用是主要因素。对于一些常用的 java
+class，可以在初始化时统一获取 jclass
+缓存起来，这可以一定程度上提高性能，类似的还有避免重复查找 class。</p>
+<p>在 4.4 或者 5.0 一些低配置手机上，全量保护（dex 中所有的方法都
+DEX-VMP 保护，包含 Android SDK
+的基础类库）时性能问题还是比较突出的，卡顿比较明显。所以不得不采用挑选方法的形式。</p>
+<p>随着硬件的发展，性能问题在一些高配手机上已经不是那么突出，全量保护也察觉不到卡顿。当然，为了兼顾低配置机器，我们采取排除基础类库和开源类库，将客户自己的逻辑代码都保护的方式，这样安全性会更好。</p>
+<p>对于一些只保护 onCreate()
+方法或者保护方法数屈指可数的厂商，我的推断是他们的兼容性和性能并没有很好解决。</p>
+<h3 id="结语">结语</h3>
+<p>安全从来不是单点的，对 Android 平台 APP
+保护来说，仅仅代码保护显然无法覆盖所有安全问题。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android-sec/" rel="tag"># android sec</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/01/14/fuzzer/fuzzer--syzkaller-init-env/" rel="next" title="syzkaller fuzz linux kernel环境搭建">
+                  <i class="fa fa-chevron-left"></i> syzkaller fuzz linux kernel环境搭建
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/10/23/android/vul--android-binder-cve20192215/" rel="prev" title="CVE-2019-2215 Binder 内核提权漏洞简要分析">
+                  CVE-2019-2215 Binder 内核提权漏洞简要分析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dex-vmp-%E6%A6%82%E8%A7%88"><span class="nav-number">2.</span> <span class="nav-text">DEX-VMP 概览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dex-vmp-%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">DEX-VMP 设计与实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#dex-%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="nav-number">3.1.</span> <span class="nav-text">dex 文件结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dalvik-%E5%AD%97%E8%8A%82%E7%A0%81"><span class="nav-number">3.2.</span> <span class="nav-text">dalvik 字节码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jni-%E8%B0%83%E7%94%A8"><span class="nav-number">3.3.</span> <span class="nav-text">JNI 调用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dex-vmp-%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0-1"><span class="nav-number">3.4.</span> <span class="nav-text">DEX-VMP 设计与实现</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#vm-%E7%BB%93%E6%9E%84%E9%80%89%E6%8B%A9"><span class="nav-number">3.4.1.</span> <span class="nav-text">VM 结构选择</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#vmp-%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="nav-number">3.4.2.</span> <span class="nav-text">VMP 执行流程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#dex-%E6%96%87%E4%BB%B6%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-number">3.4.3.</span> <span class="nav-text">dex 文件预处理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#vmp-%E5%AF%84%E5%AD%98%E5%99%A8%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">3.4.4.</span> <span class="nav-text">VMP 寄存器结构设计</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#vmp-dex-%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90"><span class="nav-number">3.4.5.</span> <span class="nav-text">VMP dex 文件解析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#vmp-%E5%AE%9E%E7%8E%B0%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.4.6.</span> <span class="nav-text">VMP 实现示例</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%A7%8D%E4%BF%9D%E6%8A%A4%E6%94%AF%E6%8C%81"><span class="nav-number">4.</span> <span class="nav-text">多种保护支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98"><span class="nav-number">5.</span> <span class="nav-text">兼容性问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98"><span class="nav-number">6.</span> <span class="nav-text">性能问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">7.</span> <span class="nav-text">结语</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="geneblue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">geneblue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

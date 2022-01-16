@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 本章讲述JNI是如何映射java类型到native C类型的。 Primitive Types 表3-1表明了java基本类型和平台依赖的（machine-dependent）等价native类型。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JNI官方文档-Chapter 3：JNI Types and Data Structures">
+<meta property="og:url" content="http://yoursite.com/2015/07/21/jni/dev--jni-doc-chapter3-jni-types-and-data-structures/index.html">
+<meta property="og:site_name" content="geneblue&#39;s blog">
+<meta property="og:description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 本章讲述JNI是如何映射java类型到native C类型的。 Primitive Types 表3-1表明了java基本类型和平台依赖的（machine-dependent）等价native类型。">
+<meta property="og:locale">
+<meta property="og:image" content="http://7vzu7u.com1.z0.glb.clouddn.com/JNI-chapter%203-3-1.PNG ">
+<meta property="og:image" content="http://7vzu7u.com1.z0.glb.clouddn.com/JNI-chapter%203-3-2.png ">
+<meta property="og:image" content="http://7vzu7u.com1.z0.glb.clouddn.com/JNI-chapter%203-3-3.png ">
+<meta property="og:image" content="http://7vzu7u.com1.z0.glb.clouddn.com/JNI-chapter%203-3-4.png ">
+<meta property="og:image" content="http://7vzu7u.com1.z0.glb.clouddn.com/JNI-chapter%203-3-5.png ">
+<meta property="article:published_time" content="2015-07-21T04:26:08.000Z">
+<meta property="article:modified_time" content="2022-01-16T15:49:52.429Z">
+<meta property="article:author" content="geneblue">
+<meta property="article:tag" content="jni">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://7vzu7u.com1.z0.glb.clouddn.com/JNI-chapter%203-3-1.PNG ">
+
+<link rel="canonical" href="http://yoursite.com/2015/07/21/jni/dev--jni-doc-chapter3-jni-types-and-data-structures/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>JNI官方文档-Chapter 3：JNI Types and Data Structures | geneblue's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">geneblue's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/07/21/jni/dev--jni-doc-chapter3-jni-types-and-data-structures/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="geneblue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geneblue's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          JNI官方文档-Chapter 3：JNI Types and Data Structures
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2015-07-21 12:26:08" itemprop="dateCreated datePublished" datetime="2015-07-21T12:26:08+08:00">2015-07-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<p>本章讲述JNI是如何映射java类型到native C类型的。</p>
+<h3 id="primitive-types">Primitive Types</h3>
+<p>表3-1表明了java基本类型和平台依赖的（machine-dependent）等价native类型。</p>
+<span id="more"></span>
+表3-1：基本类型和等价native类型
+<table>
+<tbody>
+<tr>
+<td>
+<em>Java类型</em>
+</td>
+<td>
+<em>Native类型</em>
+</td>
+<td>
+<em>描述</em>
+</td>
+</tr>
+<tr>
+<td>
+boolean
+</td>
+<td>
+jboolean
+</td>
+<td>
+Unsigned 8 bits
+</td>
+</tr>
+<tr>
+<td>
+byte
+</td>
+<td>
+jbyte
+</td>
+<td>
+Signed 8 bits
+</td>
+</tr>
+<tr>
+<td>
+char
+</td>
+<td>
+jchar
+</td>
+<td>
+Unsigned 16 bits
+</td>
+</tr>
+<tr>
+<td>
+short
+</td>
+<td>
+jshort
+</td>
+<td>
+Signed 16 bits
+</td>
+</tr>
+<tr>
+<td>
+int
+</td>
+<td>
+jint
+</td>
+<td>
+Signed 32 bits
+</td>
+</tr>
+<tr>
+<td>
+long
+</td>
+<td>
+jlong
+</td>
+<td>
+Signed 64 bits
+</td>
+</tr>
+<tr>
+<td>
+float
+</td>
+<td>
+jfloat
+</td>
+<td>
+32 bits
+</td>
+</tr>
+<tr>
+<td>
+double
+</td>
+<td>
+jdouble
+</td>
+<td>
+64 bits
+</td>
+</tr>
+<tr>
+<td>
+void
+</td>
+<td>
+void
+</td>
+<td>
+N/A
+</td>
+</tr>
+</tbody>
+</table>
+<p>方便起见，有以下定义：</p>
+<pre><code>#define   JNI_FALSE     0
+#define   JNI_TRUE      1</code></pre>
+<p>jsize整数类型用于描述基数，指数和大小：</p>
+<pre><code>typedef     jint     jsize;</code></pre>
+<h3 id="reference-types">Reference Types</h3>
+<p>JNI中也包含了大量的引用类型，这些引用类型是针对不同的java对象的。JNI引用类型以分层形式进行组织，如图所示：</p>
+<div data-align="center">
+<p><img src="http://7vzu7u.com1.z0.glb.clouddn.com/JNI-chapter%203-3-1.PNG "  alt="引用类型层次关系" title="引用类型层次关系" /></p>
+</div>
+<p>在C中，所有的JNI引用类型都被看做jobject类型，如：</p>
+<pre><code>typedef     jobject     jclass;</code></pre>
+<p>在C++中，JNI引入了一组虚拟类来强制子类型关系（the subtyping
+relationship），如：</p>
+<pre><code>class     _jobject       &#123;&#125;;
+class     _jclass : public _jobject     &#123;&#125;;
+...
+typedef     _jobject     *jobject;
+typedef     _jclass     *jclass;</code></pre>
+<h3 id="field-and-method-ids">Field and Method IDs</h3>
+<p>方法和字段ID符合C的指针类型：</p>
+<pre><code>struct    _jfieldID; /* opaque structure */
+typedef   struct   _jfieldID   *jfieldID; /* field IDs */
+
+struct    _jmethodID; /* opaque structure */
+typedef   struct   _jmethodID  *jmethodID; /* method IDs */</code></pre>
+<h3 id="the-value-type">The Value Type</h3>
+<p>jvalue联合类型在参数数组中常被用于元素类型，定义如下：</p>
+<pre><code>typedef union jvalue &#123;
+    jboolean z;
+    jbyte b;
+    jchar c;
+    jshort s;
+    jint i;
+    jlong j;
+    jfloat f;
+    jdouble d;
+    jobject l;
+&#125; jvalue;</code></pre>
+<h3 id="type-signatures">Type Signatures</h3>
+<p>JNI使用JVM的类型签名。表3-2表述了这些类型签名：</p>
+<p>表3-2：JVM类型签名</p>
+<table>
+<tbody>
+<tr>
+<td>
+<em>签名类型</em>
+</td>
+<td>
+<em>Java类型</em>
+</td>
+</tr>
+<tr>
+<td>
+Z
+</td>
+<td>
+boolean
+</td>
+</tr>
+<tr>
+<td>
+B
+</td>
+<td>
+byte
+</td>
+</tr>
+<tr>
+<td>
+C
+</td>
+<td>
+char
+</td>
+</tr>
+<tr>
+<td>
+S
+</td>
+<td>
+short
+</td>
+</tr>
+<tr>
+<td>
+I
+</td>
+<td>
+int
+</td>
+</tr>
+<tr>
+<td>
+J
+</td>
+<td>
+long
+</td>
+</tr>
+<tr>
+<td>
+F
+</td>
+<td>
+float
+</td>
+</tr>
+<tr>
+<td>
+D
+</td>
+<td>
+double
+</td>
+</tr>
+<tr>
+<td>
+Lfully-qualified-class
+</td>
+<td>
+fully-qualified-class
+</td>
+</tr>
+<tr>
+<td>
+[type
+</td>
+<td>
+type[]
+</td>
+</tr>
+<tr>
+<td>
+(arg-types) ret-type
+</td>
+<td>
+method type
+</td>
+</tr>
+</tbody>
+</table>
+<p>如，java方法如下：</p>
+<pre><code>long f (int n, String s, int[] arr);</code></pre>
+<p>该方法的签名类型如下：</p>
+<pre><code>(ILjava/lang/String;[I)J</code></pre>
+<h3 id="modified-utf-8-strings">Modified UTF-8 Strings</h3>
+<p>JNI使用一种修改版的UTF-8字符编码来表示各种字符串类型。Modified
+UTF-8字符串与JVM中使用的是相似的。</p>
+<p>Modified
+UTF-8字符串编码的目的在于，使那些只包含非空ASCII字符的字符序列每个字符用一个字节表示，但不是所有的Unicode字符都可以表示。</p>
+<p>所有在范围'001'和'07F'的字符都以一个字节表示，如下：</p>
+<div data-align="center">
+<p><img src="http://7vzu7u.com1.z0.glb.clouddn.com/JNI-chapter%203-3-2.png " /></p>
+</div>
+<p>在该字节中，有7个bit用于表示字符串的值。</p>
+<p>空字符（'000'）和'080'与'7FF'范围内的字符用两个字节X和Y表示：</p>
+<div data-align="center">
+<p><img src="http://7vzu7u.com1.z0.glb.clouddn.com/JNI-chapter%203-3-3.png " /></p>
+</div>
+<p>字节表示的字符的值为:((X&amp;0x1f)&lt;&lt;6)+(Y&amp;0x3f)</p>
+<p>范围在'800'到''的字符用3个字节表示X，Y，Z：</p>
+<div data-align="center">
+<p><img src="http://7vzu7u.com1.z0.glb.clouddn.com/JNI-chapter%203-3-4.png " /></p>
+</div>
+<p>该字符的值计算为：((X&amp;0xf)&lt;&lt;12)+((Y&amp;0x3f)&lt;&lt;6)+(Z&amp;0x3f)</p>
+<p>那些码位超过U+FFFF的字符（追加字符）是通过分别对该字符UTF-16编码的两个代理编码单元进行编码。每一个代理编码单元都通过三个字节来表示，也就是需要六个字节来表示该字符，用U,V,W,X,Y和Z表示如下：</p>
+<div data-align="center">
+<p><img src="http://7vzu7u.com1.z0.glb.clouddn.com/JNI-chapter%203-3-5.png " /></p>
+</div>
+<p>该字符值的计算为：0x10000+((V&amp;0x0f)&lt;&lt;16)+((W&amp;0x3f)&lt;&lt;10)+((Y&amp;0x0f)&lt;&lt;6)+(Z&amp;0x3f)</p>
+<p>多字节字符以大端方式存储在class文件中。</p>
+<p>Modified
+UTF-8编码格式和标准的UTF-8编码格式存在两点不同。首先，空字符（char） 0
+是以两个字节编码的而不是一个字节。这意味着Modified UTF-8字符串不会嵌入
+null。其次，只有一字节，两字节和三字节的标准UTF-8编码格式被使用。JVM不会识别四字节的标准UTF-8格式字符，而是使用自有的two-times-three-byte格式替代。</p>
+<p>更多标准UTF-8编码方面的信息最好参见section 3.9 Unicode Encoding Forms
+of The Unicode Standard, Version 4.0。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jni/" rel="tag"># jni</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2015/07/20/jni/dev--jni-doc-chapter2-design-overview/" rel="next" title="JNI官方文档-Chapter 2：Design Overview">
+                  <i class="fa fa-chevron-left"></i> JNI官方文档-Chapter 2：Design Overview
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2015/07/22/jni/dev--jni-doc-chapter4-jni-functions/" rel="prev" title="JNI官方文档-Chapter 4：JNI Functions">
+                  JNI官方文档-Chapter 4：JNI Functions <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#primitive-types"><span class="nav-number">1.</span> <span class="nav-text">Primitive Types</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reference-types"><span class="nav-number">2.</span> <span class="nav-text">Reference Types</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#field-and-method-ids"><span class="nav-number">3.</span> <span class="nav-text">Field and Method IDs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#the-value-type"><span class="nav-number">4.</span> <span class="nav-text">The Value Type</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#type-signatures"><span class="nav-number">5.</span> <span class="nav-text">Type Signatures</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#modified-utf-8-strings"><span class="nav-number">6.</span> <span class="nav-text">Modified UTF-8 Strings</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="geneblue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">geneblue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

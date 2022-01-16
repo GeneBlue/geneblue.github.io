@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 环境  macOS: 10.15.3 Xcode: Version 11.6 (11E708)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS hello world">
+<meta property="og:url" content="http://yoursite.com/2020/07/30/ios/dev--ios-hello-world/index.html">
+<meta property="og:site_name" content="geneblue&#39;s blog">
+<meta property="og:description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 环境  macOS: 10.15.3 Xcode: Version 11.6 (11E708)">
+<meta property="og:locale">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB1a9798b7707796c18dbf8b33840448cb?method=download&shareKey=56d9c4820a6262da610380f1c4a6f49c">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB6efcdcf630f4de6645fcd38a9ab05be6?method=download&shareKey=dbf0b8ceb0d2acf6d9c60427e306ce1f">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB82e103114d133060f7ce31ab1a42a6e4?method=download&shareKey=01e78e9c609996aa223fd7d15fec86c9">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB0748e0e223cb355d53a7d2018b51ae49?method=download&shareKey=a4eefd130687200dbe3c76f153b18497">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB06798ed14ec5ff5af54abeba163723ae?method=download&shareKey=bcf145539cc6fbde3e9e1c5d3266d7c5">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB6181f21667e1204d8bafd538d02702c9?method=download&shareKey=15c33b343419791100c40201779ff577">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB6e5874ef33d7bf597ea296fe3ac18d83?method=download&shareKey=d00be3bb5c41891ba5ba0a8378853f14">
+<meta property="article:published_time" content="2020-07-30T04:02:08.000Z">
+<meta property="article:modified_time" content="2022-01-16T15:49:52.430Z">
+<meta property="article:author" content="geneblue">
+<meta property="article:tag" content="ios dev">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://note.youdao.com/yws/api/personal/file/WEB1a9798b7707796c18dbf8b33840448cb?method=download&shareKey=56d9c4820a6262da610380f1c4a6f49c">
+
+<link rel="canonical" href="http://yoursite.com/2020/07/30/ios/dev--ios-hello-world/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>iOS hello world | geneblue's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">geneblue's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/30/ios/dev--ios-hello-world/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="geneblue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geneblue's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          iOS hello world
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-07-30 12:02:08" itemprop="dateCreated datePublished" datetime="2020-07-30T12:02:08+08:00">2020-07-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<h3 id="环境">环境</h3>
+<ul>
+<li>macOS: 10.15.3</li>
+<li>Xcode: Version 11.6 (11E708)</li>
+</ul>
+<span id="more"></span>
+<h3 id="创建">创建</h3>
+<p>选择 New Project 新建一个 demo 工程</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB1a9798b7707796c18dbf8b33840448cb?method=download&shareKey=56d9c4820a6262da610380f1c4a6f49c"  alt="thread_info" style="width: 554px; height: 478px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="new-project"/></p>
+</div>
+<p>填写工程名，app唯一标识</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB6efcdcf630f4de6645fcd38a9ab05be6?method=download&shareKey=dbf0b8ceb0d2acf6d9c60427e306ce1f"  alt="thread_info" style="width: 554px; height: 478px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="new-project2"/></p>
+</div>
+<p>demo 选择 single view app 即可</p>
+<h3 id="自动创建的项目目录说明">自动创建的项目目录说明</h3>
+<p>建立 demo 工程会自动创建如下文件</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB82e103114d133060f7ce31ab1a42a6e4?method=download&shareKey=01e78e9c609996aa223fd7d15fec86c9"  alt="thread_info" style="width: 186px; height: 316px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="create-files"/></p>
+</div>
+<h4 id="helloworld">HelloWorld</h4>
+<p>主源码目录，Xcode 会自动为我们创建一些文件</p>
+<ul>
+<li>AppDelegate.m(.h): ios 开发重要类，管理 application
+整个生命周期，接收系统事件，处理启动，关闭，回主界面等操作；参见 <a
+target="_blank" rel="noopener" href="https://cnbin.github.io/blog/2015/06/18/appdelegate-de-xiang-jie/">AppDelegate
+的详解</a></li>
+<li>SceneDelegate.m(.h): Xcode11
+开始会自动创建该文件。界面布局相关，比如不同分辨率适配，ipados
+多窗口适配等</li>
+<li>ViewController.m(.h): 控制 storyboard 中的控件</li>
+<li>Main.storyboard: 启动后主界面，可以在 storyboard
+上放上各种按钮控件</li>
+<li>LaunchScreen.storyboard: 启动界面</li>
+<li>Info.plist: 提供 application 在运行期间的一些配置，参见 <a
+target="_blank" rel="noopener" href="https://www.jianshu.com/p/7f1baefcd087">Info.plist文件详解</a></li>
+<li>main.m: 应用主入口，创建 UIApplication 对象，参见 <a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/55400456">ios中的main.m文件</a></li>
+</ul>
+<h4 id="helloworldtests">HelloWorldTests</h4>
+<p>代码测试用例</p>
+<h4 id="helloworlduitests">HelloWorldUITests</h4>
+<p>UI 测试用例</p>
+<h4 id="products">Products</h4>
+<p>工程产物生成目录，Command+B 构建，可启动模拟器运行</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB0748e0e223cb355d53a7d2018b51ae49?method=download&shareKey=a4eefd130687200dbe3c76f153b18497"  alt="thread_info" style="width: 188px; height: 369px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="emulator"/></p>
+</div>
+<p>启动后，就是一个空白界面</p>
+<h3 id="添加-helloworld-控件">添加 helloworld 控件</h3>
+<p>添加 button 和 textview，做到点击按钮，更改 textview 内容为 hello
+world</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB06798ed14ec5ff5af54abeba163723ae?method=download&shareKey=bcf145539cc6fbde3e9e1c5d3266d7c5"  alt="thread_info" style="width: 635px; height: 478px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="ios-library"/></p>
+</div>
+<p>使用上面的 + 号，打开控件 library，分别拖入 textview 和 button</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB6181f21667e1204d8bafd538d02702c9?method=download&shareKey=15c33b343419791100c40201779ff577"  alt="thread_info" style="width: 635px; height: 477px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="button-code"/></p>
+</div>
+<p>增加一个编辑窗口，左边是 Main.storyboard，右边是 ViewController
+代码编辑窗口；将控件响应关联到代码中，对 button 控件，按住 control
+拖拽连接到代码 implementation 区域，点击 button
+时将会触发执行该代码；对testview，按住 control 拖拽连接到代码 interface
+区域；</p>
+<p>最后效果</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB6e5874ef33d7bf597ea296fe3ac18d83?method=download&shareKey=d00be3bb5c41891ba5ba0a8378853f14"  alt="thread_info" style="width: 291px; height: 600px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="button-code"/></p>
+</div>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ios-dev/" rel="tag"># ios dev</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/12/14/suricata/suricata-rule-ip-keywords/" rel="next" title="suricata 规则之 IP Keywords">
+                  <i class="fa fa-chevron-left"></i> suricata 规则之 IP Keywords
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2020/08/17/ios/sec--ios-jailbreak-with-unc0ver/" rel="prev" title="iOS unc0ver 越狱步骤">
+                  iOS unc0ver 越狱步骤 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA"><span class="nav-number">2.</span> <span class="nav-text">创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E5%88%9B%E5%BB%BA%E7%9A%84%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95%E8%AF%B4%E6%98%8E"><span class="nav-number">3.</span> <span class="nav-text">自动创建的项目目录说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#helloworld"><span class="nav-number">3.1.</span> <span class="nav-text">HelloWorld</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#helloworldtests"><span class="nav-number">3.2.</span> <span class="nav-text">HelloWorldTests</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#helloworlduitests"><span class="nav-number">3.3.</span> <span class="nav-text">HelloWorldUITests</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#products"><span class="nav-number">3.4.</span> <span class="nav-text">Products</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0-helloworld-%E6%8E%A7%E4%BB%B6"><span class="nav-number">4.</span> <span class="nav-text">添加 helloworld 控件</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="geneblue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">geneblue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

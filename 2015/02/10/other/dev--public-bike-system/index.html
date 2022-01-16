@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 这并不是一份正式的项目总结，只是我们在做完自行车备件管理系统后我的一些心得。觉得有必要写一下记录自己在这个项目中犯过的错误。 这个项目是从大三上学期刚开学的时候接手的。这个备件管理系统相对研究生学长做的道路滑坡预测比较简单，老师就将这个项目交给我们四个啥都不太懂的本科生做。说实话，大家都挺积极的，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XX公共自行车备件管理系统项目">
+<meta property="og:url" content="http://yoursite.com/2015/02/10/other/dev--public-bike-system/index.html">
+<meta property="og:site_name" content="geneblue&#39;s blog">
+<meta property="og:description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 这并不是一份正式的项目总结，只是我们在做完自行车备件管理系统后我的一些心得。觉得有必要写一下记录自己在这个项目中犯过的错误。 这个项目是从大三上学期刚开学的时候接手的。这个备件管理系统相对研究生学长做的道路滑坡预测比较简单，老师就将这个项目交给我们四个啥都不太懂的本科生做。说实话，大家都挺积极的，">
+<meta property="og:locale">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB4ca9bb16aa3a415793302dfff0181863?method=download&shareKey=89ddca8b04f3f7f6776ef4c9c4914149">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB6f3021afbebd5deeae211fa8fbd292af?method=download&shareKey=e1c0505a4e3def032c99ba2cdd8a6f51">
+<meta property="article:published_time" content="2015-02-10T04:46:08.000Z">
+<meta property="article:modified_time" content="2022-01-16T15:49:52.435Z">
+<meta property="article:author" content="geneblue">
+<meta property="article:tag" content="other">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://note.youdao.com/yws/api/personal/file/WEB4ca9bb16aa3a415793302dfff0181863?method=download&shareKey=89ddca8b04f3f7f6776ef4c9c4914149">
+
+<link rel="canonical" href="http://yoursite.com/2015/02/10/other/dev--public-bike-system/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>XX公共自行车备件管理系统项目 | geneblue's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">geneblue's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/02/10/other/dev--public-bike-system/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="geneblue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geneblue's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          XX公共自行车备件管理系统项目
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2015-02-10 12:46:08" itemprop="dateCreated datePublished" datetime="2015-02-10T12:46:08+08:00">2015-02-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<p>这并不是一份正式的项目总结，只是我们在做完自行车备件管理系统后我的一些心得。觉得有必要写一下记录自己在这个项目中犯过的错误。</p>
+<p>这个项目是从大三上学期刚开学的时候接手的。这个备件管理系统相对研究生学长做的道路滑坡预测比较简单，老师就将这个项目交给我们四个啥都不太懂的本科生做。说实话，大家都挺积极的，至少可以明白最简单的商业项目是怎么一回事。</p>
+<p>要做的东西不是很难，这个备件管理系统主要就是完成移动端（Android）应用和后台管理系统的开发。移动端主要是完成备件从采购、入库、使用、维护、维修和报废一系列操作，需要按照操作人员的角色设定操作权限，然后将数据传输到数据库中；后台管理系统主要是使用java和jsp开发网页版程序对数据库中的数据进行管理，差不多也就是数据库的那几种基本操作。</p>
+<span id="more"></span>
+<p>在项目前期，对方让我们写一个可以使用的手机端的应用，没有考虑让我们做全部的工作。我们有java和Android的一些基础，所以手机端的应用很快就赶出来了，后台就是一个简单的接收手机端数据并存储在数据库中的一个小程序，对方的技术员说使用手机端应用的人员也不多，后台数据接收不用考虑多线程并发了，简单一点就好。于是我们相信了鬼话，在第一次和对方的经理的见面沟通后，对方觉得我们做的还不行，后台管理系统还是要完善地做出来，移动端应用太单一了。让我们照着计划书实现所有的功能。好吧，于是小伙伴们加班加点地边学边做，直至现在基本把这个项目完成。这里，我就不详细介绍项目的实现过程了。无非也就是根据要求整改，整改后让对方经理看看行不，再根据新要求整改。在整个项目过程中，我自己对开发工作有了一些认识，也认识到自己的代码功底还是很low的。以下总结认识到的几点问题。</p>
+<h4 id="数据库的设计">数据库的设计</h4>
+<p>不知怎么回事，我们专业在大三下才开数据库相关的课程，本身对数据库的认识也比较少，使用到的时候只能从google上找一些示例来看一看，然后就上手设计数据库了。到项目中后期的时候，才发现数据库的设计太不符合基本规范了，没办法只能将数据库大整改并将与数据库交互部分的代码重新改写。唉，在做一件事情之前花点时间了解一些基本原则真的是很有必要的。本学期开了“数据库及安全”这门课，看来是不能怠慢了。这里顺手贴个数据库设计的基本原则，方便自己查看，等学了数据库及安全这门课再深究。</p>
+<p><a
+target="_blank" rel="noopener" href="http://www.cnblogs.com/happylsc/archive/2010/09/01/1814682.html">数据库设计原则</a></p>
+<h4 id="整体框架设计">整体框架设计</h4>
+<p>整体的框架设计是和另一个小伙伴的争论中确定的，结果采用这样的设计是注定要造成代码冗余的，但当时没考虑太多，怎样简单怎样顺手就怎样来了。基本的架构图如下所示：</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB4ca9bb16aa3a415793302dfff0181863?method=download&shareKey=89ddca8b04f3f7f6776ef4c9c4914149"  alt="bicycle_original_structure" title="bicycle_original_structure" /></p>
+</div>
+<p>也就是说移动端和后台web管理端都实现了与数据库交互的部分，当时的理由是各自写各自的比较省心，一直保持数据库DB一样就行。我一直觉得稍微合理一点的设计应该是：</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB6f3021afbebd5deeae211fa8fbd292af?method=download&shareKey=e1c0505a4e3def032c99ba2cdd8a6f51"  alt="bicycle_except_structure" title="bicycle_except_structure" /></p>
+</div>
+<p>将与数据库的交互部分单独写出来，这样在更改代码的时候也会方便快捷一点。</p>
+<h4 id="代码冗余">代码冗余</h4>
+<p>整体系统的设计就已经决定了代码冗余是必然存在的，各自实现的一套数据库交互在后期也带来了重复性的修改工作。自己埋下的苦果自己吃呗！而且在web管理端，我也没注意将相似性的代码写成父类，使用子类去完成不同的工作。现在看看写的代码，真觉得自己是路漫漫呀！</p>
+<h4 id="设计模式">设计模式</h4>
+<p>可以说这里基本没用到什么设计模式，软考时看了看一部分设计模式，头脑中有大概的印象，现在早就抛掷脑后了。还好也算是明白了在软件设计中，什么才是重点。设计模式的缺失，让这个系统代码的可维护性和可扩展性很差，估计也就我们几人能很快上手我们的工作。</p>
+<h4 id="结语">结语</h4>
+<p>在工程项目中，重要的真不是代码，而是在整个项目开始实现前的构思和设计。稳健的项目设计真的会让整体项目工程事半功倍。好像还有点什么，嗯，等以后想到了再写吧！</p>
+<hr />
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/other/" rel="tag"># other</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2015/02/10/android/sec--xposed-demo-analyze/" rel="prev" title="Xposed demo分析">
+                  Xposed demo分析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.</span> <span class="nav-text">数据库的设计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E6%A1%86%E6%9E%B6%E8%AE%BE%E8%AE%A1"><span class="nav-number">2.</span> <span class="nav-text">整体框架设计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%86%97%E4%BD%99"><span class="nav-number">3.</span> <span class="nav-text">代码冗余</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.</span> <span class="nav-text">设计模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">5.</span> <span class="nav-text">结语</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="geneblue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">geneblue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

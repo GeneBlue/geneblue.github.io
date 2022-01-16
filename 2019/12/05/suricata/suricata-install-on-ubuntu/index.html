@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 5.4.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -51,18 +51,18 @@
   };
 </script>
 
-  <meta name="description" content="Author: geneblueBlog: https://geneblue.github.io/ suricata 是一款免费，开源的 IDS 入侵检测引擎，而且支持 ips（入侵防御系统），nsm（网络安全监控）和离线 pcap 处理。另一款知名的开源 IDS 是 Snort，网络上的一般说法是 suricata 相较于 Snort 最大优势是支持多线程，另外支持 ipv6 并兼容 Snort">
-<meta name="keywords" content="suricata">
+  <meta name="description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; suricata 是一款免费，开源的 IDS 入侵检测引擎，而且支持 ips（入侵防御系统），nsm（网络安全监控）和离线 pcap 处理。另一款知名的开源 IDS 是 Snort，网络上的一般说法是 suricata 相较于 Snort 最大优势是支持多线程，另外支持 ipv6 并兼容 Snor">
 <meta property="og:type" content="article">
 <meta property="og:title" content="suricata ubuntu 下安装使用">
 <meta property="og:url" content="http://yoursite.com/2019/12/05/suricata/suricata-install-on-ubuntu/index.html">
 <meta property="og:site_name" content="geneblue&#39;s blog">
-<meta property="og:description" content="Author: geneblueBlog: https://geneblue.github.io/ suricata 是一款免费，开源的 IDS 入侵检测引擎，而且支持 ips（入侵防御系统），nsm（网络安全监控）和离线 pcap 处理。另一款知名的开源 IDS 是 Snort，网络上的一般说法是 suricata 相较于 Snort 最大优势是支持多线程，另外支持 ipv6 并兼容 Snort">
-<meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2022-01-16T14:20:19.403Z">
+<meta property="og:description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; suricata 是一款免费，开源的 IDS 入侵检测引擎，而且支持 ips（入侵防御系统），nsm（网络安全监控）和离线 pcap 处理。另一款知名的开源 IDS 是 Snort，网络上的一般说法是 suricata 相较于 Snort 最大优势是支持多线程，另外支持 ipv6 并兼容 Snor">
+<meta property="og:locale">
+<meta property="article:published_time" content="2019-12-05T04:02:08.000Z">
+<meta property="article:modified_time" content="2022-01-16T15:36:42.647Z">
+<meta property="article:author" content="geneblue">
+<meta property="article:tag" content="suricata">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="suricata ubuntu 下安装使用">
-<meta name="twitter:description" content="Author: geneblueBlog: https://geneblue.github.io/ suricata 是一款免费，开源的 IDS 入侵检测引擎，而且支持 ips（入侵防御系统），nsm（网络安全监控）和离线 pcap 处理。另一款知名的开源 IDS 是 Snort，网络上的一般说法是 suricata 相较于 Snort 最大优势是支持多线程，另外支持 ipv6 并兼容 Snort">
 
 <link rel="canonical" href="http://yoursite.com/2019/12/05/suricata/suricata-install-on-ubuntu/">
 
@@ -216,7 +216,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
+                <time title="Modified: 2022-01-16 23:36:42" itemprop="dateModified" datetime="2022-01-16T23:36:42+08:00">2022-01-16</time>
               </span>
 
           
@@ -230,59 +230,48 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<p><code>suricata</code> 是一款免费，开源的 <code>IDS</code> 入侵检测引擎，而且支持 <code>ips</code>（入侵防御系统），<code>nsm</code>（网络安全监控）和离线 <code>pcap</code> 处理。另一款知名的开源 <code>IDS</code> 是 <code>Snort</code>，网络上的一般说法是 <code>suricata</code> 相较于 <code>Snort</code> 最大优势是支持多线程，另外支持 <code>ipv6</code> 并兼容 <code>Snort</code> 规则。</p>
-<a id="more"></a>
-
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><h4 id="ppa-安装"><a href="#ppa-安装" class="headerlink" title="ppa 安装"></a>ppa 安装</h4><p>安装当前最新版本</p>
-<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install software-properties-common</span><br><span class="line">sudo<span class="built_in"> add-apt-repository </span>ppa:oisf/suricata-stable</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install suricata jq</span><br></pre></td></tr></table></figure>
-
-<p>jq 工具用来处理 json 数据</p>
-<p>debug 版本</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-<span class="builtin-name">get</span> install suricata-dbg</span><br></pre></td></tr></table></figure>
-
-<p>查看编译信息和运行状态</p>
-<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"><span class="meta-keyword">$suricata</span> --build-info</span></span><br><span class="line"><span class="meta"><span class="meta-keyword">$systemctl</span> status suricata</span></span><br></pre></td></tr></table></figure>
-
-<p>表示安装成功</p>
-<h4 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h4><p>安装包下载</p>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https:<span class="regexp">//</span>www.openinfosecfoundation.org<span class="regexp">/download/</span>suricata-<span class="number">5.0</span>.<span class="number">0</span>.tar.gz</span><br><span class="line">tar -zxvf suricata-<span class="number">5.0</span>.<span class="number">0</span>.tar.gz</span><br></pre></td></tr></table></figure>
-
-<p>ubuntu16.04 下编译依赖：</p>
-<figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-<span class="built_in">get</span> install libpcre3 libpcre3-dbg libpcre3-<span class="built_in">dev</span> build-essential libpcap-<span class="built_in">dev</span>   \</span><br><span class="line">                libnet1-<span class="built_in">dev</span> libyaml<span class="number">-0</span><span class="number">-2</span> libyaml-<span class="built_in">dev</span> pkg-config zlib1g zlib1g-<span class="built_in">dev</span> \</span><br><span class="line">                libcap-ng-<span class="built_in">dev</span> libcap-ng0 make libmagic-<span class="built_in">dev</span> libjansson-<span class="built_in">dev</span>        \</span><br><span class="line">                libnss3-<span class="built_in">dev</span> libgeoip-<span class="built_in">dev</span> liblua5<span class="number">.1</span>-<span class="built_in">dev</span> libhiredis-<span class="built_in">dev</span> libevent-<span class="built_in">dev</span> \</span><br><span class="line">                python-yaml rustc cargo</span><br></pre></td></tr></table></figure>
-
-<p>编译：</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cd</span> suricata-<span class="number">5.0</span>.<span class="number">0</span></span><br><span class="line">./configure</span><br><span class="line"><span class="keyword">make</span></span><br><span class="line"><span class="keyword">make</span> install</span><br></pre></td></tr></table></figure>
-
+        <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
+<p><code>suricata</code> 是一款免费，开源的 <code>IDS</code>
+入侵检测引擎，而且支持
+<code>ips</code>（入侵防御系统），<code>nsm</code>（网络安全监控）和离线
+<code>pcap</code> 处理。另一款知名的开源 <code>IDS</code> 是
+<code>Snort</code>，网络上的一般说法是 <code>suricata</code> 相较于
+<code>Snort</code> 最大优势是支持多线程，另外支持 <code>ipv6</code>
+并兼容 <code>Snort</code> 规则。</p>
+<span id="more"></span>
+<h3 id="安装">安装</h3>
+<h4 id="ppa-安装">ppa 安装</h4>
+<p>安装当前最新版本 <figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install software-properties-common</span><br><span class="line">sudo<span class="built_in"> add-apt-repository </span>ppa:oisf/suricata-stable</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install suricata jq</span><br></pre></td></tr></table></figure> jq 工具用来处理 json 数据</p>
+<p>debug 版本 <figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-<span class="builtin-name">get</span> install suricata-dbg</span><br></pre></td></tr></table></figure></p>
+<p>查看编译信息和运行状态 <figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"><span class="meta-keyword">$suricata</span> --build-info</span></span><br><span class="line"><span class="meta"><span class="meta-keyword">$systemctl</span> status suricata</span></span><br></pre></td></tr></table></figure> 表示安装成功</p>
+<h4 id="编译安装">编译安装</h4>
+<p>安装包下载 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">wget</span> https://www.openinfosecfoundation.org/download/suricata-<span class="number">5</span>.<span class="number">0</span>.<span class="number">0</span>.tar.gz</span><br><span class="line"><span class="attribute">tar</span> -zxvf suricata-<span class="number">5</span>.<span class="number">0</span>.<span class="number">0</span>.tar.gz</span><br></pre></td></tr></table></figure></p>
+<p>ubuntu16.04 下编译依赖： <figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-<span class="built_in">get</span> install libpcre3 libpcre3-dbg libpcre3-<span class="built_in">dev</span> build-essential libpcap-<span class="built_in">dev</span>   \</span><br><span class="line">                libnet1-<span class="built_in">dev</span> libyaml<span class="number">-0</span><span class="number">-2</span> libyaml-<span class="built_in">dev</span> pkg-config zlib1g zlib1g-<span class="built_in">dev</span> \</span><br><span class="line">                libcap-ng-<span class="built_in">dev</span> libcap-ng0 make libmagic-<span class="built_in">dev</span> libjansson-<span class="built_in">dev</span>        \</span><br><span class="line">                libnss3-<span class="built_in">dev</span> libgeoip-<span class="built_in">dev</span> liblua5<span class="number">.1</span>-<span class="built_in">dev</span> libhiredis-<span class="built_in">dev</span> libevent-<span class="built_in">dev</span> \</span><br><span class="line">                python-yaml rustc cargo</span><br></pre></td></tr></table></figure></p>
+<p>编译： <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cd</span> suricata-<span class="number">5.0</span>.<span class="number">0</span></span><br><span class="line">./configure</span><br><span class="line"><span class="keyword">make</span></span><br><span class="line"><span class="keyword">make</span> install</span><br></pre></td></tr></table></figure></p>
 <p>生成的可执行文件在 <code>src/.libs/suricata</code></p>
-<h3 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h3><p>安装完后，来认识一些基本目录：</p>
-<p><code>/var/log/suricata</code>：存储 <code>suricata</code> 日志信息<br><code>/etc/suricata</code>：<code>suricate</code> 配置文件目录</p>
-<p><code>/var/log/suricata</code> 下:</p>
-<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">certs	                    <span class="comment">#</span></span><br><span class="line">core	                    <span class="comment">#</span></span><br><span class="line">eve.json	                <span class="comment">#</span></span><br><span class="line">fast.<span class="built_in">log</span>	                <span class="comment">#</span></span><br><span class="line"><span class="built_in">files</span>	                    <span class="comment">#</span></span><br><span class="line">stats.<span class="built_in">log</span>	                <span class="comment">#</span></span><br><span class="line">suricata.<span class="built_in">log</span>	            <span class="comment">#</span></span><br><span class="line">suricata-<span class="built_in">start</span>.<span class="built_in">log</span>	        <span class="comment">#</span></span><br></pre></td></tr></table></figure>
-
-<p><code>/etc/suricata</code> 下:</p>
-<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">classification.config	    <span class="comment"># 存放报警分类信息</span></span><br><span class="line"><span class="keyword">reference</span>.config	        <span class="comment"># reference 规则引用信息</span></span><br><span class="line">rules	                    <span class="comment"># 存放大量自带规则集目录</span></span><br><span class="line">suricata.yaml	            <span class="comment"># suricata 配置文件</span></span><br><span class="line">threshold.config	        <span class="comment">#</span></span><br></pre></td></tr></table></figure>
-
-<p><code>suricata.yaml</code> 为主要配置文件，包含：网络信息配置，输出信息配置，抓包配置，应用层协议配置</p>
-<p>更改配置，指向我们的测试规则文件</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">default</span>-rule-<span class="string">path:</span> <span class="regexp">/media/</span>psf<span class="regexp">/LinuxVolume/</span>IDS/rules</span><br><span class="line">rule-<span class="string">files:</span></span><br><span class="line">  - test.rules</span><br></pre></td></tr></table></figure>
-
-<p>一条简单的策略如下，表示任何 <code>ip</code> 地址的任意端口发送到本网段（数据流经网卡即可）任意端口的 <code>&quot;HELLO&quot;</code> 消息，将会记录在 <code>fast.log</code> 文件中</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alert<span class="built_in"> ip </span>any any -&gt; any any (msg: <span class="string">"HELLO"</span>; content: <span class="string">"HELLO"</span>; )</span><br></pre></td></tr></table></figure>
-
-<p>启动 suricata ids</p>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo suricata -c <span class="regexp">/media/</span>psf<span class="regexp">/LinuxVolume/</span>IDS<span class="regexp">/suricata.yaml -i enp0s5</span></span><br></pre></td></tr></table></figure>
-
-<p>发送数据如下：</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scapy.all import *</span><br><span class="line">pkg = IP(<span class="attribute">dst</span>=<span class="string">"10.211.55.4"</span>) / TCP(<span class="attribute">dport</span>=1234) / <span class="string">"HELLO"</span></span><br><span class="line">pkg.send()</span><br></pre></td></tr></table></figure>
-
-<p>可以看到 fast.log 中记录了这条 alert 日志：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">$cat</span> <span class="string">/var/log/suricata/fast.log</span></span><br><span class="line"><span class="number">12</span><span class="string">/05/2019-17:16:59.407436</span>  <span class="string">[**]</span> <span class="string">[1:0:0]</span> <span class="string">HELLO</span> <span class="string">[**]</span> <span class="string">[Classification:</span> <span class="string">(null)]</span> <span class="string">[Priority:</span> <span class="number">3</span><span class="string">]</span> <span class="string">&#123;TCP&#125;</span> <span class="number">10.211</span><span class="number">.55</span><span class="number">.2</span><span class="string">:20</span> <span class="string">-&gt;</span> <span class="number">10.211</span><span class="number">.55</span><span class="number">.4</span><span class="string">:1234</span></span><br></pre></td></tr></table></figure>
-
+<h3 id="简单使用">简单使用</h3>
+<p>安装完后，来认识一些基本目录：</p>
+<p><code>/var/log/suricata</code>：存储 <code>suricata</code> 日志信息
+<code>/etc/suricata</code>：<code>suricate</code> 配置文件目录</p>
+<p><code>/var/log/suricata</code> 下: <figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">certs	                    <span class="comment">#</span></span><br><span class="line">core	                    <span class="comment">#</span></span><br><span class="line">eve.json	                <span class="comment">#</span></span><br><span class="line">fast.<span class="built_in">log</span>	                <span class="comment">#</span></span><br><span class="line"><span class="built_in">files</span>	                    <span class="comment">#</span></span><br><span class="line">stats.<span class="built_in">log</span>	                <span class="comment">#</span></span><br><span class="line">suricata.<span class="built_in">log</span>	            <span class="comment">#</span></span><br><span class="line">suricata-<span class="built_in">start</span>.<span class="built_in">log</span>	        <span class="comment">#</span></span><br></pre></td></tr></table></figure></p>
+<p><code>/etc/suricata</code> 下: <figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">classification.config	    <span class="comment"># 存放报警分类信息</span></span><br><span class="line"><span class="keyword">reference</span>.config	        <span class="comment"># reference 规则引用信息</span></span><br><span class="line">rules	                    <span class="comment"># 存放大量自带规则集目录</span></span><br><span class="line">suricata.yaml	            <span class="comment"># suricata 配置文件</span></span><br><span class="line">threshold.config	        <span class="comment">#</span></span><br></pre></td></tr></table></figure></p>
+<p><code>suricata.yaml</code>
+为主要配置文件，包含：网络信息配置，输出信息配置，抓包配置，应用层协议配置</p>
+<p>更改配置，指向我们的测试规则文件 <figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">default</span>-rule-path: <span class="regexp">/media/</span>psf<span class="regexp">/LinuxVolume/I</span>DS/rules</span><br><span class="line">rule-files:</span><br><span class="line">  - test.rules</span><br></pre></td></tr></table></figure></p>
+<p>一条简单的策略如下，表示任何 <code>ip</code>
+地址的任意端口发送到本网段（数据流经网卡即可）任意端口的
+<code>"HELLO"</code> 消息，将会记录在 <code>fast.log</code> 文件中
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alert ip <span class="keyword">any</span> <span class="keyword">any</span> -&gt; <span class="keyword">any</span> <span class="keyword">any</span> (msg: <span class="string">&quot;HELLO&quot;</span>; content: <span class="string">&quot;HELLO&quot;</span>; )</span><br></pre></td></tr></table></figure></p>
+<p>启动 suricata ids <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo suricata -c <span class="regexp">/media/</span>psf<span class="regexp">/LinuxVolume/</span>IDS/suricata.yaml -i enp0s5</span><br></pre></td></tr></table></figure></p>
+<p>发送数据如下： <figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scapy.all import *</span><br><span class="line">pkg = IP(<span class="attribute">dst</span>=<span class="string">&quot;10.211.55.4&quot;</span>) / TCP(<span class="attribute">dport</span>=1234) / <span class="string">&quot;HELLO&quot;</span></span><br><span class="line">pkg.send()</span><br></pre></td></tr></table></figure></p>
+<p>可以看到 fast.log 中记录了这条 alert 日志： <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$cat</span> <span class="regexp">/var/</span>log<span class="regexp">/suricata/</span>fast.log</span><br><span class="line"><span class="number">12</span><span class="regexp">/05/</span><span class="number">2019</span>-<span class="number">17</span>:<span class="number">16</span>:<span class="number">59.407436</span>  [**] [<span class="number">1</span>:<span class="number">0</span>:<span class="number">0</span>] HELLO [**] [Classification: (null)] [Priority: <span class="number">3</span>] &#123;TCP&#125; <span class="number">10.211</span>.<span class="number">55.2</span>:<span class="number">20</span> -&gt; <span class="number">10.211</span>.<span class="number">55.4</span>:<span class="number">1234</span></span><br></pre></td></tr></table></figure></p>
 <p>以此，我们可以根据自己的需要编写规则文件，记录告警日志。</p>
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
-<li><a href="https://suricata-ids.org/" target="_blank" rel="noopener">suricata 官网</a></li>
-<li><a href="https://suricata.readthedocs.io/en/latest/" target="_blank" rel="noopener">suricata doc</a></li>
+<h3 id="参考">参考</h3>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://suricata-ids.org/">suricata 官网</a></li>
+<li><a target="_blank" rel="noopener" href="https://suricata.readthedocs.io/en/latest/">suricata
+doc</a></li>
 </ul>
 
     </div>
@@ -300,7 +289,7 @@
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
-                <a href="/2019/10/23/cve-2019-2215-binder/" rel="next" title="CVE-2019-2215 Binder 内核提权漏洞简要分析">
+                <a href="/2019/10/23/android/vul--android-binder-cve20192215/" rel="next" title="CVE-2019-2215 Binder 内核提权漏洞简要分析">
                   <i class="fa fa-chevron-left"></i> CVE-2019-2215 Binder 内核提权漏洞简要分析
                 </a>
             </div>
@@ -349,7 +338,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ppa-安装"><span class="nav-number">1.1.</span> <span class="nav-text">ppa 安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#编译安装"><span class="nav-number">1.2.</span> <span class="nav-text">编译安装</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#简单使用"><span class="nav-number">2.</span> <span class="nav-text">简单使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ppa-%E5%AE%89%E8%A3%85"><span class="nav-number">1.1.</span> <span class="nav-text">ppa 安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85"><span class="nav-number">1.2.</span> <span class="nav-text">编译安装</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">简单使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -365,14 +354,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -441,9 +430,17 @@
   <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/muse.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
 
 
 
@@ -463,6 +460,8 @@
 
 
 
+
+  
 
   
 

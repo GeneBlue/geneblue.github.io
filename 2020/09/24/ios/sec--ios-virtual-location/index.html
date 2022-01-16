@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 什么是虚拟定位 简而言之，利用软硬件更改手机系统的定位数据，从而让目标 app 获取错误的定位信息">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS虚拟定位技术探究">
+<meta property="og:url" content="http://yoursite.com/2020/09/24/ios/sec--ios-virtual-location/index.html">
+<meta property="og:site_name" content="geneblue&#39;s blog">
+<meta property="og:description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 什么是虚拟定位 简而言之，利用软硬件更改手机系统的定位数据，从而让目标 app 获取错误的定位信息">
+<meta property="og:locale">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB6e7905be1039ce7678fcb5bd80e381b3?method=download&shareKey=80e5f90a4aab9dcb30e62f7c2d4a9e4b">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB6e3d8b1dfe6668bfbe086091cc8413ce?method=download&shareKey=b664264fdd9541dee205da89a66e415e">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB7951e24bcc920a0d2c2dabbd7e99f5e6?method=download&shareKey=f5c6bf34161b4e31c3e70a4256a202d1">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB15347ad06a7cb7391e763eb1cd2f5f8d?method=download&shareKey=0ff0e5488bbe61d0ec28bab0d659cb97">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBf4570439b873dd3da5df6552b6f7ab2c?method=download&shareKey=0feb646144d8175c2d1c09a2cbe1d781">
+<meta property="article:published_time" content="2020-09-24T04:02:08.000Z">
+<meta property="article:modified_time" content="2022-01-16T15:49:52.435Z">
+<meta property="article:author" content="geneblue">
+<meta property="article:tag" content="ios sec">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://note.youdao.com/yws/api/personal/file/WEB6e7905be1039ce7678fcb5bd80e381b3?method=download&shareKey=80e5f90a4aab9dcb30e62f7c2d4a9e4b">
+
+<link rel="canonical" href="http://yoursite.com/2020/09/24/ios/sec--ios-virtual-location/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>iOS虚拟定位技术探究 | geneblue's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">geneblue's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/24/ios/sec--ios-virtual-location/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="geneblue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geneblue's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          iOS虚拟定位技术探究
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-09-24 12:02:08" itemprop="dateCreated datePublished" datetime="2020-09-24T12:02:08+08:00">2020-09-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<h3 id="什么是虚拟定位">什么是虚拟定位</h3>
+<p>简而言之，利用软硬件更改手机系统的定位数据，从而让目标 app
+获取错误的定位信息</p>
+<span id="more"></span>
+<h3 id="虚拟定位常用场景">虚拟定位常用场景</h3>
+<ul>
+<li>上下班打卡</li>
+<li>代购</li>
+<li>朋友圈装逼</li>
+<li>打车软件司机端抢单</li>
+<li>社交类软件，附近人，把妹，钓凯子</li>
+</ul>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB6e7905be1039ce7678fcb5bd80e381b3?method=download&shareKey=80e5f90a4aab9dcb30e62f7c2d4a9e4b"  alt="pic" width="434" height="328" title="pic1"/></p>
+</div>
+<p>凡是和位置相关的应用，均有一定的应用场景，尽情发挥群众的智慧</p>
+<h3 id="虚拟定位原理">虚拟定位原理</h3>
+<p>经过调研 iOS 虚拟定位大概有三类技术路线：</p>
+<h5 id="动态库注入">动态库注入</h5>
+<p>iOS
+越狱后，安装使用具备虚拟定位功能的越狱插件。在上帝模式下，越狱插件可以肆意劫持系统函数。或者在非越狱环境下，砸壳目标
+app ipa 文件，重打包注入动态库。这两种方式本质是一致的，都是为了 app
+进程运行时，注入运行动态库。</p>
+<p>劫持 <code>CoreLocation</code>
+中以下常用的获取定位信息的函数，即可篡改正常的定位数据：
+<figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">CLLocationManager</span>-&gt;<span class="function"><span class="title">delegate</span>()</span></span><br><span class="line"><span class="variable">CLLocationManager</span>-&gt;<span class="function"><span class="title">initialize</span>()</span></span><br><span class="line"><span class="variable">CLLocationManager</span>-&gt;<span class="function"><span class="title">setDelegate</span>()</span></span><br><span class="line"><span class="variable">CLLocationManager</span>-&gt;<span class="function"><span class="title">startMonitoringSignificantLocationChanges</span>()</span></span><br><span class="line"><span class="variable">CLLocationManager</span>-&gt;<span class="function"><span class="title">startUpdatingHeading</span>()</span></span><br><span class="line"><span class="variable">CLLocationManager</span>-&gt;<span class="function"><span class="title">startUpdatingLocation</span>()</span></span><br><span class="line"><span class="variable">CLLocationManager</span>-&gt;<span class="function"><span class="title">stopMonitoringSignificantLocationChanges</span>()</span></span><br><span class="line"><span class="variable">CLLocationManager</span>-&gt;<span class="function"><span class="title">stopUpdatingHeading</span>()</span></span><br><span class="line"><span class="variable">CLLocationManager</span>-&gt;<span class="function"><span class="title">stopUpdatingLocation</span>()</span></span><br></pre></td></tr></table></figure></p>
+<h5 id="电脑端软件">电脑端软件</h5>
+<p>做过 iOS 开发的同学，可以观察一下 xcode 上有一个 <code>Simulate
+location</code> 的调试功能，这是方便 app 开发过程中测试定位代码。</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB6e3d8b1dfe6668bfbe086091cc8413ce?method=download&shareKey=b664264fdd9541dee205da89a66e415e"  alt="pic" width="622" height="419" title="pic1"/></p>
+</div>
+<p>我们可以使用这个功能来模拟定位。不过使用这种方式需要打开电脑，开启
+xcode，然后再编写 GPX 文件，对于普通用户，这个门槛太高了。国内的一些 iOS
+助手类软件，将 <code>Simulate location</code>
+功能逆向出来，集成到自己的软件上，比如下面这个 iTools 软件：</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB7951e24bcc920a0d2c2dabbd7e99f5e6?method=download&shareKey=f5c6bf34161b4e31c3e70a4256a202d1"  alt="pic" width="500" height="319" title="pic2"/></p>
+</div>
+<h5 id="闪电口外设">闪电口外设</h5>
+<p>典型产品如位移精灵，不但具备虚拟定位能力，还具备充电宝功能，多种用途，很方便啊，有木有。</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB15347ad06a7cb7391e763eb1cd2f5f8d?method=download&shareKey=0ff0e5488bbe61d0ec28bab0d659cb97"  alt="pic" width="580" height="181" title="pic3"/></p>
+</div>
+<p>那这个东西是啥原理呢？</p>
+<p>解释起来很简单，这也是苹果提供的功能，不是啥黑科技。通过苹果 MFi(Made
+For iOS) 认证厂商会获得 <code>MFI Accessory Interface
+Specification</code> 文档，其中描述了 USB 与外设之间的通讯协议
+iAP2，该协议具备许多丰富的功能:</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBf4570439b873dd3da5df6552b6f7ab2c?method=download&shareKey=0feb646144d8175c2d1c09a2cbe1d781"  alt="pic" width="400" height="377" title="pic4"/></p>
+</div>
+<p>可以看到其中就有 location
+定位功能，按照协议格式，发送对应位置数据，就可以更改定位信息。电脑端
+xcode 是不是也是使用 iAP2 协议呢？xcode
+实现文档没有公开过，所以这个是未知的。</p>
+<h3 id="检测方法">检测方法</h3>
+<p>知道了，这三种虚拟定位方式，我们只要找到正常定位与虚拟定位之间的差异就可以做到检测了</p>
+<h5 id="动态库注入-1">动态库注入</h5>
+<p>有几个明显特征： - 越狱环境，安装越狱插件，其动态库会被注入到目标进程
+- 非越狱环境下，砸壳目标ipa，注入动态库 - 劫持(HOOK)定位函数</p>
+<p>越狱环境可以检查设备是否越狱，非越狱可以检查 app
+是否被重打包。如此，检查定位函数是否被劫持比较关键</p>
+<p>函数 HOOK 涉及 OC 语言的动态特性，主要利用了
+<code>method_exchangeImplementations()</code> 将函数实现替换掉。被 HOOK
+的函数，其 IMP 实现会被劫持到注入的动态库中，所以我们检查函数 IMP
+实现是否是原始 module 即可判断是否被 HOOK 了。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">NSString</span> *) getMethodIMPInfo:(<span class="built_in">NSString</span> *) className, sel:(<span class="built_in">NSString</span> *)sel &#123;</span><br><span class="line">        <span class="built_in">NSString</span> *ret;</span><br><span class="line">        Dl_info info;</span><br><span class="line">        </span><br><span class="line">        IMP imp = class_getMethodImplementation(objc_getClass([className UTF8String]), sel_registerName([sel UTF8String]));</span><br><span class="line">        <span class="keyword">if</span> ( dladdr(imp, &amp;info)) &#123;</span><br><span class="line">            ret = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@&quot;%@-%@-fname:%s-sname:%s-fbase:%p-saddr:%p&quot;</span>, className, sel, info.dli_fname, info.dli_sname, info.dli_fbase, info.dli_saddr];</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">NSString</span> *ret = getMethodIMPInfo(<span class="string">@&quot;CLLocationManager&quot;</span>, <span class="string">@&quot;delegate&quot;</span>);</span><br></pre></td></tr></table></figure>
+<h5 id="电脑端软件-1">电脑端软件</h5>
+<p>使用电脑端软件虚拟定位时，app
+获取定位信息与正常获取定位信息有差异。</p>
+<p>正常获取定位的时代理方法会被执行 3 次： <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">2020</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">14</span>:<span class="number">37</span>:<span class="number">25</span>.<span class="number">587317</span>+<span class="number">0800</span> iOSApp[<span class="number">990</span>:<span class="number">275020</span>] 纬度为：<span class="number">22</span>.<span class="number">996662</span>, 经度为：<span class="number">113</span>.<span class="number">328448</span></span><br><span class="line"><span class="attribute">2020</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">14</span>:<span class="number">38</span>:<span class="number">00</span>.<span class="number">158517</span>+<span class="number">0800</span> iOSApp[<span class="number">990</span>:<span class="number">275020</span>] 高度为：<span class="number">23</span>.<span class="number">031912</span></span><br><span class="line"><span class="attribute">2020</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">14</span>:<span class="number">38</span>:<span class="number">04</span>.<span class="number">869490</span>+<span class="number">0800</span> iOSApp[<span class="number">990</span>:<span class="number">275020</span>] 水平精确度：<span class="number">65</span>.<span class="number">000000</span>, 垂直精确度：<span class="number">10</span>.<span class="number">000000</span></span><br><span class="line"><span class="attribute">2020</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">14</span>:<span class="number">38</span>:<span class="number">22</span>.<span class="number">238887</span>+<span class="number">0800</span> iOSApp[<span class="number">990</span>:<span class="number">275020</span>] 纬度为：<span class="number">22</span>.<span class="number">996662</span>, 经度为：<span class="number">113</span>.<span class="number">328448</span></span><br><span class="line"><span class="attribute">2020</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">14</span>:<span class="number">38</span>:<span class="number">23</span>.<span class="number">784470</span>+<span class="number">0800</span> iOSApp[<span class="number">990</span>:<span class="number">275020</span>] 高度为：<span class="number">23</span>.<span class="number">031912</span></span><br><span class="line"><span class="attribute">2020</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">14</span>:<span class="number">38</span>:<span class="number">25</span>.<span class="number">844754</span>+<span class="number">0800</span> iOSApp[<span class="number">990</span>:<span class="number">275020</span>] 水平精确度：<span class="number">65</span>.<span class="number">000000</span>, 垂直精确度：<span class="number">10</span>.<span class="number">000000</span></span><br><span class="line"><span class="attribute">2020</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">14</span>:<span class="number">38</span>:<span class="number">26</span>.<span class="number">841710</span>+<span class="number">0800</span> iOSApp[<span class="number">990</span>:<span class="number">275020</span>] 纬度为：<span class="number">22</span>.<span class="number">996667</span>, 经度为：<span class="number">113</span>.<span class="number">328447</span></span><br><span class="line"><span class="attribute">2020</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">14</span>:<span class="number">38</span>:<span class="number">26</span>.<span class="number">842180</span>+<span class="number">0800</span> iOSApp[<span class="number">990</span>:<span class="number">275020</span>] 高度为：<span class="number">23</span>.<span class="number">047693</span></span><br><span class="line"><span class="attribute">2020</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">14</span>:<span class="number">38</span>:<span class="number">26</span>.<span class="number">842767</span>+<span class="number">0800</span> iOSApp[<span class="number">990</span>:<span class="number">275020</span>] 水平精确度：<span class="number">65</span>.<span class="number">000000</span>, 垂直精确度：<span class="number">10</span>.<span class="number">000000</span></span><br></pre></td></tr></table></figure></p>
+<p>使用xcode虚拟定位的 location 代理方法仅执行一次： <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">2020</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">07</span>:<span class="number">41</span>:<span class="number">57</span>.<span class="number">466217</span>+<span class="number">0100</span> iOSApp[<span class="number">1005</span>:<span class="number">276293</span>] 纬度为：<span class="number">51</span>.<span class="number">509980</span>, 经度为：-<span class="number">0</span>.<span class="number">133700</span></span><br><span class="line"><span class="attribute">2020</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">07</span>:<span class="number">41</span>:<span class="number">57</span>.<span class="number">466404</span>+<span class="number">0100</span> iOSApp[<span class="number">1005</span>:<span class="number">276293</span>] 高度为：<span class="number">0</span>.<span class="number">000000</span></span><br><span class="line"><span class="attribute">2020</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">07</span>:<span class="number">41</span>:<span class="number">57</span>.<span class="number">466511</span>+<span class="number">0100</span> iOSApp[<span class="number">1005</span>:<span class="number">276293</span>] 水平精确度：<span class="number">5</span>.<span class="number">000000</span>, 垂直精确度：-<span class="number">1</span>.<span class="number">000000</span></span><br></pre></td></tr></table></figure></p>
+<p>多次实验后，发现以下特征：正常获取定位信息时，<code>locationManager</code>
+代理方法会被回调 3 次，而虚拟定位，代理方法仅会被回调 1
+次；正常定位可以获取海拔高度，水平精确度，垂直精确度，虚拟定位时，无法获取海拔高度，水平精确度，垂直精确度也是固定的错误值。以上两点可以作为检查依据。</p>
+<h5 id="闪电口外设-1">闪电口外设</h5>
+<p>没有购买位移精灵，没有做测试，不过在 gayhub 上发现一份检查 iap2
+外设定位的代码 <a
+target="_blank" rel="noopener" href="https://github.com/supergo-x/iap2-location-checker">iap2-location-checker</a></p>
+<p>其主要思路也是检查定位数据的精度。还有一种思路是检查外设类型，获取外设的硬件信息，如
+mac，manufacturer，brand 之类的信息，不过在高版本 iOS
+中，需要额外申请权限，这里就没有实践了。</p>
+<h3 id="参考">参考</h3>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://iosre.com/t/topic/17600">苹果虚拟定位技术原理和检测</a></li>
+<li><a
+target="_blank" rel="noopener" href="http://devliubo.com/2016/2016-12-23-iOS%E4%B8%8A%E8%99%9A%E6%8B%9F%E5%AE%9A%E4%BD%8D%E6%A3%80%E6%B5%8B%E7%9A%84%E6%8E%A2%E7%A9%B6.html">iOS上虚拟定位检测的探究</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://www.secpulse.com/archives/76854.html">免越狱虚拟定位外挂的调试小记与检测方案</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ios-sec/" rel="tag"># ios sec</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2020/08/19/ios/dev--ios-javascriptcore-basic/" rel="next" title="iOS JavaScriptCore 简单使用">
+                  <i class="fa fa-chevron-left"></i> iOS JavaScriptCore 简单使用
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2021/01/04/osx/sec--MachO-file-format/" rel="prev" title="聊聊 Mach-O 文件格式">
+                  聊聊 Mach-O 文件格式 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%99%9A%E6%8B%9F%E5%AE%9A%E4%BD%8D"><span class="nav-number">1.</span> <span class="nav-text">什么是虚拟定位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%AE%9A%E4%BD%8D%E5%B8%B8%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">2.</span> <span class="nav-text">虚拟定位常用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%AE%9A%E4%BD%8D%E5%8E%9F%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">虚拟定位原理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%BA%93%E6%B3%A8%E5%85%A5"><span class="nav-number">3.0.1.</span> <span class="nav-text">动态库注入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%B5%E8%84%91%E7%AB%AF%E8%BD%AF%E4%BB%B6"><span class="nav-number">3.0.2.</span> <span class="nav-text">电脑端软件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%97%AA%E7%94%B5%E5%8F%A3%E5%A4%96%E8%AE%BE"><span class="nav-number">3.0.3.</span> <span class="nav-text">闪电口外设</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E6%96%B9%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">检测方法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%BA%93%E6%B3%A8%E5%85%A5-1"><span class="nav-number">4.0.1.</span> <span class="nav-text">动态库注入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%B5%E8%84%91%E7%AB%AF%E8%BD%AF%E4%BB%B6-1"><span class="nav-number">4.0.2.</span> <span class="nav-text">电脑端软件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%97%AA%E7%94%B5%E5%8F%A3%E5%A4%96%E8%AE%BE-1"><span class="nav-number">4.0.3.</span> <span class="nav-text">闪电口外设</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="geneblue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">geneblue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

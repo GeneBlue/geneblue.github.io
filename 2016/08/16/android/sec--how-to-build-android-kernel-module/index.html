@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 0X01 前言 内核驱动是漏洞的高发区，了解Android驱动代码的编写是分析、利用驱动漏洞的基础。本文以一个“hello”驱动为例，简单介绍内核驱动编写、编译的基本过程，包括内核模块的内建编译和动态加载方式的编译。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android内核模块编译执行">
+<meta property="og:url" content="http://yoursite.com/2016/08/16/android/sec--how-to-build-android-kernel-module/index.html">
+<meta property="og:site_name" content="geneblue&#39;s blog">
+<meta property="og:description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 0X01 前言 内核驱动是漏洞的高发区，了解Android驱动代码的编写是分析、利用驱动漏洞的基础。本文以一个“hello”驱动为例，简单介绍内核驱动编写、编译的基本过程，包括内核模块的内建编译和动态加载方式的编译。">
+<meta property="og:locale">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBe99d9a8dd62d82945248509c53de2457?method=download&shareKey=f1d12e47967eadbdfab2d57de501c66a">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB1c479a4901be686bdfcb98d0b8fb0482?method=download&shareKey=ae2570ee09dd8634f3b153d5171b3f37">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBf896d212e421403249737c0c1d2c9f36?method=download&shareKey=fca1e727ad7a30336d420cdad28450a7">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBcf2732e1fb0cc0cc3562a0432cd9d516?method=download&shareKey=9f7f9bf4f83ecdaed0dbb6e2f5456349">
+<meta property="article:published_time" content="2016-08-16T04:02:08.000Z">
+<meta property="article:modified_time" content="2022-01-16T15:49:52.429Z">
+<meta property="article:author" content="geneblue">
+<meta property="article:tag" content="android sec">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://note.youdao.com/yws/api/personal/file/WEBe99d9a8dd62d82945248509c53de2457?method=download&shareKey=f1d12e47967eadbdfab2d57de501c66a">
+
+<link rel="canonical" href="http://yoursite.com/2016/08/16/android/sec--how-to-build-android-kernel-module/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Android内核模块编译执行 | geneblue's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">geneblue's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/08/16/android/sec--how-to-build-android-kernel-module/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="geneblue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geneblue's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          Android内核模块编译执行
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2016-08-16 12:02:08" itemprop="dateCreated datePublished" datetime="2016-08-16T12:02:08+08:00">2016-08-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<h3 id="x01-前言">0X01 前言</h3>
+<p>内核驱动是漏洞的高发区，了解Android驱动代码的编写是分析、利用驱动漏洞的基础。本文以一个“hello”驱动为例，简单介绍内核驱动编写、编译的基本过程，包括内核模块的内建编译和动态加载方式的编译。</p>
+<span id="more"></span>
+<h3 id="x02-编写">0X02 编写</h3>
+<p>在./goldsifh/drivers文件夹下新建hello目录，在hello目录中新建hello.c文件：</p>
+<pre><code>#include &lt;linux/module.h&gt;  
+#include &lt;linux/kernel.h&gt;  
+#include &lt;linux/fs.h&gt;  
+#include &lt;linux/miscdevice.h&gt;  
+
+MODULE_LICENSE(&quot;GPL&quot;);  
+MODULE_AUTHOR(&quot;GeneBlue&quot;);  
+MODULE_DESCRIPTION(&quot;Hello Kernel Device&quot;);  
+MODULE_VERSION(&quot;1.0&quot;);  
+
+#define CMD_COMMAND 0x1336  
+
+long hello_ioctl(struct file *filp,  //ioctl函数
+    unsigned int cmd,  
+    unsigned long arg)&#123;  
+    switch(cmd)&#123;  
+    case CMD_COMMAND:  
+        printk(&quot;Hello Module hello_ioctl() exced&quot;);  
+        break;  
+    default:  
+        printk(&quot;Hello Module unknown ioctl cmd&quot;);  
+    &#125;  
+    return 0;  
+&#125;  
+
+struct file_operations hello_fops = &#123;  //设备的操作函数指针表
+    unlocked_ioctl: hello_ioctl  
+&#125;;  
+
+static struct miscdevice hello_device = &#123;  //注册为misc设备的基本属性
+    minor: MISC_DYNAMIC_MINOR,  
+    name: &quot;hello&quot;,  
+    fops: &amp;hello_fops,  
+    mode: 777
+&#125;;  
+
+static int __init hello_begin(void)&#123;  
+    int ret;  
+    ret = misc_register(&amp;hello_device);  //注册为misc设备
+    if(ret)  
+        printk(&quot;Failed to register misc device&quot;);  
+    else  
+        printk(&quot;Hello Module successfully loaded&quot;);  
+
+    return ret;  
+&#125;  
+
+static void __exit hello_exit(void)&#123;  
+    int ret = misc_deregister(&amp;hello_device);  //设备卸载
+    if(ret)  
+        printk(&quot;Hello module exit&quot;);  
+&#125;  
+
+module_init(hello_begin);  //模块初始化函数
+module_exit(hello_exit);  //模块卸载函数</code></pre>
+<p>写驱动模块时都要包含module.h头文件，该头文件定义了一些编写模块时常用宏或函数;kernel.h提供常用的内核函数，如printk();fs.h提供文件表和文件结构，如file_operations;miscdevice.h提供注册为misc设备的常用函数。</p>
+<h3 id="x03-编译">0X03 编译</h3>
+<p>在编译之前，要确保下载下来的内核代码已经可以顺利地编译运行，具体可以参考<a
+target="_blank" rel="noopener" href="https://geneblue.github.io/2016/01/27/Android%E5%86%85%E6%A0%B8%E7%BC%96%E8%AF%91%E8%B0%83%E8%AF%95/">这里</a>。</p>
+<p>在hello目录中要增加Makefile配置文件用于编译。在Makefile中添加：</p>
+<pre><code>obj-y +=  hello.o</code></pre>
+<p>表示内建编译，即直接编译到内核文件zImage中。然后在goldfish/drivers/Makefile中包含新建的驱动设备</p>
+<pre><code>obj-y += hello/</code></pre>
+<p>这样，再次编译内核后，驱动设备即可包含在内核中。</p>
+<p>有的时候，我们需要在手机中编写可动态加载的驱动模块，可动态加载模块非常便于调试，在kmsg中可直接看到调试信息，这个时候需要重新编译手机内核，开启内核的动态加载属性。在编译的内核的时候，使用</p>
+<pre><code>make menuconfig</code></pre>
+<p>命令，并在menuconfig中做如下配置：</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBe99d9a8dd62d82945248509c53de2457?method=download&shareKey=f1d12e47967eadbdfab2d57de501c66a"  alt="menuconfig" style="width: 371.65px; height: 237.22px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="menuconfig"/></p>
+</div>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB1c479a4901be686bdfcb98d0b8fb0482?method=download&shareKey=ae2570ee09dd8634f3b153d5171b3f37"  alt="menuconfig" style="width: 382.15px; height: 243.28px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="menuconfig"/></p>
+</div>
+<p>如果不开启该选项就直接insmod加载hello.ko，一般情况下都会报如下错误：</p>
+<pre><code>insmod: init_module &#39;hello.ko&#39; failed (Function not implemented)</code></pre>
+<p>编译完内核之后，还需要将内核拷贝到aosp的源码中，替换掉默认的内核文件，在我的Android源码中默认的内核文件存放在如下路径中：</p>
+<pre><code>/android-4.4.4_r1/device/lge/hammerhead-kernel/zImage-dtb</code></pre>
+<p>编译Android源码生成新的boot.img文件，然后只将boot.img刷入到手机即可。</p>
+<p>完成内核的准备工作之后，下面就要编译动态加载模块hello.ko，依然是上述的hello.c文件，在任意位置建一个目录，拷贝hello.c并编写Makefile如下：</p>
+<pre><code>obj-m := hello.o  
+
+KERNELDIR := /home/geneblue/Android/Source/kernel/msm/  
+PWD :=$(shell pwd)  
+ARCH=arm  
+CROSS_COMPILE=/home/geneblue/Android/Source/tsinghua_aosp/android-4.4.4_r1/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.6/bin/arm-linux-androideabi-  
+CC=$(CROSS_COMPILE)gcc  
+LD=$(CROSS_COMPILE)ld  
+CFLAGS_MODULE=-fno-pic  
+
+modules:  
+    make -C $(KERNELDIR) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) M=$(PWD) modules    
+clean:    
+    rm *.o *.ko *.mod.c *.order *.symvers</code></pre>
+<p>注意，Makefile中要加上CFLAGS_MODULE=-fno-pic选项，不然编译好的hello.ko
+relocation节会错误：</p>
+<pre><code>insmod: init_module &#39;hello.ko&#39; failed (Exec format error)  
+kmsg:  
+&lt;3&gt;[ 1646.589131] hello: unknown relocation: 27  </code></pre>
+<p>最后，使用make命令即可编译正确的hello.ko文件。</p>
+<h3 id="x04-运行">0X04 运行</h3>
+<p>使用模拟器来加载新编好的内核，并在adb shell中查看新编的驱动：</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBf896d212e421403249737c0c1d2c9f36?method=download&shareKey=fca1e727ad7a30336d420cdad28450a7"  alt="内建编译" style="width: 436.22px; height: 76.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="内建编译"/></p>
+</div>
+<p>这样，一个最简单的设备驱动已经可以正确运行了。</p>
+<p>将hello.ko文件push的手机中，用insmod来加载即可。</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBcf2732e1fb0cc0cc3562a0432cd9d516?method=download&shareKey=9f7f9bf4f83ecdaed0dbb6e2f5456349"  alt="模块编译" style="width: 437.65px; height: 52.08px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title="模块编译"/></p>
+</div>
+<h3 id="x05-参考">0X05 参考</h3>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="http://blog.csdn.net/pillarbuaa/article/details/40340165">在Ubuntu上为Android系统编写Linux内核驱动程序</a></li>
+<li><a
+target="_blank" rel="noopener" href="http://stackoverflow.com/questions/11614441/hello-world-kernel-module-for-android-unknown-relocation-27-when-insmod">Hello
+world kernel module for android &amp; unknown relocation: 27 when
+insmod</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/android-sec/" rel="tag"># android sec</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2016/07/27/android/vul--how-to-bypass-android-kernel-pxn/" rel="next" title="Android PXN绕过技术研究">
+                  <i class="fa fa-chevron-left"></i> Android PXN绕过技术研究
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2016/10/09/android/sec--android-ollvm1/" rel="prev" title="利用OLLVM混淆Android Native代码篇一">
+                  利用OLLVM混淆Android Native代码篇一 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#x01-%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">0X01 前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#x02-%E7%BC%96%E5%86%99"><span class="nav-number">2.</span> <span class="nav-text">0X02 编写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#x03-%E7%BC%96%E8%AF%91"><span class="nav-number">3.</span> <span class="nav-text">0X03 编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#x04-%E8%BF%90%E8%A1%8C"><span class="nav-number">4.</span> <span class="nav-text">0X04 运行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#x05-%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">0X05 参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="geneblue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">geneblue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

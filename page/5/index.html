@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 5.4.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -57,10 +57,9 @@
 <meta property="og:url" content="http://yoursite.com/page/5/index.html">
 <meta property="og:site_name" content="geneblue&#39;s blog">
 <meta property="og:description" content="Personal Blog">
-<meta property="og:locale" content="zh-Hans">
+<meta property="og:locale">
+<meta property="article:author" content="geneblue">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="geneblue&#39;s blog">
-<meta name="twitter:description" content="Personal Blog">
 
 <link rel="canonical" href="http://yoursite.com/page/5/">
 
@@ -184,7 +183,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/07/21/JNI官方文档-Chapter 3：JNI Types and Data Structures/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/10/android/sec--android-pagemap/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -198,7 +197,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2015/07/21/JNI%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3-Chapter%203%EF%BC%9AJNI%20Types%20and%20Data%20Structures/" class="post-title-link" itemprop="url">JNI官方文档-Chapter 3：JNI Types and Data Structures</a>
+            <a href="/2017/05/10/android/sec--android-pagemap/" class="post-title-link" itemprop="url">pagemap 解析</a>
         </h2>
 
         <div class="post-meta">
@@ -208,14 +207,14 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2015-07-21 12:26:08" itemprop="dateCreated datePublished" datetime="2015-07-21T12:26:08+08:00">2015-07-21</time>
+              <time title="Created: 2017-05-10 12:02:08" itemprop="dateCreated datePublished" datetime="2017-05-10T12:02:08+08:00">2017-05-10</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
               </span>
 
           
@@ -229,12 +228,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<p>本章讲述JNI是如何映射java类型到native C类型的。</p>
-<h3 id="Primitive-Types"><a href="#Primitive-Types" class="headerlink" title="Primitive Types"></a>Primitive Types</h3><p>表3-1表明了java基本类型和平台依赖的（machine-dependent）等价native类型。</p>
+          <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<p>linux 下 <code>/proc/[pid]/pagemap</code>
+文件保存了当前进程虚拟内存页的映射信息。用户态程序可以根据该文件计算出虚拟页映射到哪个物理页。</p>
+<p>对于每一个虚拟页，pagemap 使用 64bit
+的值表示，该值表示以下信息（<code>fs/proc/task_mmu.c
+pagemap_read</code>）</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2015/07/21/JNI官方文档-Chapter 3：JNI Types and Data Structures/#more" rel="contents">
+              <a class="btn" href="/2017/05/10/android/sec--android-pagemap/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -258,7 +261,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/07/20/JNI官方文档-Chapter 2：Design Overview/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/02/android/sec--linux-kernel-arm64-virtual-address-space/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -272,7 +275,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2015/07/20/JNI%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3-Chapter%202%EF%BC%9ADesign%20Overview/" class="post-title-link" itemprop="url">JNI官方文档-Chapter 2：Design Overview</a>
+            <a href="/2017/04/02/android/sec--linux-kernel-arm64-virtual-address-space/" class="post-title-link" itemprop="url">ARM64 Linux 内核虚拟地址空间</a>
         </h2>
 
         <div class="post-meta">
@@ -282,14 +285,14 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2015-07-20 12:26:08" itemprop="dateCreated datePublished" datetime="2015-07-20T12:26:08+08:00">2015-07-20</time>
+              <time title="Created: 2017-04-02 12:02:08" itemprop="dateCreated datePublished" datetime="2017-04-02T12:02:08+08:00">2017-04-02</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
+                <time title="Modified: 2020-10-14 11:44:30" itemprop="dateModified" datetime="2020-10-14T11:44:30+08:00">2020-10-14</time>
               </span>
 
           
@@ -303,12 +306,19 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<p>本篇主要关注JNI设计中的主要问题。这里讲述的大多数问题都与本地方法有关。Invocation API的介绍在Chapter 5中。</p>
-<h3 id="JNI-Interface-Functions-and-Pointers"><a href="#JNI-Interface-Functions-and-Pointers" class="headerlink" title="JNI Interface Functions and Pointers"></a>JNI Interface Functions and Pointers</h3><p>本地代码通过JNI函数可以获取JVM的一些特性。JNI函数可以通过一个接口指针获取。该接口指针是一个双重指针（指向指针的指针）。指针指向了一个指针数组，指针数组中的每一个成员都指向一个接口函数。每一个接口函数都在数组中预定义了一个偏移地址。下图可以表明接口指针的组织关系。</p>
+          <p><strong>文章访问密码：whoami</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<ul>
+<li>原文<a
+target="_blank" rel="noopener" href="http://thinkiii.blogspot.hk/2014/02/arm64-linux-kernel-virtual-address-space.html">地址</a></li>
+<li>翻译: GeneBlue</li>
+</ul>
+<p>现在我们来讨论 64 位 ARM CPU 的 Linux 内核虚拟地址空间。在 ARM
+官网上也可以找到一些关于 ARMv8 的信息。<a
+target="_blank" rel="noopener" href="http://www.arm.com/products/processors/armv8-architecture.php">http://www.arm.com/products/processors/armv8-architecture.php</a></p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2015/07/20/JNI官方文档-Chapter 2：Design Overview/#more" rel="contents">
+              <a class="btn" href="/2017/04/02/android/sec--linux-kernel-arm64-virtual-address-space/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -332,7 +342,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/07/18/JNI官方文档-Chapter 1：Introduction/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/02/osx/dev--use-pgp-send-email-on-osx/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -346,7 +356,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2015/07/18/JNI%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3-Chapter%201%EF%BC%9AIntroduction/" class="post-title-link" itemprop="url">JNI官方文档-Chapter 1：Introduction</a>
+            <a href="/2017/03/02/osx/dev--use-pgp-send-email-on-osx/" class="post-title-link" itemprop="url">在 OS X 上使用 PGP 发送加密邮件</a>
         </h2>
 
         <div class="post-meta">
@@ -356,14 +366,14 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2015-07-18 12:26:08" itemprop="dateCreated datePublished" datetime="2015-07-18T12:26:08+08:00">2015-07-18</time>
+              <time title="Created: 2017-03-02 12:02:08" itemprop="dateCreated datePublished" datetime="2017-03-02T12:02:08+08:00">2017-03-02</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
               </span>
 
           
@@ -377,14 +387,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<p>在使用NDK的时候，发现自己对jNI机制并不是很了解，就把官方文档拿来看了看并翻译了一下。官方文档地址看<a href="http://docs.oracle.com/javase/6/docs/technotes/guides/jni/spec/jniTOC.html" target="_blank" rel="noopener">这里</a>。自己也是首次翻译英文资料，有翻译不妥的地方请联系我，我将及时更改。</p>
-<hr>
-<p>本篇开始介绍JNI（Java Native Interface）技术。JNI是一种本地编程接口。它允许运行在java VM 中的java代码与使用C/C++或汇编等其它编程语言写成的应用或者库进行交互操作。</p>
-<p>JNI机制能够存在的最重要一点在于利用了JVM的基础实现是没有被限制死。因此，JVM的构建者可以增添对JNI的支持而不会影响到VM的其他部分。开发人员在编写完一个版本的native程序或库后就可以在所有支持JNI技术的JVM中运行。</p>
+          <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<p>一直没用过 PGP 发送加密邮件，现在需要用到，顺便把过程记录下来。</p>
+<h3 id="x01-pgp介绍">0x01 PGP介绍</h3>
+<p>什么是 PGP？PGP 意为 Pretty Good
+Privacy（更好地保护隐私），是一个基于 RSA
+公匙加密体系的邮件加密软件。可以用它加密邮件内容，防止第三者非授权阅读，还可以对邮件添加数字签名，这样接收者根据签名信息可以确定发件人身份，确信邮件内容没有被篡改。这些神奇的功能都是建立在公钥密码学基础上，伟大的公约密码啊……</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2015/07/18/JNI官方文档-Chapter 1：Introduction/#more" rel="contents">
+              <a class="btn" href="/2017/03/02/osx/dev--use-pgp-send-email-on-osx/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -408,7 +420,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/04/20/Android开发中错误解决（持续更新）/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/10/09/android/sec--android-ollvm1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -422,7 +434,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2015/04/20/Android%E5%BC%80%E5%8F%91%E4%B8%AD%E9%94%99%E8%AF%AF%E8%A7%A3%E5%86%B3%EF%BC%88%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%EF%BC%89/" class="post-title-link" itemprop="url">Android开发中错误解决（持续更新）</a>
+            <a href="/2016/10/09/android/sec--android-ollvm1/" class="post-title-link" itemprop="url">利用OLLVM混淆Android Native代码篇一</a>
         </h2>
 
         <div class="post-meta">
@@ -432,14 +444,14 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2015-04-20 12:30:08" itemprop="dateCreated datePublished" datetime="2015-04-20T12:30:08+08:00">2015-04-20</time>
+              <time title="Created: 2016-10-09 09:06:10" itemprop="dateCreated datePublished" datetime="2016-10-09T09:06:10+08:00">2016-10-09</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
               </span>
 
           
@@ -453,13 +465,13 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<p>平时写Android程序时遇到的一些错误， 在此记录方便以后查找。</p>
-<h3 id="类中方法找不到问题"><a href="#类中方法找不到问题" class="headerlink" title="类中方法找不到问题"></a>类中方法找不到问题</h3><p>logcat中报错提示如下：<br>    java.lang.NoClassDefFoundError: com.google.zxing.EncodeHintType</p>
-<p>这个问题是在二维码编码中遇到的但是在代码使用的jar包中明明已经定义了该类，就是提示找不到该类，最后查找别人的解决办法，将jar文件存放在libs文件夹下就顺利解决了，之前我将其存放在了自定义的lib文件夹下。可问题是为什么别的jar文件放在lib下依然可以顺利使用jar中的类呢？？？？？？？？</p>
+          <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<p>这里将会用两篇文章解释OLLVM混淆Android
+Native代码的方法和原理。篇一主要聚焦NDK中OLLVM的编译构建和主要混淆模式的使用，并简要解释各混淆模式的效果；篇二主要研究默认混淆模式的实现并尝试编写调试自定义Pass。
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2015/04/20/Android开发中错误解决（持续更新）/#more" rel="contents">
+              <a class="btn" href="/2016/10/09/android/sec--android-ollvm1/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -483,7 +495,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/03/20/DEX文件格式/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/08/16/android/sec--how-to-build-android-kernel-module/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -497,7 +509,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2015/03/20/DEX%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" class="post-title-link" itemprop="url">Dex文件格式</a>
+            <a href="/2016/08/16/android/sec--how-to-build-android-kernel-module/" class="post-title-link" itemprop="url">Android内核模块编译执行</a>
         </h2>
 
         <div class="post-meta">
@@ -507,14 +519,14 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2015-03-20 12:26:08" itemprop="dateCreated datePublished" datetime="2015-03-20T12:26:08+08:00">2015-03-20</time>
+              <time title="Created: 2016-08-16 12:02:08" itemprop="dateCreated datePublished" datetime="2016-08-16T12:02:08+08:00">2016-08-16</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
               </span>
 
           
@@ -528,22 +540,13 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<p>为了更好了解DEX文件格式，写了个java版的DEX解析器，可以打印出一个dex文件中的字符串，字段和类中调用了哪些方法。具体代码见<a href="https://github.com/GeneBlue/DexFunctions" target="_blank" rel="noopener">这里</a> </p>
-<h3 id="0X01-准备工作"><a href="#0X01-准备工作" class="headerlink" title="0X01 准备工作"></a>0X01 准备工作</h3><p>java文件为Hello.java:</p>
-<pre><code>public class Hello {
-   public int foo(int a, int b) {
-       return (a + b) * (a - b);
-   }
-
-   public static void main(String[] argc) {
-       Hello hello = new Hello();
-       System.out.println(hello.foo(5, 3));
-   }
-}</code></pre>
+          <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<h3 id="x01-前言">0X01 前言</h3>
+<p>内核驱动是漏洞的高发区，了解Android驱动代码的编写是分析、利用驱动漏洞的基础。本文以一个“hello”驱动为例，简单介绍内核驱动编写、编译的基本过程，包括内核模块的内建编译和动态加载方式的编译。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2015/03/20/DEX文件格式/#more" rel="contents">
+              <a class="btn" href="/2016/08/16/android/sec--how-to-build-android-kernel-module/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -567,7 +570,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -613,14 +616,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -689,9 +692,17 @@
   <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/muse.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
 
 
 
@@ -711,6 +722,8 @@
 
 
 
+
+  
 
   
 

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 一直没用过 PGP 发送加密邮件，现在需要用到，顺便把过程记录下来。 0x01 PGP介绍 什么是 PGP？PGP 意为 Pretty Good Privacy（更好地保护隐私），是一个基于 RSA 公匙加密体系的邮件加密软件。可以用它加密邮件内容，防止第三者非授权阅读，还可以对邮件添加数字签名，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在 OS X 上使用 PGP 发送加密邮件">
+<meta property="og:url" content="http://yoursite.com/2017/03/02/osx/dev--use-pgp-send-email-on-osx/index.html">
+<meta property="og:site_name" content="geneblue&#39;s blog">
+<meta property="og:description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 一直没用过 PGP 发送加密邮件，现在需要用到，顺便把过程记录下来。 0x01 PGP介绍 什么是 PGP？PGP 意为 Pretty Good Privacy（更好地保护隐私），是一个基于 RSA 公匙加密体系的邮件加密软件。可以用它加密邮件内容，防止第三者非授权阅读，还可以对邮件添加数字签名，">
+<meta property="og:locale">
+<meta property="article:published_time" content="2017-03-02T04:02:08.000Z">
+<meta property="article:modified_time" content="2022-01-16T15:49:52.507Z">
+<meta property="article:author" content="geneblue">
+<meta property="article:tag" content="osx">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2017/03/02/osx/dev--use-pgp-send-email-on-osx/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>在 OS X 上使用 PGP 发送加密邮件 | geneblue's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">geneblue's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/02/osx/dev--use-pgp-send-email-on-osx/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="geneblue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geneblue's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          在 OS X 上使用 PGP 发送加密邮件
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-03-02 12:02:08" itemprop="dateCreated datePublished" datetime="2017-03-02T12:02:08+08:00">2017-03-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<p>一直没用过 PGP 发送加密邮件，现在需要用到，顺便把过程记录下来。</p>
+<h3 id="x01-pgp介绍">0x01 PGP介绍</h3>
+<p>什么是 PGP？PGP 意为 Pretty Good
+Privacy（更好地保护隐私），是一个基于 RSA
+公匙加密体系的邮件加密软件。可以用它加密邮件内容，防止第三者非授权阅读，还可以对邮件添加数字签名，这样接收者根据签名信息可以确定发件人身份，确信邮件内容没有被篡改。这些神奇的功能都是建立在公钥密码学基础上，伟大的公约密码啊……</p>
+<span id="more"></span>
+<h3 id="x02-下载安装">0x02 下载安装</h3>
+<p>GPG Suite 集合了 PGP 操作相关的工具，可以去<a
+target="_blank" rel="noopener" href="https://gpgtools.org">官网</a>下载安装包，也可以使用 Homebrew
+命令安装：</p>
+<p><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install Caskroom<span class="regexp">/cask/g</span>pgtools</span><br></pre></td></tr></table></figure></p>
+<p>安装完毕，launcher 里就会有 GPG Keychain
+工具，使用该工具来生成自己的证书。</p>
+<p>点击新建，按提示配置就好，生成的公钥会被上传到公钥服务器上，这样别人就可以根据名字或者
+key ID 搜索到我的公钥。</p>
+<center>
+<figure>
+<img
+src="https://note.youdao.com/yws/api/personal/file/WEB5f5be63b8c880b6cc178e07327252bd9?method=download&amp;shareKey=a727adb7059d891d49437fcefe746f04"
+alt="新建证书" />
+<figcaption aria-hidden="true">新建证书</figcaption>
+</figure>
+</center>
+<p>证书导出，吊销这些基本功能 GPG Suite 都提供。</p>
+<h3 id="x03-使用">0x03 使用</h3>
+<p>我们可以设置一些快捷键来方便我们使用 PGP，在
+系统偏好设置-&gt;键盘-&gt;快捷键-&gt;服务
+中，根据自己的偏好设置快捷键就好。当然，右键服务里也有对应的选项。</p>
+<h5 id="获取公钥">获取公钥</h5>
+<p>生成好了证书，那应该怎样去发加密邮件呢？首先，我们要知道邮件接收方的公钥是什么，我们用对方的公钥加密邮件内容，对方就可以用自己的私钥解密出邮件内容，知道对方的邮件地址，key
+ID 或者 名字都能在公钥服务器上搜索到对方的公钥，也就是 GPG Suite
+中提供的 查找公钥 功能。如果对方有多个公钥，选择最新的那个。</p>
+<h5 id="加密">加密</h5>
+<p>发邮件前，选中邮件内容，右键服务中选择 <code>OpenPGP:Encrypt
+Selection</code>，然后选择公钥，之后邮件内容会被加密。比如，如下内容：</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">hihi</span></span><br></pre></td></tr></table></figure>
+<p>加密成：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">-----<span class="keyword">BEGIN</span> PGP MESSAGE-----</span><br><span class="line"></span><br><span class="line">hQIMA1ZXVS4+LnyeARAAwliVfeHpvEPpY4UXNqbVc8APYJbGH1f0wojEWgk3mgoo</span><br><span class="line">oj7rFpACbOGAiKt0D+kSnmfqR+NZxfsHRY5ngnCWPN2<span class="regexp">/D/</span>Bv0gn0GSMZdWNq5EO1</span><br><span class="line">zf<span class="regexp">/mRpmvhRhQaMF/</span>aivRUgulbsdbaaEXJNrOMGyPREkL+m/<span class="number">9</span>EnD2o4BxGGa6St02</span><br><span class="line"><span class="number">26</span>LCABi6x8GXyEzIFp+KZqjShTP0G<span class="regexp">/+bA9i/</span>L1s+iJeXEcxAjjKxYGlgMxbnOf1G</span><br><span class="line"><span class="regexp">/vAXnmeUP8rf3M+5lTG/</span><span class="number">82</span>OvxOfvMX4xcvwrma8cp6YtfZ2JtroQ6qpDoVny1hpC</span><br><span class="line">Ve0uGibLG3w43CCnfGmauK1t<span class="regexp">/4Mj0AVugoWJuS89FLzgg/</span>vms2KlXH/rmdfmNYVu</span><br><span class="line">T3QaV2ccg9<span class="regexp">/ZrSkFxs7X0TRoPRTEFx2/</span>BInEADUH<span class="regexp">/HEfrsi3fY96eHnXhQtut/</span>c3</span><br><span class="line">oN+a8zlv9XfWxhR6Nze3fqdIr0S8ssMIvYS/fuH343TUmLstlhSg89qch8zme9sN</span><br><span class="line">pcOlrfJUwYpTLeL+<span class="number">4</span>y4TFgQC178Thc+ERHPbOYrMfyP2G441fj5qjoa+qD4Dw6a/</span><br><span class="line">uxp1Q38wj9/ocO6OTt3Sn0Au8f3iOcQE2qM6hw3J+ChQ7SDVfdHcOs+SpJmFqwjR</span><br><span class="line">xXHpQ5+dJx5PfS<span class="regexp">/W7Cg5Rbe5bB9ovq/</span>hbFwL0<span class="regexp">/SuYkFbrtbpnZ3Lr+pUUt9/u</span>33S</span><br><span class="line">PwEbCEiBDDtw6pT1P6kzf71Mq0hBAi0hPPOh/wicO5gGWmyaWz5UK6XMLDNGX5o7</span><br><span class="line">ff53QG1QoezcezX5COiv+g==</span><br><span class="line">=QLE+</span><br><span class="line">-----<span class="keyword">END</span> PGP MESSAGE-----</span><br></pre></td></tr></table></figure>
+<h5 id="签名">签名</h5>
+<p>为了方便对方验证邮件发送者，我们还可以附加上签名信息，选中加密后的信息，右键服务中选择
+<code>OpenPGP:Sign
+Selection</code>，然后输入自己证书的私钥短语，签名信息就可以附加上：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">-----<span class="keyword">BEGIN</span> PGP SIGNED MESSAGE-----</span><br><span class="line">Hash: SHA512</span><br><span class="line"></span><br><span class="line">- -----<span class="keyword">BEGIN</span> PGP MESSAGE-----</span><br><span class="line"></span><br><span class="line">hQIMA1ZXVS4+LnyeARAAwliVfeHpvEPpY4UXNqbVc8APYJbGH1f0wojEWgk3mgoo</span><br><span class="line">oj7rFpACbOGAiKt0D+kSnmfqR+NZxfsHRY5ngnCWPN2<span class="regexp">/D/</span>Bv0gn0GSMZdWNq5EO1</span><br><span class="line">zf<span class="regexp">/mRpmvhRhQaMF/</span>aivRUgulbsdbaaEXJNrOMGyPREkL+m/<span class="number">9</span>EnD2o4BxGGa6St02</span><br><span class="line"><span class="number">26</span>LCABi6x8GXyEzIFp+KZqjShTP0G<span class="regexp">/+bA9i/</span>L1s+iJeXEcxAjjKxYGlgMxbnOf1G</span><br><span class="line"><span class="regexp">/vAXnmeUP8rf3M+5lTG/</span><span class="number">82</span>OvxOfvMX4xcvwrma8cp6YtfZ2JtroQ6qpDoVny1hpC</span><br><span class="line">Ve0uGibLG3w43CCnfGmauK1t<span class="regexp">/4Mj0AVugoWJuS89FLzgg/</span>vms2KlXH/rmdfmNYVu</span><br><span class="line">T3QaV2ccg9<span class="regexp">/ZrSkFxs7X0TRoPRTEFx2/</span>BInEADUH<span class="regexp">/HEfrsi3fY96eHnXhQtut/</span>c3</span><br><span class="line">oN+a8zlv9XfWxhR6Nze3fqdIr0S8ssMIvYS/fuH343TUmLstlhSg89qch8zme9sN</span><br><span class="line">pcOlrfJUwYpTLeL+<span class="number">4</span>y4TFgQC178Thc+ERHPbOYrMfyP2G441fj5qjoa+qD4Dw6a/</span><br><span class="line">uxp1Q38wj9/ocO6OTt3Sn0Au8f3iOcQE2qM6hw3J+ChQ7SDVfdHcOs+SpJmFqwjR</span><br><span class="line">xXHpQ5+dJx5PfS<span class="regexp">/W7Cg5Rbe5bB9ovq/</span>hbFwL0<span class="regexp">/SuYkFbrtbpnZ3Lr+pUUt9/u</span>33S</span><br><span class="line">PwEbCEiBDDtw6pT1P6kzf71Mq0hBAi0hPPOh/wicO5gGWmyaWz5UK6XMLDNGX5o7</span><br><span class="line">ff53QG1QoezcezX5COiv+g==</span><br><span class="line">=QLE+</span><br><span class="line">- -----<span class="keyword">END</span> PGP MESSAGE-----</span><br><span class="line">-----<span class="keyword">BEGIN</span> PGP SIGNATURE-----</span><br><span class="line"></span><br><span class="line">iQIcBAEBCgAGBQJY9lFgAAoJEEf4W28ow4hib9EP/<span class="number">2</span>sPwWZvrsaFbqmLhBRRKnSL</span><br><span class="line"><span class="number">5</span>yxx8uZnwRMLFxJGu6oyk7pSP4Ce8hQScJLFB2MAiU65J5MSEqc7MWkA/mLb9aaC</span><br><span class="line">HfEfGvSfjTVmP1E+xzwEjeQYRAP9OWdRisqoz6ChE/XD6eaAre31w4MhbWk07J+K</span><br><span class="line">koHK11g7nmdYCESc3bHNcjEYouciGq9XZ4MaPq1DLD97EgFQV5h0fiNaLzAlBUgD</span><br><span class="line">pDmqS3eC7A4SxP9iATIT+Gyp+JgzLX2uo5NN/BUfMl2yEzVAAYDFl5GH+jeIm0fe</span><br><span class="line">YDD7BiRUSzUZNKNsC94l0v7X4TwInx32wiMhWfcZrZr5KsU4tf3rq5KvWFW1/Ftz</span><br><span class="line">sOJxLaG4OI9WS40kDQkqWfWxcq03kI6MxS8VBQkAdrQjMG9H5NdslR8G9iBVMkSV</span><br><span class="line"><span class="number">0</span>HAy90zL0vmHhFBpJ92AkT7ppTuGcMKptLXtcPdvsV35HWeqYlSwZvh7ZSW5gPJ6</span><br><span class="line">f8U5CGWPNbbcRwNudbVcXD4vJbKYUNbvQCE9wRcBG9PBFle9rJhC0IyM6aGhmquL</span><br><span class="line">kYJh1niizVgxery2tt8+<span class="number">9</span>ZpMEjiY8B4oaUWepATfTzxXUQUmHhpOV9E85ei/MgKo</span><br><span class="line">WoAksxAb7WV20g0JQqBjAhjFM75puPLXI6/ppIAbj6lgQOnIBwvbQrl1HZlOcEnr</span><br><span class="line">RVH7glSgYBnBoH5M2tDJ</span><br><span class="line">=iT60</span><br><span class="line">-----<span class="keyword">END</span> PGP SIGNATURE-----</span><br></pre></td></tr></table></figure>
+<h5 id="验证签名">验证签名</h5>
+<p>当邮件接收者收到邮件之后，对方可以选中 从 <code>-----BEGIN PGP SIGNED
+MESSAGE-----</code> 到 <code>-----END PGP SIGNATURE-----</code>
+的内容（包括这两个标签），右键服务选择 <code>OpenPGP:Verify Signature of
+Selection</code>，对方通过签名校验就可以知道发送者身份。</p>
+<h5 id="解密">解密</h5>
+<p>对方解密邮件内容也很简单，选中 从 <code>- -----BEGIN PGP
+MESSAGE-----</code> 到 <code>- -----END PGP MESSAGE-----</code>
+的加密内容（包括这两个标签），右键服务选择 <code>OpenPGP:Decrypt
+Selection</code>，对方输入自己的私钥短语，即可解密内容：</p>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">-----BEGIN PGP SIGNED MESSAGE-----</span><br><span class="line">Ha<span class="symbol">sh:</span> SHA512</span><br><span class="line"></span><br><span class="line">hihi</span><br><span class="line">-----BEGIN PGP SIGNATURE-----</span><br><span class="line"></span><br><span class="line">iQIcBAEBCgAGBQJY9lFgAAoJEEf4W28ow4hib9EP/<span class="number">2</span>sPwWZvrsaFbqmLhBRRKnSL</span><br><span class="line"><span class="number">5</span>yxx8uZnwRMLFxJGu6oyk7pSP4Ce8hQScJLFB2MAiU65J5MSEqc7MWkA/mLb9aaC</span><br><span class="line">HfEfGvSfjTVmP1E+xzwEjeQYRAP9OWdRisqoz6ChE/XD6eaAre31w4MhbWk07J+K</span><br><span class="line">koHK11g7nmdYCESc3bHNcjEYouciGq9XZ4MaPq1DLD97EgFQV5h0fiNaLzAlBUgD</span><br><span class="line">pDmqS3eC7A4SxP9iATIT+Gyp+JgzLX2uo5NN/BUfMl2yEzVAAYDFl5GH+jeIm0fe</span><br><span class="line">YDD7BiRUSzUZNKNsC94l0v7X4TwInx32wiMhWfcZrZr5KsU4tf3rq5KvWFW1/Ftz</span><br><span class="line">sOJxLaG4OI9WS40kDQkqWfWxcq03kI6MxS8VBQkAdrQjMG9H5NdslR8G9iBVMkSV</span><br><span class="line"><span class="number">0</span>HAy90zL0vmHhFBpJ92AkT7ppTuGcMKptLXtcPdvsV35HWeqYlSwZvh7ZSW5gPJ6</span><br><span class="line">f8U5CGWPNbbcRwNudbVcXD4vJbKYUNbvQCE9wRcBG9PBFle9rJhC0IyM6aGhmquL</span><br><span class="line">kYJh1niizVgxery2tt8+<span class="number">9</span>ZpMEjiY8B4oaUWepATfTzxXUQUmHhpOV9E85ei/MgKo</span><br><span class="line">WoAksxAb7WV20g0JQqBjAhjFM75puPLXI6/ppIAbj6lgQOnIBwvbQrl1HZlOcEnr</span><br><span class="line">RVH7glSgYBnBoH5M2tDJ</span><br><span class="line">=<span class="symbol">iT60</span></span><br><span class="line">-----END PGP SIGNATURE-----</span><br></pre></td></tr></table></figure>
+<p>至此，可以完整的使用 PGP 发送接收加密邮件了！<sup>=</sup>…… ### 0x04
+参考 - <a target="_blank" rel="noopener" href="http://www.8btc.com/pgp-mail-on-osx">防篡改防偷窥，OS X
+上发送 PGP 加密邮件</a></p>
+<hr />
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/osx/" rel="tag"># osx</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2016/10/09/android/sec--android-ollvm1/" rel="next" title="利用OLLVM混淆Android Native代码篇一">
+                  <i class="fa fa-chevron-left"></i> 利用OLLVM混淆Android Native代码篇一
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2017/04/02/android/sec--linux-kernel-arm64-virtual-address-space/" rel="prev" title="ARM64 Linux 内核虚拟地址空间">
+                  ARM64 Linux 内核虚拟地址空间 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#x01-pgp%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">0x01 PGP介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#x02-%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">0x02 下载安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#x03-%E4%BD%BF%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">0x03 使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%85%AC%E9%92%A5"><span class="nav-number">3.0.1.</span> <span class="nav-text">获取公钥</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86"><span class="nav-number">3.0.2.</span> <span class="nav-text">加密</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%AD%BE%E5%90%8D"><span class="nav-number">3.0.3.</span> <span class="nav-text">签名</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E7%AD%BE%E5%90%8D"><span class="nav-number">3.0.4.</span> <span class="nav-text">验证签名</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%AF%86"><span class="nav-number">3.0.5.</span> <span class="nav-text">解密</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="geneblue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">geneblue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 5.4.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -51,18 +51,18 @@
   };
 </script>
 
-  <meta name="description" content="Author: geneblueBlog: https://geneblue.github.io/ 指定为 ip 协议时的一些规则项字段">
-<meta name="keywords" content="suricata">
+  <meta name="description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 指定为 ip 协议时的一些规则项字段">
 <meta property="og:type" content="article">
 <meta property="og:title" content="suricata 规则之 IP Keywords">
 <meta property="og:url" content="http://yoursite.com/2019/12/14/suricata/suricata-rule-ip-keywords/index.html">
 <meta property="og:site_name" content="geneblue&#39;s blog">
-<meta property="og:description" content="Author: geneblueBlog: https://geneblue.github.io/ 指定为 ip 协议时的一些规则项字段">
-<meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2022-01-16T14:20:19.404Z">
+<meta property="og:description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 指定为 ip 协议时的一些规则项字段">
+<meta property="og:locale">
+<meta property="article:published_time" content="2019-12-14T06:02:08.000Z">
+<meta property="article:modified_time" content="2022-01-16T15:36:42.647Z">
+<meta property="article:author" content="geneblue">
+<meta property="article:tag" content="suricata">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="suricata 规则之 IP Keywords">
-<meta name="twitter:description" content="Author: geneblueBlog: https://geneblue.github.io/ 指定为 ip 协议时的一些规则项字段">
 
 <link rel="canonical" href="http://yoursite.com/2019/12/14/suricata/suricata-rule-ip-keywords/">
 
@@ -216,7 +216,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
+                <time title="Modified: 2022-01-16 23:36:42" itemprop="dateModified" datetime="2022-01-16T23:36:42+08:00">2022-01-16</time>
               </span>
 
           
@@ -230,82 +230,97 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
+        <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
 <p>指定为 ip 协议时的一些规则项字段</p>
-<a id="more"></a>
-
-<h3 id="IP-Keywords"><a href="#IP-Keywords" class="headerlink" title="IP Keywords"></a>IP Keywords</h3><h4 id="ttl"><a href="#ttl" class="headerlink" title="ttl"></a>ttl</h4><p>ttl 用于指定 ip 包的最大存活时间，可以指定想匹配的 ttl 时间，比如：</p>
-<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">ttl:</span><span class="number">10</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="ipopts"><a href="#ipopts" class="headerlink" title="ipopts"></a>ipopts</h4><p>对 ip 协议比较熟悉的话，会知道 ip 包中会有一些 options 项，可以设定指定项来匹配指定的 ip 包：</p>
+<span id="more"></span>
+<h3 id="ip-keywords">IP Keywords</h3>
+<h4 id="ttl">ttl</h4>
+<p>ttl 用于指定 ip 包的最大存活时间，可以指定想匹配的 ttl
+时间，比如：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">ttl</span>:<span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+<h4 id="ipopts">ipopts</h4>
+<p>对 ip 协议比较熟悉的话，会知道 ip 包中会有一些 options
+项，可以设定指定项来匹配指定的 ip 包：</p>
 <table>
 <thead>
-<tr>
+<tr class="header">
 <th>IP Option</th>
 <th>Description</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr class="odd">
 <td>rr</td>
 <td>Record Route</td>
 </tr>
-<tr>
+<tr class="even">
 <td>eol</td>
 <td>End of List</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>nop</td>
 <td>no Op</td>
 </tr>
-<tr>
+<tr class="even">
 <td>ts</td>
 <td>time stamp</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>sec</td>
 <td>ip Security</td>
 </tr>
-<tr>
+<tr class="even">
 <td>esec</td>
 <td>IP Extended Security</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>lsrr</td>
 <td>Loose Source Routing</td>
 </tr>
-<tr>
+<tr class="even">
 <td>ssrr</td>
 <td>Strict Source Routing</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>satid</td>
 <td>Stream Identifier</td>
 </tr>
-<tr>
+<tr class="even">
 <td>any</td>
 <td>any Ip options are set</td>
 </tr>
-</tbody></table>
-<p>例如：</p>
-<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">ipopts:</span> lsrr<span class="comment">;</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="sameip"><a href="#sameip" class="headerlink" title="sameip"></a>sameip</h4><p>sameip 关键字用于匹配源 IP 和目的 IP 相同的包：</p>
+</tbody>
+</table>
+<p>例如： <figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">ipopts:</span> lsrr<span class="comment">;</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="sameip">sameip</h4>
+<p>sameip 关键字用于匹配源 IP 和目的 IP 相同的包：</p>
 <figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sameip<span class="comment">;</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="ip-proto"><a href="#ip-proto" class="headerlink" title="ip_proto"></a>ip_proto</h4><p>ip_proto 关键字可用于匹配包头中的 ip 协议，检测基于 ip 协议的其他协议，比如 TCP 协议在 IP header 中的协议号是 6。完整的协议号列表可以参见 <a href="https://en.wikipedia.org/wiki/List_of_IP_protocol_numbers" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/List_of_IP_protocol_numbers</a>. 可以指定协议号，也可以指定协议名缩写，比如：</p>
+<h4 id="ip_proto">ip_proto</h4>
+<p>ip_proto 关键字可用于匹配包头中的 ip 协议，检测基于 ip
+协议的其他协议，比如 TCP 协议在 IP header 中的协议号是
+6。完整的协议号列表可以参见 <a
+target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/List_of_IP_protocol_numbers">https://en.wikipedia.org/wiki/List_of_IP_protocol_numbers</a>.
+可以指定协议号，也可以指定协议名缩写，比如：</p>
 <figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">ip_proto:</span><span class="number">6</span><span class="comment">;</span></span><br><span class="line"><span class="symbol">ip_proto:</span>TCP<span class="comment">;</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="id"><a href="#id" class="headerlink" title="id"></a>id</h4><p>id 指定匹配 IP 协议中 Identification 项的数值，比如：</p>
-<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">id</span>:<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-
-<h4 id="geoip"><a href="#geoip" class="headerlink" title="geoip"></a>geoip</h4><p>geoip 关键字用于匹配源ip，目的 ip，或者两者的 ip 归属地，suricata 使用 MaxMind 的 GeoIP2 api：</p>
+<h4 id="id">id</h4>
+<p>id 指定匹配 IP 协议中 Identification 项的数值，比如：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">id</span>:<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<h4 id="geoip">geoip</h4>
+<p>geoip 关键字用于匹配源ip，目的 ip，或者两者的 ip 归属地，suricata
+使用 MaxMind 的 GeoIP2 api：</p>
 <figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">geoip: src,<span class="keyword">RU</span>;</span><br><span class="line">geoip: both,CN,<span class="keyword">RU</span>;</span><br><span class="line">geoip: dst,CN,<span class="keyword">RU</span>,<span class="keyword">IR</span>;</span><br><span class="line">geoip: both,<span class="keyword">US</span>,<span class="keyword">CA</span>,UK;</span><br><span class="line">geoip: any,CN,<span class="keyword">IR</span>;</span><br></pre></td></tr></table></figure>
-
 <p>使用 api 需要编译 libmaxminddb，详情见文档。</p>
-<h4 id="fragbits"><a href="#fragbits" class="headerlink" title="fragbits"></a>fragbits</h4><p>fragbits 关键字匹配 ip header 中的flags，搭配 fragoffset 关键字使用，这个使用频率应该比较低，详情见文档</p>
-<h4 id="tos"><a href="#tos" class="headerlink" title="tos"></a>tos</h4><p>匹配 ip header 中的 tos 字段</p>
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
-<li><a href="https://suricata.readthedocs.io/en/latest/rules/header-keywords.html" target="_blank" rel="noopener">ip keywords doc</a></li>
+<h4 id="fragbits">fragbits</h4>
+<p>fragbits 关键字匹配 ip header 中的flags，搭配 fragoffset
+关键字使用，这个使用频率应该比较低，详情见文档</p>
+<h4 id="tos">tos</h4>
+<p>匹配 ip header 中的 tos 字段</p>
+<h3 id="参考">参考</h3>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://suricata.readthedocs.io/en/latest/rules/header-keywords.html">ip
+keywords doc</a></li>
 </ul>
 
     </div>
@@ -331,8 +346,8 @@
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-                <a href="/2021/11/16/ml/01-anomaly-detection-algo-iforest/" rel="prev" title="iForest异常检测算法">
-                  iForest异常检测算法 <i class="fa fa-chevron-right"></i>
+                <a href="/2020/07/30/ios/dev--ios-hello-world/" rel="prev" title="iOS hello world">
+                  iOS hello world <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -372,7 +387,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#IP-Keywords"><span class="nav-number">1.</span> <span class="nav-text">IP Keywords</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ttl"><span class="nav-number">1.1.</span> <span class="nav-text">ttl</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ipopts"><span class="nav-number">1.2.</span> <span class="nav-text">ipopts</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sameip"><span class="nav-number">1.3.</span> <span class="nav-text">sameip</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ip-proto"><span class="nav-number">1.4.</span> <span class="nav-text">ip_proto</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#id"><span class="nav-number">1.5.</span> <span class="nav-text">id</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#geoip"><span class="nav-number">1.6.</span> <span class="nav-text">geoip</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fragbits"><span class="nav-number">1.7.</span> <span class="nav-text">fragbits</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tos"><span class="nav-number">1.8.</span> <span class="nav-text">tos</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">2.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#ip-keywords"><span class="nav-number">1.</span> <span class="nav-text">IP Keywords</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ttl"><span class="nav-number">1.1.</span> <span class="nav-text">ttl</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ipopts"><span class="nav-number">1.2.</span> <span class="nav-text">ipopts</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sameip"><span class="nav-number">1.3.</span> <span class="nav-text">sameip</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ip_proto"><span class="nav-number">1.4.</span> <span class="nav-text">ip_proto</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#id"><span class="nav-number">1.5.</span> <span class="nav-text">id</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#geoip"><span class="nav-number">1.6.</span> <span class="nav-text">geoip</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fragbits"><span class="nav-number">1.7.</span> <span class="nav-text">fragbits</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tos"><span class="nav-number">1.8.</span> <span class="nav-text">tos</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">2.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -388,14 +403,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -464,9 +479,17 @@
   <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/muse.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
 
 
 
@@ -486,6 +509,8 @@
 
 
 
+
+  
 
   
 

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 在使用NDK的时候，发现自己对jNI机制并不是很了解，就把官方文档拿来看了看并翻译了一下。官方文档地址看这里。自己也是首次翻译英文资料，有翻译不妥的地方请联系我，我将及时更改。  本篇开始介绍JNI（Java Native Interface）技术。JNI是一种本地编程接口。它允许运行在java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JNI官方文档-Chapter 1：Introduction">
+<meta property="og:url" content="http://yoursite.com/2015/07/18/jni/dev--jni-doc-chapter1-introduction/index.html">
+<meta property="og:site_name" content="geneblue&#39;s blog">
+<meta property="og:description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 在使用NDK的时候，发现自己对jNI机制并不是很了解，就把官方文档拿来看了看并翻译了一下。官方文档地址看这里。自己也是首次翻译英文资料，有翻译不妥的地方请联系我，我将及时更改。  本篇开始介绍JNI（Java Native Interface）技术。JNI是一种本地编程接口。它允许运行在java">
+<meta property="og:locale">
+<meta property="article:published_time" content="2015-07-18T04:26:08.000Z">
+<meta property="article:modified_time" content="2022-01-16T15:49:52.428Z">
+<meta property="article:author" content="geneblue">
+<meta property="article:tag" content="jni">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2015/07/18/jni/dev--jni-doc-chapter1-introduction/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>JNI官方文档-Chapter 1：Introduction | geneblue's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">geneblue's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/07/18/jni/dev--jni-doc-chapter1-introduction/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="geneblue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geneblue's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          JNI官方文档-Chapter 1：Introduction
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2015-07-18 12:26:08" itemprop="dateCreated datePublished" datetime="2015-07-18T12:26:08+08:00">2015-07-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<p>在使用NDK的时候，发现自己对jNI机制并不是很了解，就把官方文档拿来看了看并翻译了一下。官方文档地址看<a
+target="_blank" rel="noopener" href="http://docs.oracle.com/javase/6/docs/technotes/guides/jni/spec/jniTOC.html">这里</a>。自己也是首次翻译英文资料，有翻译不妥的地方请联系我，我将及时更改。</p>
+<hr />
+<p>本篇开始介绍JNI（Java Native
+Interface）技术。JNI是一种本地编程接口。它允许运行在java VM
+中的java代码与使用C/C++或汇编等其它编程语言写成的应用或者库进行交互操作。</p>
+<p>JNI机制能够存在的最重要一点在于利用了JVM的基础实现是没有被限制死。因此，JVM的构建者可以增添对JNI的支持而不会影响到VM的其他部分。开发人员在编写完一个版本的native程序或库后就可以在所有支持JNI技术的JVM中运行。</p>
+<span id="more"></span>
+<p>本篇包括以下几个话题：</p>
+<ul>
+<li>Java Native Interface Overview</li>
+<li>Background</li>
+<li>Objectives</li>
+<li>Java Native Interface Approach</li>
+<li>Programming to the JNI</li>
+<li>Changes</li>
+</ul>
+<h3 id="java-native-interface-overview">Java Native Interface
+Overview</h3>
+<p>当使用java语言开发应用程序时，我们常常遇到java语言无法满足程序需求的情况。所以在应用程序无法完全用java语言实现时，开发人员就会使用JNI编写java本地方法来解决程序需求。</p>
+<p>在以下情形中可能会用到java本地方法：</p>
+<ul>
+<li>标准的java类库不支持程序需求的平台特性</li>
+<li>希望通过java语言直接使用由其它语言编写的库</li>
+<li>希望通过低级语言如汇编来实现计算复杂度较高的部分代码，依次来提高计算效率</li>
+</ul>
+<p>通过JNI编程，可以使用本地方法来达到以下目的：</p>
+<ul>
+<li>创建、检查和更新java对象（包括arrays和strings）</li>
+<li>调用java方法</li>
+<li>捕获和抛出异常</li>
+<li>加载类和获得类信息</li>
+<li>执行运行时的类型检查</li>
+</ul>
+<p>也可以通过JNI的Invocation API将任意一个本地程序嵌入到java
+VM中。这使得开发者可以很容易地将已存在的程序成为可以被java语言使用的（java-enabled）而且不需要与VM的源码相关联。</p>
+<h3 id="historical-background">Historical Background</h3>
+<p>不同构造者的VM可能会提供不同的本地方法接口。在特定平台，这些不同的接口会造成开发人员开发、维护和分发不同版本的本地方法库。</p>
+<p>我们简要地列举一些本地方法接口：</p>
+<ul>
+<li>JDK1.0本地方法接口</li>
+<li>Netscape java运行接口</li>
+<li>Microsoft's Raw本地接口和Java/COM接口</li>
+</ul>
+<h4 id="jdk-1.0本地方法接口">JDK 1.0本地方法接口</h4>
+<p>JDK
+1.0中首次引入了本地方法接口。不幸的是，有两个主要问题导致该版本的接口无法对其它的java
+VM适用。</p>
+<p>首先，本地代码是以C结构体成员的形式进入到java对象的字段中。但是，java语言的说明文档中没有定义对象在内存中是如何分配的。如果一个java
+VM以不同的方式在内存中分配对象，那么开发人员就不得不重新编译本地方法库。</p>
+<p>其次，JDK
+1.0本地方法接口依赖较为保守的垃圾收集策略。比如无节制地使用unhand
+macro就会导致垃圾收集器以一种较为保守的方式扫描本地方法的内存栈。</p>
+<h4 id="java-运行接口">Java 运行接口</h4>
+<p>Netscape曾推荐的JRI（The Java Runtime
+Interface）对于JVM提供的服务来说是一种较通用的接口。本质上，JRI被设计的容易移植，它在基本的JVM的实现细节上做了些许改动。JRI机制解决了很多的问题，比如本地方法，调试，反射，嵌入（invocation）等。</p>
+<h4 id="raw本地接口和javacom接口">Raw本地接口和Java/COM接口</h4>
+<p>Microsoft的JVM支持两种本地方法接口。在低等级中，它提供了高效的RNI（Raw
+Native
+Interface）。在JDK的本地方法接口方面，RNI机制提供了高度的源码级向后兼容性。但是它有一个重要的不同点，本地代码必须使用RNI的函数来精确地与垃圾收集器交互，而不是依赖保守的垃圾收集策略。</p>
+<p>在高等级中，微软的Java/COM接口为JVM提供了一个不受语言约束的单独的二进制接口。java代码即使是java对象也可以使用COM对象。同样地，一个java类也会以COM类的形式对系统的剩余部分暴露。</p>
+<h3 id="objectives">Objectives</h3>
+<p>我们相信提供一个统一的经过深思熟虑的单独接口可以为所有人带来以下优点：</p>
+<ul>
+<li>每一个VM的构建者都能够支持更多的本地代码</li>
+<li>编译工具提供商也不必再维护针对不同本地方法接口的版本工具</li>
+<li>应用程序开发者可以一次编译本地代码并在所有的JVM上运行</li>
+</ul>
+<p>标准化本地方法接口的最好办法就是召集所有与JVM相关的厂商和人员。因此，在关于java授权中标准本地接口的设计方面，我们组织了一些列交流会。交流会上一致认同标准的本地方法接口必须满足以下几点要求：</p>
+<ul>
+<li>二进制兼容性-二进制兼容性的基本目标是在一个平台上本地方法库可以适用于所有的JVM。开发人员也只需维护该平台上的一个版本的本地方法库。</li>
+<li>效率-为了支持计算复杂的代码，本地方法接口必须利用小部分的上层代码。所有确保VM独立性（保证二进制兼容性）的技术都涉及了一定数量的上层代码。我们必须知道如何在效率和VM独立性之间折中。</li>
+<li>泛函数-为了本地方法等顺利完成任务，接口必须能揭示足够多的JVM内部构件</li>
+</ul>
+<h3 id="java-native-interface-approach">Java Native Interface
+Approach</h3>
+<p>我们希望采用现存的接口来作为标准接口，这样可以减少大量的工作，因为不同VM里的接口是不同的。不幸的是，没有一个现存的途径可以满足标准接口的需求。</p>
+<p>Netscape的JRI是一种轻便的本地方法接口，它起初是最靠近我们的设想，而且也在我们设计之初被采用。对JRI较熟悉的读者会觉得在API命名约定，方法和字段的使用，本地和全局引用的使用等都是非常相似的。尽管我们力推JRI，但是JRI（尽管虚拟机可以同时支持JRI和JNI）并不支持二进制兼容性。</p>
+<p>Microsoft的RNI对JDK
+1.0做了改善因为它解决了本地方法和垃圾收集器之间的问题。但是RNI不满足虚拟机的独立性，就像JDK，RNI的本地方法仍然采用C结构体的形式进入java对象。这导致两个主要问题：</p>
+<ul>
+<li>RNI对本地代码暴露了java对象的内部布局</li>
+<li>以C结构体的形式直接进入java对象可能会造成大量的“写障碍”，在高版本的垃圾收集算法中尤为突出。</li>
+</ul>
+<p>作为二进制独立的COM可以确保在不同虚拟机中二进制兼容性。只能通过间接方式调用COM的方法，因为COM中也设计了部分上层代码。此外，在解决版本问题方面，COM对象相比动态链接库有了极大的提升。</p>
+<p>但是采用COM作为标准本地方法接口也存在几点障碍：</p>
+<ul>
+<li>第一，Java/COM接口缺乏几个重要功能，例如获取私有的成员字段和提供通用的异常。</li>
+<li>第二，Java/COM接口自动为java对象提供标准的IUnknown和IDispatch
+COM接口，所以本地代码可以获取到公有的方法和字段。不幸的是，IDispatch接口没有解决java方法过度加载和匹配函数名大小写不敏感的问题。而且，所有通过IDispatch接口暴露的java方法都会被重新封装执行动态类型检查。这是因为在本质上IDispatch接口本设计成弱类型的语言。</li>
+<li>第三，COM被设计为允许软件模块（包括功能完善的应用）协同工作，而不是解决单个的低级功能。我们认为让所有的java类和低层次本地方方法作为软件模块是不合适的。</li>
+<li>第四，COM缺乏对UNIX平台的支持也是一个阻碍因素</li>
+</ul>
+<p>尽管作为COM对象的java对象没有对本地代码暴露，但JNI接口本身对COM具备二进制兼容性。JNI采用COM采用的跳转表结构和调用约定。这意味着，一旦COM满足了跨平台特性，对JVM来说JNI就可以成为一个COM接口。</p>
+<p>JNI并没有被设计为针对特定JVM的唯一的本地方法接口。一个标准的接口是有利于开发者的，这是的能在不同的JVM中加载同一个本地代码库。在一些情况下，开发者可能会使用低级的，特定虚拟机的接口来达到更高的效率。在其它情况下，开发者会采用高级接口来构建软件模块。从长远来看，软件技术变得更加成熟，本地方法会渐渐失去它们的意义。</p>
+<h3 id="programming-to-the-jni">Programming to the JNI</h3>
+<p>开发本地方法的人员应该学会JNI编程。JNI编程可以做到编程与终端用于的VM相隔离。通过标准化JNI，你将会更好地在JVM中使用本地方法库。</p>
+<p>如果你是JVM的构建者，那么你应该在JVM中实现JNI机制。经过时间的检验JNI在VM的实现上不会牵涉任何上层代码而且没有什么限制，包括对象表述，垃圾收集机制等。如果你发现我们遗漏的问题请给我们反馈。</p>
+<h3 id="changes">Changes</h3>
+<p>在Java SE
+6.0中，一直被反对的JDK1_1InitArgs和JDK1_1AttachArgs结构已经被移除，取而代之的是JavaVMInitArgs和JavaVMAttachArgs结构。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jni/" rel="tag"># jni</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2015/04/20/android/dev--android-dev-errors/" rel="next" title="Android开发中错误解决（持续更新）">
+                  <i class="fa fa-chevron-left"></i> Android开发中错误解决（持续更新）
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2015/07/20/jni/dev--jni-doc-chapter2-design-overview/" rel="prev" title="JNI官方文档-Chapter 2：Design Overview">
+                  JNI官方文档-Chapter 2：Design Overview <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#java-native-interface-overview"><span class="nav-number">1.</span> <span class="nav-text">Java Native Interface
+Overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#historical-background"><span class="nav-number">2.</span> <span class="nav-text">Historical Background</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#jdk-1.0%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%8E%A5%E5%8F%A3"><span class="nav-number">2.1.</span> <span class="nav-text">JDK 1.0本地方法接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#java-%E8%BF%90%E8%A1%8C%E6%8E%A5%E5%8F%A3"><span class="nav-number">2.2.</span> <span class="nav-text">Java 运行接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#raw%E6%9C%AC%E5%9C%B0%E6%8E%A5%E5%8F%A3%E5%92%8Cjavacom%E6%8E%A5%E5%8F%A3"><span class="nav-number">2.3.</span> <span class="nav-text">Raw本地接口和Java&#x2F;COM接口</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#objectives"><span class="nav-number">3.</span> <span class="nav-text">Objectives</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#java-native-interface-approach"><span class="nav-number">4.</span> <span class="nav-text">Java Native Interface
+Approach</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#programming-to-the-jni"><span class="nav-number">5.</span> <span class="nav-text">Programming to the JNI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#changes"><span class="nav-number">6.</span> <span class="nav-text">Changes</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="geneblue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">geneblue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

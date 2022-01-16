@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; MachO （Mach Object）文件格式是苹果 OSX 和 iOS 系统使用的可执行，可链接的 ABI（二进制）文件格式。类比 ELF 文件之于 Linux 平台，PE 文件之于 Windows 平台。同样的，MachO 文件是代码与数据的集合，体现了在苹果定义的一套规则下，程序文件是如何构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="聊聊 Mach-O 文件格式">
+<meta property="og:url" content="http://yoursite.com/2021/01/04/osx/sec--MachO-file-format/index.html">
+<meta property="og:site_name" content="geneblue&#39;s blog">
+<meta property="og:description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; MachO （Mach Object）文件格式是苹果 OSX 和 iOS 系统使用的可执行，可链接的 ABI（二进制）文件格式。类比 ELF 文件之于 Linux 平台，PE 文件之于 Windows 平台。同样的，MachO 文件是代码与数据的集合，体现了在苹果定义的一套规则下，程序文件是如何构">
+<meta property="og:locale">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB0b7c9e805c02ad7c1df0d4f584630cc3?method=download&shareKey=687c71061c6abbfd77e412b218a8dff1">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBcac10f86c58d9ff16d9f108b3d208d22?method=download&shareKey=0e5898e1411922760440fd9a1168063d">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB88315f05e6b13276cccd0c9a46f570df?method=download&shareKey=6a8776f8465091a1f9b52a18cc3efb3a">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB8f8fb67d9921544e19f60e073c309635?method=download&shareKey=161a445e882110149c43d0abac12c1ae">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB7c5b2178c5f54d4ff2ac86032e94cf3f?method=download&shareKey=fd8f9f63cc883cec51489ff3691595b0">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB21967961f862ada31bf2a5bbc9a9ac98?method=download&shareKey=6ee65c577d1a15585e14fde97bb2010a">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB854741d42c7a343b5526e412098a6f15?method=download&shareKey=f27495ab295502cb3fcfb334acb0f1d0">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB3e8ee4106ba17785541f1099b1b30242?method=download&shareKey=70eaba1d11443fdfe9eec1fc420ee20a">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB0c03f7205ecd5c77137c1d0f07ad970a?method=download&shareKey=7317a3b9f04cbb164fa30ba50d9e0d06">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB0301be9f3ca6d3cbe97e7770ae31bc09?method=download&shareKey=9dab821348395526eb24c7f46e389d1a">
+<meta property="article:published_time" content="2021-01-04T04:02:08.000Z">
+<meta property="article:modified_time" content="2022-01-16T15:49:52.511Z">
+<meta property="article:author" content="geneblue">
+<meta property="article:tag" content="osx">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://note.youdao.com/yws/api/personal/file/WEB0b7c9e805c02ad7c1df0d4f584630cc3?method=download&shareKey=687c71061c6abbfd77e412b218a8dff1">
+
+<link rel="canonical" href="http://yoursite.com/2021/01/04/osx/sec--MachO-file-format/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>聊聊 Mach-O 文件格式 | geneblue's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">geneblue's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/04/osx/sec--MachO-file-format/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="geneblue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geneblue's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          聊聊 Mach-O 文件格式
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-01-04 12:02:08" itemprop="dateCreated datePublished" datetime="2021-01-04T12:02:08+08:00">2021-01-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<p>MachO （Mach Object）文件格式是苹果 OSX 和 iOS
+系统使用的可执行，可链接的 ABI（二进制）文件格式。类比 ELF 文件之于
+Linux 平台，PE 文件之于 Windows 平台。同样的，MachO
+文件是代码与数据的集合，体现了在苹果定义的一套规则下，程序文件是如何构成的，程序的链接，装载是如何发生的。</p>
+<p>ABI 文件是操作系统的基石。学习认识一个新的 OS 平台，理解它的 ABI
+文件是非常好的切入点，对于 OSX/iOS 系统同样如此。</p>
+<span id="more"></span>
+<p>官方文档永远是学习的第一手资料。<a
+target="_blank" rel="noopener" href="https://github.com/aidansteele/osx-abi-macho-file-format-reference/blob/master/Mach-O_File_Format.pdf">这里</a>有一份苹果出的《OSX
+ABI Mach-O File Format
+Reference》文档，奇怪的是，这份文档在苹果开发者官网竟然没找到。另外，XNU
+源码中可以找到 MachO 相关代码 <a
+target="_blank" rel="noopener" href="https://github.com/apple/darwin-xnu/tree/master/EXTERNAL_HEADERS/mach-o">darwin-xnu/EXTERNAL_HEADERS/mach-o/</a>。<code>fat.h</code>,
+<code>loader.h</code>, <code>nlist.h</code>, <code>reloc.h</code>
+这四个文件主要描述 Mach-O 结构。本文内容主要基于这两份资料。</p>
+<h3 id="macho-基本结构">MachO 基本结构</h3>
+<p><a target="_blank" rel="noopener" href="https://sourceforge.net/projects/machoview/">MachOView</a>
+和 <a target="_blank" rel="noopener" href="https://www.sweetscape.com/010editor/">010editor</a>
+这两款工具可以帮我们更直观的分析 MachO 格式。</p>
+MachOView：
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB0b7c9e805c02ad7c1df0d4f584630cc3?method=download&shareKey=687c71061c6abbfd77e412b218a8dff1"  alt="MachO-structure" width="611" height="409" title="MachO-structure"/></p>
+</div>
+010Editor：
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBcac10f86c58d9ff16d9f108b3d208d22?method=download&shareKey=0e5898e1411922760440fd9a1168063d"  alt="010editor" width="725" height="576" title="010editor"/></p>
+</div>
+Mach-O 文件基本结构如下：
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB88315f05e6b13276cccd0c9a46f570df?method=download&shareKey=6a8776f8465091a1f9b52a18cc3efb3a"  alt="mach-o_format_basic_structure" width="366" height="378" title="mach-o_format_basic_structure"/></p>
+</div>
+<p>可以看出，Mach-O 主要由三部分组成： - 首先是文件头，表明该文件是
+Mach-O
+格式，指定目标架构，还有一些其他的文件属性信息，文件头信息影响后续的文件结构安排
+- 紧随文件头的是可变大小的 Load Commands
+区，这里以多组结构指定文件数据布局和关系，比如可以指定文件在虚拟内存中初始加载地址，符号表的位置，代码块的位置等。Load
+Commands 不是固定的，通过多种组合，Mach-O
+就可以用于不同场景下，比如作为可执行文件，作为动态链接库，调试文件，目标文件，内核转储文件等。
+- 接下来是 Data
+区，以上两部分实际上是结构化组织，不承载具体的二进制代码和数据，Data
+区主要就是负责代码和数据记录的。Mach-O 是以 Segment
+这种结构来组织数据的，一个 Segment 可以包含 0 个或多个 Section。根据
+Segment 是映射的哪一个 Load Command，Segment 中 section
+就可以被解读为是是代码，常量或者一些其他的数据类型。在装载在内存中时，也是根据
+Segment 做内存映射的。</p>
+<h3 id="header">header</h3>
+<p>MachO64 文件头结构详情可参考 <code>loader.h</code>，共占用 0x20 个
+byte。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * The 64-bit mach header appears at the very beginning of object files for</span></span><br><span class="line"><span class="comment"> * 64-bit architectures.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">mach_header_64</span> &#123;</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	magic;		<span class="comment">/* mach magic number identifier */</span></span><br><span class="line">	<span class="keyword">cpu_type_t</span>	cputype;	<span class="comment">/* cpu specifier */</span></span><br><span class="line">	<span class="keyword">cpu_subtype_t</span>	cpusubtype;	<span class="comment">/* machine specifier */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	filetype;	<span class="comment">/* type of file */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	ncmds;		<span class="comment">/* number of load commands */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	sizeofcmds;	<span class="comment">/* the size of all the load commands */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	flags;		<span class="comment">/* flags */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	reserved;	<span class="comment">/* reserved */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB8f8fb67d9921544e19f60e073c309635?method=download&shareKey=161a445e882110149c43d0abac12c1ae"  alt="macho-file-header" width="574" height="409" title="macho-file-header"/></p>
+</div>
+<p><code>magic</code> 表示魔数标识，MACHO-64 的魔数值为 0xfeedfacf</p>
+<p><code>cputype</code> 和 <code>cpusubtype</code> 表示 cpu
+类别信息，具体参考 <a
+target="_blank" rel="noopener" href="https://github.com/apple/darwin-xnu/blob/master/osfmk/mach/machine.h">osfmk/mach/machine.h</a></p>
+<p><code>filetype</code> 表明该 MachO 具体的文件类型，类似于 ELF
+文件，是可执行文件，还是动态链接库之类的，<code>filetype</code>
+常见类型有如下： - 0x1 MH_OBJECT:
+可重定向目标文件，编译过程的之间产物，一般是 .o，静态库就是这些 .o
+的归档文件 - 0x2 MH_EXECUTE: 可执行文件，有执行入口 - 0x6 MH_DYLIB:
+动态库文件，常见的 .dylib 文件，还有一些动态的 framework 文件 - 0xa
+MH_DSYM：存储文件符号信息，用于debug ...</p>
+<p><code>ncmds</code> 和 <code>sizeofcmds</code> 表示 LOAD_COMMAND
+结构数量，和所有 LOAD_COMMAND 结构大小总和。</p>
+<p><code>flags</code> 字段标识文件的各种属性，可以组合多个属性的 bit
+位信息，常见的 flags 有： - 0x1 MH_NOUNDEFS:
+目标文件在编译时没有未定义的符号引用，目标文件是静态编译的，不会依赖其他动态库的实现
+- 0x4 MH_DYLDLINK: 该文件用于动态链接，不可用在静态链接中 - 0x200000
+MH_PIE: 位置无关代码，针对 MH_EXECUTE 可执行文件，os
+会将可执行文件加载到随机的内存地址处 ...</p>
+<p><code>reserved</code> 保留字段，未使用</p>
+<h3 id="load-commands装载命令">Load Commands（装载命令）</h3>
+<p>Load Command 指定了文件逻辑结构还有文件在虚拟内存中的布局，每个 Load
+Command 结构都会以命令类型和当前 Load Command 结构大小开始：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">load_command</span> &#123;</span></span><br><span class="line">	<span class="keyword">uint32_t</span> cmd;		<span class="comment">/* type of load command */</span></span><br><span class="line">	<span class="keyword">uint32_t</span> cmdsize;	<span class="comment">/* total size of command in bytes */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>cmd</code> 32位，指定命令类型，</li>
+<li><code>cmdsize</code> 32位，用来表示 Load Command 结构的大小。Load
+Command
+根据命令类型，是由不同的对应的数据结构构成的，这样占据的大小也不一样。64位系统
+size 大小是 8 的倍数，结尾多余空间用 0 填充。</li>
+</ul>
+<p>这里介绍一些常见的装载命令，未介绍到的参考官方文档</p>
+<h4 id="lc_segment_64">LC_SEGMENT_64</h4>
+<p>segment 是 MachO 中最重要的 Command，这里主要包含了 MachO
+中代码，常量数据等信息。segment
+负责将这些代码块，数据块等内容以指定方式映射到虚拟内存的对应位置。</p>
+<p><code>segment_command_64</code> 结构: <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">segment_command_64</span> &#123;</span> <span class="comment">/* for 64-bit architectures */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	cmd;		<span class="comment">/* LC_SEGMENT_64 */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	cmdsize;	<span class="comment">/* includes sizeof section_64 structs */</span></span><br><span class="line">	<span class="keyword">char</span>		segname[<span class="number">16</span>];	<span class="comment">/* segment name */</span></span><br><span class="line">	<span class="keyword">uint64_t</span>	vmaddr;		<span class="comment">/* memory address of this segment */</span></span><br><span class="line">	<span class="keyword">uint64_t</span>	vmsize;		<span class="comment">/* memory size of this segment */</span></span><br><span class="line">	<span class="keyword">uint64_t</span>	fileoff;	<span class="comment">/* file offset of this segment */</span></span><br><span class="line">	<span class="keyword">uint64_t</span>	filesize;	<span class="comment">/* amount to map from the file */</span></span><br><span class="line">	<span class="keyword">vm_prot_t</span>	maxprot;	<span class="comment">/* maximum VM protection */</span></span><br><span class="line">	<span class="keyword">vm_prot_t</span>	initprot;	<span class="comment">/* initial VM protection */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	nsects;		<span class="comment">/* number of sections in segment */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	flags;		<span class="comment">/* flags */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p><code>cmd</code> 命令类型，<code>LC_SEGMENT_64</code> 值为 0x19</p>
+<p><code>cmdsize</code> 命令结构大小，<code>LC_SEGMENT_64</code>
+也要根据数据类型的不同，填充对应的结构大小</p>
+<p><code>segname</code> 指定当前 segment 的数据类型，主要类型包括
+<code>__PAGEZERO</code>, <code>__TEXT</code>, <code>__DATA</code>,
+<code>__OBJC</code>, <code>__IMPORT</code>,
+<code>__LINKEDIT</code>。</p>
+<p><code>vmaddr</code> 和 <code>vmsize</code> 指定当前 segment
+在映射到内存后，虚拟内存开始地址和占据的内存大小</p>
+<p><code>fileoff</code> 和 <code>filesize</code> 指定当前 segment
+数据在偏移 fileoff 的长度后映射到 vmaddr 处，注意不是指在 MachO
+文件中的偏移，filesize 指定要拷贝的数据大小</p>
+<p><code>maxprot</code> 和 <code>initprot</code> 指定当前 segment
+映射后的初始内存属性和最大支持的内存属性，常用属性
+<code>VM_PROT_NONE</code>, <code>VM_PROT_READ</code>,
+<code>VM_PROT_WRITE</code>, <code>VM_PROT_EXECUTE</code></p>
+<p><code>nsects</code> 当前 segment 后紧跟多少个 section 结构</p>
+<p><code>flags</code> 影响 segment 内存加载方式，flag 值有 SG_HIGHVM,
+SG_FVMLIB, SG_NORELOC, SG_PROTECTED_VERSION_1</p>
+<p>介绍一些常用的 segment 数据类型： - <code>__PAGEZERO</code> 一般作为
+MachO <strong>可执行文件</strong>的第一个 segment, __PAGEZERO 从虚拟地址
+0 开始加载，内存属性 VM_PROT_NONE，在 LC_SEGMENT_64 中 vmsize 为
+0x100000000。__PAGEZERO 只是指明了 MachO
+要加载的内存地址，并无数据要填充，所以在 segment_command_64 结构中
+fileoff filesize 均为 0 - <code>__TEXT</code> segment
+包含可执行代码块和只读数据，代码和只读数据在映射后都不具备内存写属性。__TEXT
+中可以包含多 section，比如 __text, __cstring, __picsymbol_stub,
+__symbol_stub, __const, __literal4, __literal8 - <code>__DATA</code>
+segment 包含写属性的数据，也常包含多个 section，比如 __data,
+__la_symbol_ptr, __nl_symbol_ptr, __dyld, __const, __mod_init_func,
+__mod_term_func, __bss, __common - <code>__OBJC</code> 提供 Objective-C
+语言运行时所需要的支持库信息 - <code>__IMPORT</code> 只为 IA-32 架构服务
+- <code>__LINKEDIT</code> segment
+提供动态链接器需要的数据，比如符号，字符串，还有一些可重定位表信息</p>
+<p>上面说到 __TEXT __DATA segment 中可能会包含多个 section
+用于记录具体的代码和数据，section 的结构如下， section 一般 4 字节对齐：
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">section_64</span> &#123;</span> <span class="comment">/* for 64-bit architectures */</span></span><br><span class="line">	<span class="keyword">char</span>		sectname[<span class="number">16</span>];	<span class="comment">/* name of this section */</span></span><br><span class="line">	<span class="keyword">char</span>		segname[<span class="number">16</span>];	<span class="comment">/* segment this section goes in */</span></span><br><span class="line">	<span class="keyword">uint64_t</span>	addr;		<span class="comment">/* memory address of this section */</span></span><br><span class="line">	<span class="keyword">uint64_t</span>	size;		<span class="comment">/* size in bytes of this section */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	offset;		<span class="comment">/* file offset of this section */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	align;		<span class="comment">/* section alignment (power of 2) */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	reloff;		<span class="comment">/* file offset of relocation entries */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	nreloc;		<span class="comment">/* number of relocation entries */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	flags;		<span class="comment">/* flags (section type and attributes)*/</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	reserved1;	<span class="comment">/* reserved (for offset or index) */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	reserved2;	<span class="comment">/* reserved (for count or sizeof) */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	reserved3;	<span class="comment">/* reserved */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p><code>sectname</code> 表明当前 section 名，section
+名都是小写字母，比如 __text, __cstring, __bss, __common, __data 等</p>
+<p><code>segname</code> 当前 section 所属的 segment</p>
+<p><code>addr</code> 当前 section 映射的虚拟内存起始地址</p>
+<p><code>size</code> 映射到虚拟内存时，要拷贝的数据大小，指 section
+结构所指定的具体数据（在 DATA 区）大小</p>
+<p><code>offset</code> 指这个 section 结构所指定的具体数据（在 DATA
+区）在 MachO 文件中偏移，这样 loader 就可以找到具体数据在哪里了</p>
+<p><code>align</code> 指定 section 要按照多少字节对齐</p>
+<p><code>reloff</code> 重定位相关，指定首个重定位入口在 MachO
+文件中偏移</p>
+<p><code>nreloc</code> 指重定位入口数量</p>
+<p><code>flags</code> 用来表示 section 属性，32bit
+大小，分成两个部分，低 8 bit 表示 section 类型信息，高 24
+位表示其他属性信息，这些属性信息主要提供给链接器和其他分析工具使用，详情参见文档。</p>
+<p>**问题， __TEXT segment
+中有一些常量数据，这些常量数据所在的区域是不是也具备代码执行权限？**</p>
+<h4 id="lc_uuid">LC_UUID</h4>
+<p>UUID(universally unique identifier) 通用唯一标识</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * The uuid load command contains a single 128-bit unique random number that</span></span><br><span class="line"><span class="comment"> * identifies an object produced by the static link editor.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">uuid_command</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint32_t</span>	cmd;		<span class="comment">/* LC_UUID */</span></span><br><span class="line">    <span class="keyword">uint32_t</span>	cmdsize;	<span class="comment">/* sizeof(struct uuid_command) */</span></span><br><span class="line">    <span class="keyword">uint8_t</span>	uuid[<span class="number">16</span>];	<span class="comment">/* the 128-bit uuid */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>uuid 存储了一个 128bit 长的具备唯一随机字符串ID，可以通过这个 ID
+来标识二进制文件。如果有 UUID 相同的 dSYM
+文件，就可以符号调试或者追溯崩溃时的堆栈信息。</p>
+<h4
+id="lc_code_signature-lc_segment_split_info-lc_function_starts-lc_data_in_code-lc_dylib_code_sign_drs-lc_linker_optimization_hint">LC_CODE_SIGNATURE
+LC_SEGMENT_SPLIT_INFO LC_FUNCTION_STARTS LC_DATA_IN_CODE
+LC_DYLIB_CODE_SIGN_DRS LC_LINKER_OPTIMIZATION_HINT</h4>
+<p>这几个装载命令使用同一个数据结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * The linkedit_data_command contains the offsets and sizes of a blob</span></span><br><span class="line"><span class="comment"> * of data in the __LINKEDIT segment.  </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">linkedit_data_command</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint32_t</span>	cmd;		<span class="comment">/* LC_CODE_SIGNATURE, LC_SEGMENT_SPLIT_INFO,</span></span><br><span class="line"><span class="comment">                                   LC_FUNCTION_STARTS, LC_DATA_IN_CODE,</span></span><br><span class="line"><span class="comment">				   LC_DYLIB_CODE_SIGN_DRS or</span></span><br><span class="line"><span class="comment">				   LC_LINKER_OPTIMIZATION_HINT. */</span></span><br><span class="line">    <span class="keyword">uint32_t</span>	cmdsize;	<span class="comment">/* sizeof(struct linkedit_data_command) */</span></span><br><span class="line">    <span class="keyword">uint32_t</span>	dataoff;	<span class="comment">/* file offset of data in __LINKEDIT segment */</span></span><br><span class="line">    <span class="keyword">uint32_t</span>	datasize;	<span class="comment">/* file size of data in __LINKEDIT segment  */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>dataoff</code> 数据在 MachO 文件中偏移</p>
+<p><code>datasize</code> 数据大小</p>
+<h4 id="lc_main">LC_MAIN</h4>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * The entry_point_command is a replacement for thread_command.</span></span><br><span class="line"><span class="comment"> * It is used for main executables to specify the location (file offset)</span></span><br><span class="line"><span class="comment"> * of main().  If -stack_size was used at link time, the stacksize</span></span><br><span class="line"><span class="comment"> * field will contain the stack size need for the main thread.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">entry_point_command</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint32_t</span>  cmd;	<span class="comment">/* LC_MAIN only used in MH_EXECUTE filetypes */</span></span><br><span class="line">    <span class="keyword">uint32_t</span>  cmdsize;	<span class="comment">/* 24 */</span></span><br><span class="line">    <span class="keyword">uint64_t</span>  entryoff;	<span class="comment">/* file (__TEXT) offset of main() */</span></span><br><span class="line">    <span class="keyword">uint64_t</span>  stacksize;<span class="comment">/* if not zero, initial stack size */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>entryoff</code> main 函数在 MachO 文件中偏移</p>
+<p><code>stacksize</code> 一般情况下为0， 非 0 表示初始的栈大小</p>
+<h4 id="lc_dyld_info-lc_dyld_info_only">LC_DYLD_INFO
+LC_DYLD_INFO_ONLY</h4>
+<p>这两个命令主要是给动态链接器 dyld 做 link 使用的。动态 linker
+的主要作用是二进制加载到内存后，将动态链接库的信息链接起来，找到使用的外部函数信息，导出提供给外部使用的函数信息。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dyld_info_command</span> &#123;</span></span><br><span class="line">	<span class="keyword">uint32_t</span>   cmd;		<span class="comment">/* LC_DYLD_INFO or LC_DYLD_INFO_ONLY */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>   cmdsize;		<span class="comment">/* sizeof(struct dyld_info_command) */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">uint32_t</span>   rebase_off;	<span class="comment">/* file offset to rebase info  */</span></span><br><span class="line">    <span class="keyword">uint32_t</span>   rebase_size;	<span class="comment">/* size of rebase info   */</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">uint32_t</span>   bind_off;	<span class="comment">/* file offset to binding info   */</span></span><br><span class="line">    <span class="keyword">uint32_t</span>   bind_size;	<span class="comment">/* size of binding info  */</span></span><br><span class="line">        </span><br><span class="line">    <span class="keyword">uint32_t</span>   weak_bind_off;	<span class="comment">/* file offset to weak binding info   */</span></span><br><span class="line">    <span class="keyword">uint32_t</span>   weak_bind_size;  <span class="comment">/* size of weak binding info  */</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">uint32_t</span>   lazy_bind_off;	<span class="comment">/* file offset to lazy binding info */</span></span><br><span class="line">    <span class="keyword">uint32_t</span>   lazy_bind_size;  <span class="comment">/* size of lazy binding infs */</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">uint32_t</span>   export_off;	<span class="comment">/* file offset to lazy binding info */</span></span><br><span class="line">    <span class="keyword">uint32_t</span>   export_size;	<span class="comment">/* size of lazy binding infs */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>rebase</code> 地址重定位</p>
+<p><code>bind</code> 地址绑定, 找到使用的外部符号信息</p>
+<p><code>weak bind</code> 弱引用绑定，C++ 程序需要的</p>
+<p><code>lazy bind</code>
+地址懒绑定，延迟绑定，有的外部函数，不需要在加载时就完成地址绑定，可以在运行到的时候再去查找外部函数地址</p>
+<p><code>export</code> 要导出的函数信息</p>
+<p><strong>问题：iOS 的函数 hook 应该在这里操作吧？</strong></p>
+<h4 id="lc_load_dylinker">LC_LOAD_DYLINKER</h4>
+<p>这个命令指定动态链接器 linker 路径</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">union</span> <span class="title">lc_str</span> &#123;</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	offset;	<span class="comment">/* offset to the string */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> __LP64__</span></span><br><span class="line">	<span class="keyword">char</span>		*ptr;	<span class="comment">/* pointer to the string */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> </span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dylinker_command</span> &#123;</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	cmd;		<span class="comment">/* LC_ID_DYLINKER, LC_LOAD_DYLINKER or</span></span><br><span class="line"><span class="comment">					   LC_DYLD_ENVIRONMENT */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	cmdsize;	<span class="comment">/* includes pathname string */</span></span><br><span class="line">	<span class="class"><span class="keyword">union</span> <span class="title">lc_str</span>    <span class="title">name</span>;</span>		<span class="comment">/* dynamic linker&#x27;s path name */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>offset</code> 链接器路径字符串在 struct dylinker_command
+这个结构中的偏移</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB7c5b2178c5f54d4ff2ac86032e94cf3f?method=download&shareKey=fd8f9f63cc883cec51489ff3691595b0"  alt="loader" width="603" height="245" title="loader"/></p>
+</div>
+<p>比如这里使用的 dyld 链接器 linker，OSX 和 iOS 都使用 dyld
+做动态链接器。</p>
+<h4 id="lc_symtab">LC_SYMTAB</h4>
+<p>符号表</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * The symtab_command contains the offsets and sizes of the link-edit 4.3BSD</span></span><br><span class="line"><span class="comment"> * &quot;stab&quot; style symbol table information as described in the header files</span></span><br><span class="line"><span class="comment"> * &lt;nlist.h&gt; and &lt;stab.h&gt;.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">symtab_command</span> &#123;</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	cmd;		<span class="comment">/* LC_SYMTAB */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	cmdsize;	<span class="comment">/* sizeof(struct symtab_command) */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	symoff;		<span class="comment">/* symbol table offset */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	nsyms;		<span class="comment">/* number of symbol table entries */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	stroff;		<span class="comment">/* string table offset */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	strsize;	<span class="comment">/* string table size in bytes */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>symoff</code> 符号表在 MachO 文件中的偏移</p>
+<p><code>nsyms</code> 符号数量</p>
+<p><code>stroff</code> 字符串表在 MachO 文件中的偏移</p>
+<p><code>strsize</code> 字符串表大小</p>
+<h4 id="lc_load_dylib">LC_LOAD_DYLIB</h4>
+<p>描述当前 MachO 需要哪些动态链接库信息</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB21967961f862ada31bf2a5bbc9a9ac98?method=download&shareKey=6ee65c577d1a15585e14fde97bb2010a"  alt="lc-load-dylib" width="587" height="420" title="lc-load-dylib"/></p>
+</div>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">union</span> <span class="title">lc_str</span> &#123;</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	offset;	<span class="comment">/* offset to the string */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> __LP64__</span></span><br><span class="line">	<span class="keyword">char</span>		*ptr;	<span class="comment">/* pointer to the string */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> </span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dylib</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">union</span> <span class="title">lc_str</span>  <span class="title">name</span>;</span>			<span class="comment">/* library&#x27;s path name */</span></span><br><span class="line">    <span class="keyword">uint32_t</span> timestamp;			<span class="comment">/* library&#x27;s build time stamp */</span></span><br><span class="line">    <span class="keyword">uint32_t</span> current_version;		<span class="comment">/* library&#x27;s current version number */</span></span><br><span class="line">    <span class="keyword">uint32_t</span> compatibility_version;	<span class="comment">/* library&#x27;s compatibility vers number*/</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dylib_command</span> &#123;</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	cmd;		<span class="comment">/* LC_ID_DYLIB, LC_LOAD_&#123;,WEAK_&#125;DYLIB,</span></span><br><span class="line"><span class="comment">					   LC_REEXPORT_DYLIB */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	cmdsize;	<span class="comment">/* includes pathname string */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dylib</span>	<span class="title">dylib</span>;</span>		<span class="comment">/* the library identification */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>offset</code> 指动态链接库字符串在 struct dylib_command
+这个结构中的偏移</p>
+<p><strong>问题，更改 LC_LOAD_DYLIB 数据，是不是就可以加载我们自定义的
+lib 了？</strong></p>
+<h3 id="data">Data</h3>
+<p>Data 区存放的是 MachO
+中实际的二进制代码指令数据和使用到的常量，符号信息等。Header 和 Load
+Commands 就是为了有序的组织这些数据。这里的数据大部分都是对应 Load
+Commands 中不同的 Command 结构。</p>
+<h3 id="查看-macho-文件内存布局">查看 MachO 文件内存布局</h3>
+<p>我们现在 macos 下编译一个简单的命令行程序 main <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// clang main.c -o main</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid = getpid();</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[+] current pid = %d\n&quot;</span>, pid);</span><br><span class="line">    sleep(<span class="number">10</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (argc &lt; <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;[-] please enter the password\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">strcmp</span>(argv[<span class="number">1</span>], <span class="string">&quot;thisiskey&quot;</span>) != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;[-] access denied\n&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;[+] access ok\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>将 main 程序运行，获取 pid</p>
+<p>可以使用 vmmap 工具查看进程内存信息： <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">✗ vmmap <span class="tag">&lt;<span class="name">pid</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+如下是 main 程序的虚拟内存信息:
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB854741d42c7a343b5526e412098a6f15?method=download&shareKey=f27495ab295502cb3fcfb334acb0f1d0"  alt="vmmap" width="796" height="1756" title="vmmap"/></p>
+</div>
+<p>可以看到 main MachO 文件从虚拟地址 0x10352f000 开始加载，</p>
+使用 lldb 工具来调试： <figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"><span class="meta-keyword">$lldb</span> -p &lt;pid&gt;</span></span><br><span class="line">(lldb) x/<span class="number">100</span>xw <span class="number">0x10352f000</span> --force</span><br></pre></td></tr></table></figure>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB3e8ee4106ba17785541f1099b1b30242?method=download&shareKey=70eaba1d11443fdfe9eec1fc420ee20a"  alt="lldb-macho" width="384" height="398" title="lldb-macho"/></p>
+</div>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB0c03f7205ecd5c77137c1d0f07ad970a?method=download&shareKey=7317a3b9f04cbb164fa30ba50d9e0d06"  alt="010-macho" width="469" height="265" title="010-macho"/></p>
+</div>
+<p>000000010352f000-0000000103530000 区域均具备代码执行权限，在 Load
+Commands 和 Data
+区之前，还有很多未使用的空白区域，这些区域是否可以用来隐藏我们的某些代码呢？</p>
+<h3 id="fat-胖二进制格式-通用二进制格式">FAT 胖二进制格式
+（通用二进制格式）</h3>
+<p>在其他 OS
+平台，如果我们想编译跨平台的二进制文件，我们需要单独编译出来，然后在独立输出出去。</p>
+<p>在 OSX/iOS 中，可以使用通用二进制格式（Universal Binary）又叫 FAT
+胖格式，把这些不同平台的 MachO
+文件组织在一起，输出一个独立的二进制文件。系统在执行这个独立的二进制文件时，会选择与当前架构匹配的
+MachO 执行。</p>
+<p>FAT 格式定义在 <code>fat.h</code> 文件中。 <figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">fat_header</span> &#123;</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	magic;		<span class="comment">/* FAT_MAGIC */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	nfat_arch;	<span class="comment">/* number of structs that follow */</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">fat_arch</span> &#123;</span></span><br><span class="line">	<span class="keyword">cpu_type_t</span>	cputype;	<span class="comment">/* cpu specifier (int) */</span></span><br><span class="line">	<span class="keyword">cpu_subtype_t</span>	cpusubtype;	<span class="comment">/* machine specifier (int) */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	offset;		<span class="comment">/* file offset to this object file */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	size;		<span class="comment">/* size of this object file */</span></span><br><span class="line">	<span class="keyword">uint32_t</span>	align;		<span class="comment">/* alignment as a power of 2 */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>OSX 中很多系统文件都是 FAT 格式，比如
+<code>/usr/lib/libSystem.B.dylib</code></p>
+<figure class="highlight vhdl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="keyword">file</span> /usr/lib/libSystem.B.dylib</span><br><span class="line">/usr/lib/libSystem.B.dylib: Mach-O universal binary <span class="keyword">with</span> <span class="number">2</span> architectures: [x86_64:Mach-O <span class="number">64</span>-<span class="built_in">bit</span> dynamically linked <span class="keyword">shared</span> <span class="keyword">library</span> x86_64] [i386:Mach-O dynamically linked <span class="keyword">shared</span> <span class="keyword">library</span> i386]</span><br><span class="line">/usr/lib/libSystem.B.dylib (<span class="keyword">for</span> <span class="keyword">architecture</span> x86_64):	Mach-O <span class="number">64</span>-<span class="built_in">bit</span> dynamically linked <span class="keyword">shared</span> <span class="keyword">library</span> x86_64</span><br><span class="line">/usr/lib/libSystem.B.dylib (<span class="keyword">for</span> <span class="keyword">architecture</span> i386):	Mach-O dynamically linked <span class="keyword">shared</span> <span class="keyword">library</span> i386</span><br></pre></td></tr></table></figure>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB0301be9f3ca6d3cbe97e7770ae31bc09?method=download&shareKey=9dab821348395526eb24c7f46e389d1a"  alt="fat-format" width="687" height="426" title="fat-format"/></p>
+</div>
+<h3 id="参考">参考</h3>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://developer.apple.com/library/archive/documentation/Performance/Conceptual/CodeFootprint/Articles/MachOOverview.html">Overview
+of the Mach-O Executable Format</a></li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Mach-O">Mach-O
+wikipedia</a></li>
+<li><a target="_blank" rel="noopener" href="https://paper.seebug.org/1363/">深入浅出 MachO</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://zhangbuhuai.com/post/macho-structure.html#data-%E7%9A%84%E7%BB%93%E6%9E%84">Mach-O
+简单分析</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/osx/" rel="tag"># osx</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2020/09/24/ios/sec--ios-virtual-location/" rel="next" title="iOS虚拟定位技术探究">
+                  <i class="fa fa-chevron-left"></i> iOS虚拟定位技术探究
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2021/11/16/ml/01-anomaly-detection-algo-iforest/" rel="prev" title="iForest异常检测算法">
+                  iForest异常检测算法 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#macho-%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">MachO 基本结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#header"><span class="nav-number">2.</span> <span class="nav-text">header</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#load-commands%E8%A3%85%E8%BD%BD%E5%91%BD%E4%BB%A4"><span class="nav-number">3.</span> <span class="nav-text">Load Commands（装载命令）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#lc_segment_64"><span class="nav-number">3.1.</span> <span class="nav-text">LC_SEGMENT_64</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lc_uuid"><span class="nav-number">3.2.</span> <span class="nav-text">LC_UUID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lc_code_signature-lc_segment_split_info-lc_function_starts-lc_data_in_code-lc_dylib_code_sign_drs-lc_linker_optimization_hint"><span class="nav-number">3.3.</span> <span class="nav-text">LC_CODE_SIGNATURE
+LC_SEGMENT_SPLIT_INFO LC_FUNCTION_STARTS LC_DATA_IN_CODE
+LC_DYLIB_CODE_SIGN_DRS LC_LINKER_OPTIMIZATION_HINT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lc_main"><span class="nav-number">3.4.</span> <span class="nav-text">LC_MAIN</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lc_dyld_info-lc_dyld_info_only"><span class="nav-number">3.5.</span> <span class="nav-text">LC_DYLD_INFO
+LC_DYLD_INFO_ONLY</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lc_load_dylinker"><span class="nav-number">3.6.</span> <span class="nav-text">LC_LOAD_DYLINKER</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lc_symtab"><span class="nav-number">3.7.</span> <span class="nav-text">LC_SYMTAB</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lc_load_dylib"><span class="nav-number">3.8.</span> <span class="nav-text">LC_LOAD_DYLIB</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#data"><span class="nav-number">4.</span> <span class="nav-text">Data</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B-macho-%E6%96%87%E4%BB%B6%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80"><span class="nav-number">5.</span> <span class="nav-text">查看 MachO 文件内存布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fat-%E8%83%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%A0%BC%E5%BC%8F-%E9%80%9A%E7%94%A8%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%A0%BC%E5%BC%8F"><span class="nav-number">6.</span> <span class="nav-text">FAT 胖二进制格式
+（通用二进制格式）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="geneblue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">geneblue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 安装 使用 syzkaller fuzz linux kernel，需要安装以下工具。  支持 coverage 的 C 编译器 支持 coverage 配置的 linux 内核 QEME 和 磁盘镜像或者真机 syzkaller">
+<meta property="og:type" content="article">
+<meta property="og:title" content="syzkaller fuzz linux kernel环境搭建">
+<meta property="og:url" content="http://yoursite.com/2019/01/14/fuzzer/fuzzer--syzkaller-init-env/index.html">
+<meta property="og:site_name" content="geneblue&#39;s blog">
+<meta property="og:description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 安装 使用 syzkaller fuzz linux kernel，需要安装以下工具。  支持 coverage 的 C 编译器 支持 coverage 配置的 linux 内核 QEME 和 磁盘镜像或者真机 syzkaller">
+<meta property="og:locale">
+<meta property="article:published_time" content="2019-01-14T04:30:08.000Z">
+<meta property="article:modified_time" content="2022-01-16T15:49:52.498Z">
+<meta property="article:author" content="geneblue">
+<meta property="article:tag" content="fuzzer">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/01/14/fuzzer/fuzzer--syzkaller-init-env/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>syzkaller fuzz linux kernel环境搭建 | geneblue's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">geneblue's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/14/fuzzer/fuzzer--syzkaller-init-env/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="geneblue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geneblue's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          syzkaller fuzz linux kernel环境搭建
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-01-14 12:30:08" itemprop="dateCreated datePublished" datetime="2019-01-14T12:30:08+08:00">2019-01-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<h3 id="安装">安装</h3>
+<p>使用 syzkaller fuzz linux kernel，需要安装以下工具。</p>
+<ul>
+<li>支持 coverage 的 C 编译器</li>
+<li>支持 coverage 配置的 linux 内核</li>
+<li>QEME 和 磁盘镜像或者真机</li>
+<li>syzkaller</li>
+</ul>
+<span id="more"></span>
+<p><strong>C 编译器</strong></p>
+<p>syzkaller 是个基于代码覆盖率的
+fuzz工具，这要求内核需要支持代码覆盖，这就需要一个
+支持代码覆盖的编译器来编译内核。gcc6 版本 231296
+开始增加了对代码覆盖的支持，所以 我们可以使用 gcc6 来编译内核。</p>
+<p>下载编译 gcc6: <figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">svn checkout svn:<span class="string">//gcc.gnu.org/svn/gcc/trunk</span> gcc_src</span><br><span class="line"><span class="keyword">cd</span> gcc_src</span><br><span class="line">svn <span class="keyword">ls</span> -v ^<span class="string">/tags</span> | grep gcc_8_2_0_release</span><br><span class="line">svn up -r 262993</span><br><span class="line">mkdir build</span><br><span class="line">mkdir install</span><br><span class="line"><span class="keyword">cd</span> build/</span><br><span class="line">sudo apt-get install flex bison libc6-dev libc6-dev-i386 linux-libc-dev linux-libc-dev<span class="function">:i386</span> libgmp3-dev libmpfr-dev libmpc-dev</span><br><span class="line"><span class="string">../configure</span> <span class="params">--enable-languages=c</span>,c++ <span class="params">--disable-bootstrap</span> <span class="params">--enable-checking=no</span> <span class="params">--with-gnu-as</span> <span class="params">--with-gnu-ld</span> <span class="params">--with-ld=/usr/bin/ld</span>.bfd <span class="params">--disable-multilib</span> <span class="params">--prefix=gcc_src/install/</span></span><br><span class="line">make -j16</span><br><span class="line">make install</span><br></pre></td></tr></table></figure></p>
+<p><strong>Linux 内核</strong> 和 gcc6
+一样，内核本身也要增加对代码覆盖的支持。</p>
+<ul>
+<li>build 内核时增加对代码覆盖的支持（CONFIG_KCOV）</li>
+<li>在系统调用 entry/exit 中增加额外的指令</li>
+<li>添加代码来跟踪报告每个任务的代码覆盖信息</li>
+</ul>
+<p>KCOV 配置已经添加到了上游代码 linux4.6 中，对于较老的内核需要移植
+commit <a
+target="_blank" rel="noopener" href="https://github.com/torvalds/linux/commit/5c9a8750a6409c63a0f01d51a9024861022f6593">5c9a8750a6409c63a0f01d51a9024861022f6593</a>,该commit
+基本上就是在内核中添加对 KCOV
+特性的支持。编译内核时推荐使用如下配置：</p>
+<p>对代码覆盖的支持： <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">CONFIG_KCOV</span>=y</span><br><span class="line"><span class="attr">CONFIG_KCOV_INSTRUMENT_ALL</span>=y</span><br><span class="line"><span class="attr">CONFIG_KCOV_ENABLE_COMPARISONS</span>=y</span><br><span class="line"><span class="attr">CONFIG_DEBUG_FS</span>=y</span><br></pre></td></tr></table></figure></p>
+<p>在 web 接口显示代码覆盖： <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">CONFIG_DEBUG_INFO</span>=y</span><br></pre></td></tr></table></figure></p>
+<p>内核符号信息： <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">CONFIG_KALLSYMS</span>=y</span><br><span class="line"><span class="attr">CONFIG_KALLSYMS_ALL</span>=y</span><br></pre></td></tr></table></figure></p>
+<p>namespace 沙箱： <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">CONFIG_NAMESPACES</span>=y</span><br><span class="line"><span class="attr">CONFIG_UTS_NS</span>=y</span><br><span class="line"><span class="attr">CONFIG_IPC_NS</span>=y</span><br><span class="line"><span class="attr">CONFIG_PID_NS</span>=y</span><br><span class="line"><span class="attr">CONFIG_NET_NS</span>=y</span><br><span class="line"><span class="attr">CONFIG_CGROUP_PIDS</span>=y</span><br><span class="line"><span class="attr">CONFIG_MEMCG</span>=y</span><br><span class="line"><span class="attr">CONFIG_USER_NS</span>=y</span><br></pre></td></tr></table></figure></p>
+<p>如果 kernel 运行在 VMs 中，在编译内核时可以使用 <code>make
+kvmconfig</code></p>
+<p>使用 Debian 文件镜像（由tools/create-image.sh生成）还需要：
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">CONFIG_CONFIGFS_FS</span>=y</span><br><span class="line"><span class="attr">CONFIG_SECURITYFS</span>=y</span><br></pre></td></tr></table></figure></p>
+<p>开启 KASAN 支持对 use-after-free 和 out-of-bounds 的检测：
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">CONFIG_KASAN</span>=y</span><br><span class="line"><span class="attr">CONFIG_KASAN_INLINE</span>=y</span><br></pre></td></tr></table></figure></p>
+<p>打开其他调试选项对 fuzz 的支持更好，如下是比较推荐的：
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">CONFIG_LOCKDEP</span>=y</span><br><span class="line"><span class="attr">CONFIG_PROVE_LOCKING</span>=y</span><br><span class="line"><span class="attr">CONFIG_DEBUG_ATOMIC_SLEEP</span>=y</span><br><span class="line"><span class="attr">CONFIG_PROVE_RCU</span>=y</span><br><span class="line"><span class="attr">CONFIG_DEBUG_VM</span>=y</span><br></pre></td></tr></table></figure></p>
+<p>关闭下述配置： <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># CONFIG_RANDOMIZE_BASE <span class="keyword">is</span> not <span class="keyword">set</span></span><br></pre></td></tr></table></figure></p>
+<p>增加 RCU 时延： <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">CONFIG_RCU_CPU_STALL_TIMEOUT</span>=<span class="number">60</span></span><br></pre></td></tr></table></figure></p>
+<p>编译 linux 内核： <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">git clone http<span class="variable">s:</span>//github.<span class="keyword">com</span>/torvalds/linux.git $KERNEL</span><br><span class="line"><span class="keyword">cd</span> $KERNEL</span><br><span class="line"><span class="keyword">make</span> defconfig</span><br><span class="line"><span class="keyword">make</span> kvmconfig</span><br><span class="line"># Edit .config <span class="keyword">to</span> <span class="keyword">set</span> CONFIG_KCOV=<span class="keyword">y</span></span><br><span class="line"># Edit .config <span class="keyword">to</span> <span class="keyword">set</span> CONFIG_DEBUG_INFO=<span class="keyword">y</span></span><br><span class="line"># Edit .config <span class="keyword">to</span> <span class="keyword">set</span> CONFIG_KASAN=<span class="keyword">y</span></span><br><span class="line"><span class="keyword">make</span> oldconfig</span><br><span class="line"># Select KASAN_INLINE when prompted, leave other <span class="keyword">options</span> default</span><br><span class="line"><span class="keyword">make</span> CC=<span class="string">&#x27;$GCC/install/bin/gcc&#x27;</span> -j64</span><br></pre></td></tr></table></figure> 编译时根据提示信息，其余配置选 N
+即可。</p>
+<p><strong>QEMU 配置</strong> syzkaller 在 QEMU 虚拟机中运行 fuzz
+进程，所以这里还需要配置 QEMU，QEMU 的安装可以参考 QEMU <a
+target="_blank" rel="noopener" href="http://wiki.qemu-project.org/Manual">官网</a>.</p>
+<p>但以下几点需要注意： - fuzzing 进程需要和外面世界通信，所以 VM
+镜像需要包含对 networking 的支持 - fuzzer 进程的程序文件需要通过 SSH
+传入到 VM 中，所以 VM 镜像需要运行 SSH server - VM 的 SSH
+配置应该被设置成允许 syz-manager 配置的 root 权限访问。还句话说，在执行
+<code>ssh -i $SSHID -p $PORT root@localhost</code>
+时没有任何提示，也不要求输入密码（SSHID 是 SSH 的凭证，PORT 表示
+syz-manager 配置文件中指定的端口号） - 内核通过 debugfs 入口来导出
+代码覆盖信息，所以 VM 镜像 需要 在 <code>/sys/kernel/debug</code> 处
+mount debugfs 文件系统</p>
+<p><a
+target="_blank" rel="noopener" href="https://github.com/google/syzkaller/blob/master/tools/create-image.sh">create-image.sh</a>
+脚本用于创建一个 linux 镜像。</p>
+<p>Syzkaller 也支持 kvmtools VMs,GCE VMs 或运行在真实的 Android
+设备中。</p>
+<p><strong>Syzkaller</strong> syzkaller 是 go 语言编写而成，所以需要 go
+编译器（&gt;=1.9）来编译 syzkaller。</p>
+<p>到<a target="_blank" rel="noopener" href="https://golang.org/dl/">https://golang.org/dl/</a>站点下载
+go
+包，将其解压到目录<code>$HOME/go</code>中，然后添加环境变量<code>GOROOT=$HOME/go</code>,<code>PATH=$HOME/go/bin:$PATH</code>,<code>GOPATH=$HOME/gopath</code>，运行命令<code>go
+get -d github.com/google/syzkaller/...</code> checkout 出 syzkaller
+源码及其依赖，进入到
+<code>$GOPATH/src/github.com/google/syzkaller</code> 目录，运行命令
+<code>make</code>即可将 syzkaller 编译到 <code>bin\</code> 目录下。</p>
+<p>go 的站点被墙了，导致有些包下载不下来，可以到<a
+target="_blank" rel="noopener" href="http://www.golangtc.com/download/package">第三方站点</a>上下载离线包，再手动解包。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">wget</span> https://dl.google.com/go/go<span class="number">1</span>.<span class="number">10</span>.linux-amd<span class="number">64</span>.tar.gz</span><br><span class="line"><span class="attribute">tar</span> -zxvf go<span class="number">1</span>.<span class="number">10</span>.linux-amd<span class="number">64</span>.tar.gz</span><br><span class="line"><span class="attribute">mv</span> go go-<span class="number">1</span>.<span class="number">10</span></span><br></pre></td></tr></table></figure>
+<p>配置 go 环境变量 <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">GOROOT</span>=<span class="variable">$HOME</span>/go</span><br><span class="line"><span class="attr">PATH</span>=<span class="variable">$HOME</span>/go/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="attr">GOPATH</span>=<span class="variable">$HOME</span>/gopath</span><br></pre></td></tr></table></figure></p>
+<p>使用 go 下载编译 syzkaller <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">go get -d github.com<span class="regexp">/google/</span>syzkaller/...</span><br><span class="line">cd <span class="variable">$GOPATH</span><span class="regexp">/src/gi</span>thub.com<span class="regexp">/google/</span>syzkaller</span><br><span class="line">make</span><br></pre></td></tr></table></figure></p>
+<h3 id="参考">参考</h3>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/google/syzkaller">syzkaller</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/fuzzer/" rel="tag"># fuzzer</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2018/10/27/android/vul--ksma-android-root-tech/" rel="next" title="KSMA--Android通用Root技术">
+                  <i class="fa fa-chevron-left"></i> KSMA--Android通用Root技术
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/09/13/android/sec--android-dex-vmp/" rel="prev" title="Android DEX-VMP 虚拟保护技术">
+                  Android DEX-VMP 虚拟保护技术 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">2.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="geneblue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">geneblue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

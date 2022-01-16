@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 5.4.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -57,10 +57,9 @@
 <meta property="og:url" content="http://yoursite.com/page/6/index.html">
 <meta property="og:site_name" content="geneblue&#39;s blog">
 <meta property="og:description" content="Personal Blog">
-<meta property="og:locale" content="zh-Hans">
+<meta property="og:locale">
+<meta property="article:author" content="geneblue">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="geneblue&#39;s blog">
-<meta name="twitter:description" content="Personal Blog">
 
 <link rel="canonical" href="http://yoursite.com/page/6/">
 
@@ -184,7 +183,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/03/18/so文件的调试方法/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/07/27/android/vul--how-to-bypass-android-kernel-pxn/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -198,7 +197,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2015/03/18/so%E6%96%87%E4%BB%B6%E7%9A%84%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">so文件的调试方法</a>
+            <a href="/2016/07/27/android/vul--how-to-bypass-android-kernel-pxn/" class="post-title-link" itemprop="url">Android PXN绕过技术研究</a>
         </h2>
 
         <div class="post-meta">
@@ -208,14 +207,14 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2015-03-18 12:09:08" itemprop="dateCreated datePublished" datetime="2015-03-18T12:09:08+08:00">2015-03-18</time>
+              <time title="Created: 2016-07-27 12:02:08" itemprop="dateCreated datePublished" datetime="2016-07-27T12:02:08+08:00">2016-07-27</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
               </span>
 
           
@@ -229,21 +228,14 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<h3 id="0X01-基本步骤"><a href="#0X01-基本步骤" class="headerlink" title="0X01 基本步骤"></a>0X01 基本步骤</h3><p>这里介绍使用IDA对so文件的动态调试，其他调试工具的使用，以后再做补充。</p>
-<p>IDA从6.1版本开始支持Android原生程序的动态调试。</p>
-<ul>
-<li><p>将ida目录下的android_server拷贝到android的目录中</p>
-<p> adb push android_server /data/local/tmp/</p>
-</li>
-</ul>
-<pre><code>adb shell 进入模拟器
-
-
-cd /data/local/tmp/</code></pre>
+          <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<h3 id="x01-pxn技术介绍">0X01 PXN技术介绍</h3>
+<p>PXN是Privileged eXecute
+Never的缩写，意为非特权执行，简单点说PXN是ARM平台下的一项内核保护措施，该措施的目的是阻止内核执行用户态代码，保证内核的执行流程不会被劫持到用户空间。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2015/03/18/so文件的调试方法/#more" rel="contents">
+              <a class="btn" href="/2016/07/27/android/vul--how-to-bypass-android-kernel-pxn/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -267,7 +259,7 @@ cd /data/local/tmp/</code></pre>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/02/27/Xposed插件编写流程/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/07/12/android/sec--get-kernel-file-from-android-devices/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -281,7 +273,7 @@ cd /data/local/tmp/</code></pre>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2015/02/27/Xposed%E6%8F%92%E4%BB%B6%E7%BC%96%E5%86%99%E6%B5%81%E7%A8%8B/" class="post-title-link" itemprop="url">Xposed插件编写流程</a>
+            <a href="/2016/07/12/android/sec--get-kernel-file-from-android-devices/" class="post-title-link" itemprop="url">从Android手机中提取内核</a>
         </h2>
 
         <div class="post-meta">
@@ -291,14 +283,14 @@ cd /data/local/tmp/</code></pre>
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2015-02-27 10:06:08" itemprop="dateCreated datePublished" datetime="2015-02-27T10:06:08+08:00">2015-02-27</time>
+              <time title="Created: 2016-07-12 12:02:08" itemprop="dateCreated datePublished" datetime="2016-07-12T12:02:08+08:00">2016-07-12</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
               </span>
 
           
@@ -312,22 +304,22 @@ cd /data/local/tmp/</code></pre>
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<p>官方英文介绍：<a href="https://github.com/rovo89/XposedBridge/wiki/Development-tutorial" target="_blank" rel="noopener">这里</a> </p>
-<p>创建一个XposedModule一般按照以下流程：</p>
-<h4 id="添加meta-data元素"><a href="#添加meta-data元素" class="headerlink" title="添加meta-data元素"></a>添加meta-data元素</h4><p>应该在要编写的程序的Manifest文件的application元素下添加三个 meta-data元素，如下所示：</p>
-<pre><code>&lt;meta-data              //指定这是Xposed Module程序
-    android:name=&quot;xposedmodule&quot;
-    android:value=&quot;true&quot; /&gt;
-&lt;meta-data             //此Module的描述性信息
-    android:name=&quot;xposeddescription&quot;
-    android:value=&quot;makes the status bar clock red and adds a smiley&quot; /&gt;
-&lt;meta-data            //此Module的最低的Xposed api的版本
-    android:name=&quot;xposedminversion&quot;
-    android:value=&quot;30&quot; /&gt;</code></pre>
+          <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<h3 id="x01-环境">0X01 环境</h3>
+<pre><code>Device: Nexus 5
+OS Version: Android4.4.4 KTU84P
+Kernel Version: 3.4.0</code></pre>
+<h3 id="x02-内核提取">0X02 内核提取</h3>
+<p>Android
+内核文件存放在boot分区，先在设备中找到boot分区存放的位置：</p>
+<pre><code>adb shell
+su
+cd /dev/block/platform/msm_sdcc.1/by-name
+ls -l boot</code></pre>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2015/02/27/Xposed插件编写流程/#more" rel="contents">
+              <a class="btn" href="/2016/07/12/android/sec--get-kernel-file-from-android-devices/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -351,7 +343,7 @@ cd /data/local/tmp/</code></pre>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/02/21/Xposed翻译文档/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/01/27/android/sec--debug-android-kernel-module/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -365,7 +357,7 @@ cd /data/local/tmp/</code></pre>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2015/02/21/Xposed%E7%BF%BB%E8%AF%91%E6%96%87%E6%A1%A3/" class="post-title-link" itemprop="url">Xposed翻译文档</a>
+            <a href="/2016/01/27/android/sec--debug-android-kernel-module/" class="post-title-link" itemprop="url">Android内核编译调试</a>
         </h2>
 
         <div class="post-meta">
@@ -375,14 +367,14 @@ cd /data/local/tmp/</code></pre>
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2015-02-21 12:02:08" itemprop="dateCreated datePublished" datetime="2015-02-21T12:02:08+08:00">2015-02-21</time>
+              <time title="Created: 2016-01-27 12:02:08" itemprop="dateCreated datePublished" datetime="2016-01-27T12:02:08+08:00">2016-01-27</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
               </span>
 
           
@@ -396,14 +388,18 @@ cd /data/local/tmp/</code></pre>
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<p>英文原版地址：<a href="https://github.com/rovo89/XposedBridge/wiki/Development-tutorial" target="_blank" rel="noopener">这里</a> </p>
-<p>注：文档去掉了Xposed Module建立的过程，上述地址介绍的比较详细且容易看懂。有些地方翻译的比较生硬，还是查看对应的英文文档比较好。</p>
-<hr>
-<h3 id="Development-tutorial"><a href="#Development-tutorial" class="headerlink" title="Development tutorial"></a>Development tutorial</h3><h4 id="Xposed原理"><a href="#Xposed原理" class="headerlink" title="Xposed原理"></a>Xposed原理</h4><p>在Android运行时空间里（Android runtime)有一个非常重要的进程是“Zygote”。每个Android应用程序的启动都是由Zygote进程fork而出的。当手机启动的时候，Zygote进程就会由/init.rc脚本启动。最终由/system/bin/app_process进程完成Zygote进程的启动，app_process进程会加载一些必要的类库并初始化一些方法。</p>
+          <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<h3 id="x01-前言">0X01 前言</h3>
+<p>研究Android底层或漏洞方面的知识，编译调试内核源码是必不可少的。这篇文章介绍内核编译调试的基本步骤。</p>
+<h3 id="x02-环境">0X02 环境</h3>
+<pre><code>Android开发环境：SDK，NDK
+PC OS：Ubuntu 14.04 LTS 64bit
+Kernel Source：goldfish3.4   
+Android Source: android-4.4.4_r1</code></pre>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2015/02/21/Xposed翻译文档/#more" rel="contents">
+              <a class="btn" href="/2016/01/27/android/sec--debug-android-kernel-module/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -427,7 +423,7 @@ cd /data/local/tmp/</code></pre>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/02/10/XX公共自行车备件管理系统项目心得/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/07/22/jni/dev--jni-doc-chapter4-jni-functions/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -441,7 +437,7 @@ cd /data/local/tmp/</code></pre>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2015/02/10/XX%E5%85%AC%E5%85%B1%E8%87%AA%E8%A1%8C%E8%BD%A6%E5%A4%87%E4%BB%B6%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E9%A1%B9%E7%9B%AE%E5%BF%83%E5%BE%97/" class="post-title-link" itemprop="url">XX公共自行车备件管理系统项目心得</a>
+            <a href="/2015/07/22/jni/dev--jni-doc-chapter4-jni-functions/" class="post-title-link" itemprop="url">JNI官方文档-Chapter 4：JNI Functions</a>
         </h2>
 
         <div class="post-meta">
@@ -451,14 +447,14 @@ cd /data/local/tmp/</code></pre>
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2015-02-10 12:46:08" itemprop="dateCreated datePublished" datetime="2015-02-10T12:46:08+08:00">2015-02-10</time>
+              <time title="Created: 2015-07-22 12:26:08" itemprop="dateCreated datePublished" datetime="2015-07-22T12:26:08+08:00">2015-07-22</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
               </span>
 
           
@@ -472,13 +468,13 @@ cd /data/local/tmp/</code></pre>
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<p>这并不是一份正式的项目总结，只是我们在做完自行车备件管理系统后我的一些心得。觉得有必要写一下记录自己在这个项目中犯过的错误。</p>
-<p>这个项目是从大三上学期刚开学的时候接手的。这个备件管理系统相对研究生学长做的道路滑坡预测比较简单，老师就将这个项目交给我们四个啥都不太懂的本科生做。说实话，大家都挺积极的，至少可以明白最简单的商业项目是怎么一回事。</p>
-<p>要做的东西不是很难，这个备件管理系统主要就是完成移动端（Android）应用和后台管理系统的开发。移动端主要是完成备件从采购、入库、使用、维护、维修和报废一系列操作，需要按照操作人员的角色设定操作权限，然后将数据传输到数据库中；后台管理系统主要是使用java和jsp开发网页版程序对数据库中的数据进行管理，差不多也就是数据库的那几种基本操作。</p>
+          <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<p>本章主要作为JNI函数的参考手册。这里提供完整的JNI函数列表，也提供JNI函数表的设计。</p>
+<p>注意“必须”这个词常常描述对JNI开发人员的限制。如，当你看到一个JNI函数“必须”接收一个非空的对象时，你就要确保NULL值不会被传递到该JNI函数。所以，该JNI函数的实现是不需要执行NULL值检查的。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2015/02/10/XX公共自行车备件管理系统项目心得/#more" rel="contents">
+              <a class="btn" href="/2015/07/22/jni/dev--jni-doc-chapter4-jni-functions/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -502,7 +498,7 @@ cd /data/local/tmp/</code></pre>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/02/10/Xposed demo分析/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/07/21/jni/dev--jni-doc-chapter3-jni-types-and-data-structures/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -516,7 +512,7 @@ cd /data/local/tmp/</code></pre>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2015/02/10/Xposed%20demo%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">Xposed demo分析</a>
+            <a href="/2015/07/21/jni/dev--jni-doc-chapter3-jni-types-and-data-structures/" class="post-title-link" itemprop="url">JNI官方文档-Chapter 3：JNI Types and Data Structures</a>
         </h2>
 
         <div class="post-meta">
@@ -526,14 +522,14 @@ cd /data/local/tmp/</code></pre>
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2015-02-10 12:46:08" itemprop="dateCreated datePublished" datetime="2015-02-10T12:46:08+08:00">2015-02-10</time>
+              <time title="Created: 2015-07-21 12:26:08" itemprop="dateCreated datePublished" datetime="2015-07-21T12:26:08+08:00">2015-07-21</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 22:20:19" itemprop="dateModified" datetime="2022-01-16T22:20:19+08:00">2022-01-16</time>
+                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
               </span>
 
           
@@ -547,20 +543,14 @@ cd /data/local/tmp/</code></pre>
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong><br><strong>Blog: <a href="https://geneblue.github.io/" target="_blank" rel="noopener">https://geneblue.github.io/</a></strong></p>
-<p>代码下载地址：<a href="https://github.com/GeneBlue/BlueGeneModule" target="_blank" rel="noopener">这里</a></p>
-<hr>
-<h4 id="MainActivity类"><a href="#MainActivity类" class="headerlink" title="MainActivity类"></a>MainActivity类</h4><p>下面从主函数MainActivity开始入手分析：</p>
-<div align="center">
-<img src="https://note.youdao.com/yws/api/personal/file/WEB8fde0ad79a859ed673bd2c63640ad04c?method=download&shareKey=e5939775d200de68fc1a06b827831edd" alt="MainActivity" title="MainActivity">
-</div>
-
-
-<p>MainActivity主要是处理页面上的一些控件。modifyMac()方法是关键，主要是通过调用PrivacyManager类中的setValue（）方法，设置mac值。</p>
-<p>PrivacyManager类没有做任何实际处理，只是调用了PrivacyService中的getSetting()和setValue（）方法。</p>
+          <p><strong>Author: geneblue</strong> <strong>Blog:
+https://geneblue.github.io/</strong></p>
+<p>本章讲述JNI是如何映射java类型到native C类型的。</p>
+<h3 id="primitive-types">Primitive Types</h3>
+<p>表3-1表明了java基本类型和平台依赖的（machine-dependent）等价native类型。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2015/02/10/Xposed demo分析/#more" rel="contents">
+              <a class="btn" href="/2015/07/21/jni/dev--jni-doc-chapter3-jni-types-and-data-structures/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -584,7 +574,7 @@ cd /data/local/tmp/</code></pre>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span>
+    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -630,14 +620,14 @@ cd /data/local/tmp/</code></pre>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -706,9 +696,17 @@ cd /data/local/tmp/</code></pre>
   <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/muse.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
 
 
 
@@ -728,6 +726,8 @@ cd /data/local/tmp/</code></pre>
 
 
 
+
+  
 
   
 
