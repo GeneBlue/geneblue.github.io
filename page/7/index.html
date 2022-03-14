@@ -183,6 +183,82 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/07/21/jni/dev--jni-doc-chapter3-jni-types-and-data-structures/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="geneblue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geneblue's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2015/07/21/jni/dev--jni-doc-chapter3-jni-types-and-data-structures/" class="post-title-link" itemprop="url">JNI官方文档-Chapter 3：JNI Types and Data Structures</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2015-07-21 12:26:08" itemprop="dateCreated datePublished" datetime="2015-07-21T12:26:08+08:00">2015-07-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-03-14 16:06:01" itemprop="dateModified" datetime="2022-03-14T16:06:01+08:00">2022-03-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
+<p>本章讲述JNI是如何映射java类型到native C类型的。</p>
+<h3 id="primitive-types">Primitive Types</h3>
+<p>表3-1表明了java基本类型和平台依赖的（machine-dependent）等价native类型。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2015/07/21/jni/dev--jni-doc-chapter3-jni-types-and-data-structures/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/07/20/jni/dev--jni-doc-chapter2-design-overview/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -214,7 +290,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+                <time title="Modified: 2022-03-14 16:05:57" itemprop="dateModified" datetime="2022-03-14T16:05:57+08:00">2022-03-14</time>
               </span>
 
           
@@ -228,8 +304,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong> <strong>Blog:
-https://geneblue.github.io/</strong></p>
+          <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
 <p>本篇主要关注JNI设计中的主要问题。这里讲述的大多数问题都与本地方法有关。Invocation
 API的介绍在Chapter 5中。</p>
 <h3 id="jni-interface-functions-and-pointers">JNI Interface Functions
@@ -292,7 +368,7 @@ and Pointers</h3>
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+                <time title="Modified: 2022-03-14 16:05:54" itemprop="dateModified" datetime="2022-03-14T16:05:54+08:00">2022-03-14</time>
               </span>
 
           
@@ -306,8 +382,8 @@ and Pointers</h3>
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong> <strong>Blog:
-https://geneblue.github.io/</strong></p>
+          <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
 <p>在使用NDK的时候，发现自己对jNI机制并不是很了解，就把官方文档拿来看了看并翻译了一下。官方文档地址看<a
 target="_blank" rel="noopener" href="http://docs.oracle.com/javase/6/docs/technotes/guides/jni/spec/jniTOC.html">这里</a>。自己也是首次翻译英文资料，有翻译不妥的地方请联系我，我将及时更改。</p>
 <hr />
@@ -372,7 +448,7 @@ Interface）技术。JNI是一种本地编程接口。它允许运行在java VM
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+                <time title="Modified: 2022-03-14 16:04:14" itemprop="dateModified" datetime="2022-03-14T16:04:14+08:00">2022-03-14</time>
               </span>
 
           
@@ -386,8 +462,8 @@ Interface）技术。JNI是一种本地编程接口。它允许运行在java VM
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong> <strong>Blog:
-https://geneblue.github.io/</strong></p>
+          <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
 <p>平时写Android程序时遇到的一些错误， 在此记录方便以后查找。</p>
 <h3 id="类中方法找不到问题">类中方法找不到问题</h3>
 <p>logcat中报错提示如下： java.lang.NoClassDefFoundError:
@@ -450,7 +526,7 @@ com.google.zxing.EncodeHintType</p>
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+                <time title="Modified: 2022-03-14 16:04:17" itemprop="dateModified" datetime="2022-03-14T16:04:17+08:00">2022-03-14</time>
               </span>
 
           
@@ -464,8 +540,8 @@ com.google.zxing.EncodeHintType</p>
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong> <strong>Blog:
-https://geneblue.github.io/</strong></p>
+          <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
 <p>为了更好了解DEX文件格式，写了个java版的DEX解析器，可以打印出一个dex文件中的字符串，字段和类中调用了哪些方法。具体代码见<a
 target="_blank" rel="noopener" href="https://github.com/GeneBlue/DexFunctions">这里</a></p>
 <h3 id="x01-准备工作">0X01 准备工作</h3>
@@ -483,87 +559,6 @@ target="_blank" rel="noopener" href="https://github.com/GeneBlue/DexFunctions">�
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2015/03/20/android/dev--dex-file-format/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/03/18/android/sec--debug-android-so-lib/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="geneblue">
-      <meta itemprop="description" content="Personal Blog">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="geneblue's blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2015/03/18/android/sec--debug-android-so-lib/" class="post-title-link" itemprop="url">so文件的调试方法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2015-03-18 12:09:08" itemprop="dateCreated datePublished" datetime="2015-03-18T12:09:08+08:00">2015-03-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><strong>Author: geneblue</strong> <strong>Blog:
-https://geneblue.github.io/</strong></p>
-<h3 id="x01-基本步骤">0X01 基本步骤</h3>
-<p>这里介绍使用IDA对so文件的动态调试，其他调试工具的使用，以后再做补充。</p>
-<p>IDA从6.1版本开始支持Android原生程序的动态调试。</p>
-<ul>
-<li><p>将ida目录下的android_server拷贝到android的目录中</p>
-<p>adb push android_server /data/local/tmp/  </p>
-<p>adb shell 进入模拟器    </p>
-<p>cd /data/local/tmp/
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2015/03/18/android/sec--debug-android-so-lib/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -633,7 +628,7 @@ https://geneblue.github.io/</strong></p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-count">40</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>

@@ -183,6 +183,87 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/03/18/android/sec--debug-android-so-lib/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="geneblue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geneblue's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2015/03/18/android/sec--debug-android-so-lib/" class="post-title-link" itemprop="url">so文件的调试方法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2015-03-18 12:09:08" itemprop="dateCreated datePublished" datetime="2015-03-18T12:09:08+08:00">2015-03-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-03-14 16:04:35" itemprop="dateModified" datetime="2022-03-14T16:04:35+08:00">2022-03-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
+<h3 id="x01-基本步骤">0X01 基本步骤</h3>
+<p>这里介绍使用IDA对so文件的动态调试，其他调试工具的使用，以后再做补充。</p>
+<p>IDA从6.1版本开始支持Android原生程序的动态调试。</p>
+<ul>
+<li><p>将ida目录下的android_server拷贝到android的目录中</p>
+<p>adb push android_server /data/local/tmp/  </p>
+<p>adb shell 进入模拟器    </p>
+<p>cd /data/local/tmp/
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2015/03/18/android/sec--debug-android-so-lib/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/02/27/android/sec--xposed-plugin-tutorial/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -214,7 +295,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+                <time title="Modified: 2022-03-14 16:05:16" itemprop="dateModified" datetime="2022-03-14T16:05:16+08:00">2022-03-14</time>
               </span>
 
           
@@ -228,8 +309,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong> <strong>Blog:
-https://geneblue.github.io/</strong></p>
+          <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
 <p>官方英文介绍：<a
 target="_blank" rel="noopener" href="https://github.com/rovo89/XposedBridge/wiki/Development-tutorial">这里</a></p>
 <p>创建一个XposedModule一般按照以下流程：</p>
@@ -302,7 +383,7 @@ meta-data元素，如下所示：</p>
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+                <time title="Modified: 2022-03-14 16:05:14" itemprop="dateModified" datetime="2022-03-14T16:05:14+08:00">2022-03-14</time>
               </span>
 
           
@@ -316,8 +397,8 @@ meta-data元素，如下所示：</p>
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong> <strong>Blog:
-https://geneblue.github.io/</strong></p>
+          <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
 <p>英文原版地址：<a
 target="_blank" rel="noopener" href="https://github.com/rovo89/XposedBridge/wiki/Development-tutorial">这里</a></p>
 <p>注：文档去掉了Xposed
@@ -384,7 +465,7 @@ runtime)有一个非常重要的进程是“Zygote”。每个Android应用程�
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+                <time title="Modified: 2022-03-14 16:05:10" itemprop="dateModified" datetime="2022-03-14T16:05:10+08:00">2022-03-14</time>
               </span>
 
           
@@ -398,8 +479,8 @@ runtime)有一个非常重要的进程是“Zygote”。每个Android应用程�
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong> <strong>Blog:
-https://geneblue.github.io/</strong></p>
+          <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
 <p>代码下载地址：<a
 target="_blank" rel="noopener" href="https://github.com/GeneBlue/BlueGeneModule">这里</a></p>
 <hr />
@@ -467,7 +548,7 @@ target="_blank" rel="noopener" href="https://github.com/GeneBlue/BlueGeneModule"
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+                <time title="Modified: 2022-03-14 16:06:19" itemprop="dateModified" datetime="2022-03-14T16:06:19+08:00">2022-03-14</time>
               </span>
 
           
@@ -481,8 +562,8 @@ target="_blank" rel="noopener" href="https://github.com/GeneBlue/BlueGeneModule"
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong> <strong>Blog:
-https://geneblue.github.io/</strong></p>
+          <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
 <p>这并不是一份正式的项目总结，只是我们在做完自行车备件管理系统后我的一些心得。觉得有必要写一下记录自己在这个项目中犯过的错误。</p>
 <p>这个项目是从大三上学期刚开学的时候接手的。这个备件管理系统相对研究生学长做的道路滑坡预测比较简单，老师就将这个项目交给我们四个啥都不太懂的本科生做。说实话，大家都挺积极的，至少可以明白最简单的商业项目是怎么一回事。</p>
 <p>要做的东西不是很难，这个备件管理系统主要就是完成移动端（Android）应用和后台管理系统的开发。移动端主要是完成备件从采购、入库、使用、维护、维修和报废一系列操作，需要按照操作人员的角色设定操作权限，然后将数据传输到数据库中；后台管理系统主要是使用java和jsp开发网页版程序对数据库中的数据进行管理，差不多也就是数据库的那几种基本操作。</p>
@@ -558,7 +639,7 @@ https://geneblue.github.io/</strong></p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-count">40</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>

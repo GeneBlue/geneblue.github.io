@@ -183,6 +183,81 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/08/16/android/sec--how-to-build-android-kernel-module/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="geneblue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geneblue's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/08/16/android/sec--how-to-build-android-kernel-module/" class="post-title-link" itemprop="url">Android内核模块编译执行</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2016-08-16 12:02:08" itemprop="dateCreated datePublished" datetime="2016-08-16T12:02:08+08:00">2016-08-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-03-14 16:04:41" itemprop="dateModified" datetime="2022-03-14T16:04:41+08:00">2022-03-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
+<h3 id="x01-前言">0X01 前言</h3>
+<p>内核驱动是漏洞的高发区，了解Android驱动代码的编写是分析、利用驱动漏洞的基础。本文以一个“hello”驱动为例，简单介绍内核驱动编写、编译的基本过程，包括内核模块的内建编译和动态加载方式的编译。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2016/08/16/android/sec--how-to-build-android-kernel-module/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/07/27/android/vul--how-to-bypass-android-kernel-pxn/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -214,7 +289,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+                <time title="Modified: 2022-03-14 16:05:26" itemprop="dateModified" datetime="2022-03-14T16:05:26+08:00">2022-03-14</time>
               </span>
 
           
@@ -228,8 +303,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong> <strong>Blog:
-https://geneblue.github.io/</strong></p>
+          <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
 <h3 id="x01-pxn技术介绍">0X01 PXN技术介绍</h3>
 <p>PXN是Privileged eXecute
 Never的缩写，意为非特权执行，简单点说PXN是ARM平台下的一项内核保护措施，该措施的目的是阻止内核执行用户态代码，保证内核的执行流程不会被劫持到用户空间。</p>
@@ -290,7 +365,7 @@ Never的缩写，意为非特权执行，简单点说PXN是ARM平台下的一项
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+                <time title="Modified: 2022-03-14 16:04:39" itemprop="dateModified" datetime="2022-03-14T16:04:39+08:00">2022-03-14</time>
               </span>
 
           
@@ -304,8 +379,8 @@ Never的缩写，意为非特权执行，简单点说PXN是ARM平台下的一项
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong> <strong>Blog:
-https://geneblue.github.io/</strong></p>
+          <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
 <h3 id="x01-环境">0X01 环境</h3>
 <pre><code>Device: Nexus 5
 OS Version: Android4.4.4 KTU84P
@@ -374,7 +449,7 @@ ls -l boot</code></pre>
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+                <time title="Modified: 2022-03-14 16:04:33" itemprop="dateModified" datetime="2022-03-14T16:04:33+08:00">2022-03-14</time>
               </span>
 
           
@@ -388,8 +463,8 @@ ls -l boot</code></pre>
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong> <strong>Blog:
-https://geneblue.github.io/</strong></p>
+          <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
 <h3 id="x01-前言">0X01 前言</h3>
 <p>研究Android底层或漏洞方面的知识，编译调试内核源码是必不可少的。这篇文章介绍内核编译调试的基本步骤。</p>
 <h3 id="x02-环境">0X02 环境</h3>
@@ -454,7 +529,7 @@ Android Source: android-4.4.4_r1</code></pre>
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
+                <time title="Modified: 2022-03-14 16:06:04" itemprop="dateModified" datetime="2022-03-14T16:06:04+08:00">2022-03-14</time>
               </span>
 
           
@@ -468,89 +543,13 @@ Android Source: android-4.4.4_r1</code></pre>
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>Author: geneblue</strong> <strong>Blog:
-https://geneblue.github.io/</strong></p>
+          <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
 <p>本章主要作为JNI函数的参考手册。这里提供完整的JNI函数列表，也提供JNI函数表的设计。</p>
 <p>注意“必须”这个词常常描述对JNI开发人员的限制。如，当你看到一个JNI函数“必须”接收一个非空的对象时，你就要确保NULL值不会被传递到该JNI函数。所以，该JNI函数的实现是不需要执行NULL值检查的。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2015/07/22/jni/dev--jni-doc-chapter4-jni-functions/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/07/21/jni/dev--jni-doc-chapter3-jni-types-and-data-structures/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="geneblue">
-      <meta itemprop="description" content="Personal Blog">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="geneblue's blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2015/07/21/jni/dev--jni-doc-chapter3-jni-types-and-data-structures/" class="post-title-link" itemprop="url">JNI官方文档-Chapter 3：JNI Types and Data Structures</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2015-07-21 12:26:08" itemprop="dateCreated datePublished" datetime="2015-07-21T12:26:08+08:00">2015-07-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-16 23:49:52" itemprop="dateModified" datetime="2022-01-16T23:49:52+08:00">2022-01-16</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><strong>Author: geneblue</strong> <strong>Blog:
-https://geneblue.github.io/</strong></p>
-<p>本章讲述JNI是如何映射java类型到native C类型的。</p>
-<h3 id="primitive-types">Primitive Types</h3>
-<p>表3-1表明了java基本类型和平台依赖的（machine-dependent）等价native类型。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2015/07/21/jni/dev--jni-doc-chapter3-jni-types-and-data-structures/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -620,7 +619,7 @@ https://geneblue.github.io/</strong></p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-count">40</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>

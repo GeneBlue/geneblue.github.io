@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 背景 1996年，德国慕尼黑大学(LMU Ludwig Maximilians University of Munich)的 Martin Ester(助理教授) 和 Hans-Peter Kriegel(教授) 与博士生 Jörg Sander，Xiaowei Xu一起发表了他们在数据挖掘领域的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="聚类算法DBSCAN">
+<meta property="og:url" content="http://yoursite.com/2022/01/17/ml/02-clustering-algo-dbscan/index.html">
+<meta property="og:site_name" content="geneblue&#39;s blog">
+<meta property="og:description" content="Author: geneblue Blog: https:&#x2F;&#x2F;geneblue.github.io&#x2F; 背景 1996年，德国慕尼黑大学(LMU Ludwig Maximilians University of Munich)的 Martin Ester(助理教授) 和 Hans-Peter Kriegel(教授) 与博士生 Jörg Sander，Xiaowei Xu一起发表了他们在数据挖掘领域的">
+<meta property="og:locale">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB325e97bc530ff0fd5a4374f355d6992d?method=download&shareKey=7e30d2aa9b3ceb09f8679317ebb93d3e">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/DBSCAN-Illustration.svg/1200px-DBSCAN-Illustration.svg.png">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB32862afc5329a47dc28770f1219aeb4a?method=download&shareKey=c601c9d1fb18084595d909053f5e6a23">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBa402242036e6306d6c20959cc9560b6f?method=download&shareKey=e8700161cb0fe5adc02d7b41bda8428e">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB4bf97ff27ce39b681bceff47b2d73e52?method=download&shareKey=e7461d164d8503dbcd91ea11a652490d">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB4268cabc7b5a7bbaeb37011a2c63abed?method=download&shareKey=6d67afd970b8a48a40968c66f24cf904">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB042c2b9cd9578e3f1cf75a86f1b56e63?method=download&shareKey=9f51c104bd621e145d10a3cb80136594">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB20f977e3105ccebb10cf95f305a79185?method=download&shareKey=2e57f7b824c51d13b2f7ce21d6c3837c">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB9f8cb86825b415f2667c69f0dbd2d07b?method=download&shareKey=58ff6a50b1e6aa84f021249924b2766e">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBde597f43af0fed352abb62b77fd48239?method=download&shareKey=cdee88f782aa7d0f9f036c4e395eccfb">
+<meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB3711df65cd167cd5f632f101f45598c1?method=download&shareKey=ad4748eeed4941f66b2064ee53d68516">
+<meta property="article:published_time" content="2022-01-17T04:02:08.000Z">
+<meta property="article:modified_time" content="2022-03-14T08:20:14.391Z">
+<meta property="article:author" content="geneblue">
+<meta property="article:tag" content="ml">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://note.youdao.com/yws/api/personal/file/WEB325e97bc530ff0fd5a4374f355d6992d?method=download&shareKey=7e30d2aa9b3ceb09f8679317ebb93d3e">
+
+<link rel="canonical" href="http://yoursite.com/2022/01/17/ml/02-clustering-algo-dbscan/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>聚类算法DBSCAN | geneblue's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">geneblue's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">The quiter you become,the more you are able to hear!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/01/17/ml/02-clustering-algo-dbscan/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="geneblue">
+      <meta itemprop="description" content="Personal Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geneblue's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          聚类算法DBSCAN
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-01-17 12:02:08" itemprop="dateCreated datePublished" datetime="2022-01-17T12:02:08+08:00">2022-01-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-03-14 16:20:14" itemprop="dateModified" datetime="2022-03-14T16:20:14+08:00">2022-03-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>Author: geneblue</strong></p>
+<p><strong>Blog: https://geneblue.github.io/</strong></p>
+<h3 id="背景">背景</h3>
+<p>1996年，德国慕尼黑大学(LMU Ludwig Maximilians University of Munich)的
+Martin Ester(助理教授) 和 Hans-Peter Kriegel(教授) 与博士生 Jörg
+Sander，Xiaowei Xu一起发表了他们在数据挖掘领域的最新研究
+DBSCAN(<strong>D</strong>ensity-<strong>B</strong>ased
+<strong>S</strong>patial <strong>C</strong>lustering of
+<strong>A</strong>pplications with
+<strong>N</strong>oise，具有噪声的基于密度的聚类方法) 算法。</p>
+<span id="more"></span>
+<p>原版论文 <a
+target="_blank" rel="noopener" href="http://super.tka4.org/materials/study/%23ANOTHER/%5Bmaterials_from_no_access%5D%203%20potok/%D0%94%D0%BE%D0%BA%D0%BB%D0%B0%D0%B4%20(8%20%D1%81%D0%B5%D0%BC%D0%B5%D1%81%D1%82%D1%80)/%D0%94%D0%BE%D0%BA%D0%BB%D0%B0%D0%B4/kdd-96.pdf">A
+density-based algorithm for discovering clusters in large spatial
+databases with noise</a> 最初发表在 1996 年的 <a
+target="_blank" rel="noopener" href="https://kdd.org/">KDD</a>（专注数据挖掘，知识发现领域的计算机会议）上。算法
+DBSCAN 在 2014
+年的会议上授予了经受住时间考验的赞誉，表明该算法在理论和实践中都长期获得很大关注。这一点，我们从论文他引次数上也能看出来：</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB325e97bc530ff0fd5a4374f355d6992d?method=download&shareKey=7e30d2aa9b3ceb09f8679317ebb93d3e" width = "843" height = "228" alt="dbscan-paper" align=center /></p>
+</div>
+<p>我在翻阅 DBSCAN 相关论文时发现了一件趣事。在 <a
+target="_blank" rel="noopener" href="https://sigmod.org/">SIGMOD</a> 2015 上，有一篇名为 <a
+target="_blank" rel="noopener" href="http://www.cse.cuhk.edu.hk/~taoyf/paper/sigmod15-dbscan.pdf">DBSCAN
+Revisited: Mis-Claim, Un-Fixability, and Approximation</a>
+的论文获得了当年的最佳论文奖。这篇文章主要讲 DBSCAN 算法复杂度并不像 96
+版论文说的那样为 <span class="math inline">\(O(n\log{n})\)</span>,
+在高纬数据集中，实际需要 <span class="math inline">\(O(n^2)\)</span>
+的复杂度，n 是样本数量。然后他们改进了 DBSCAN 算法，称为 <span
+class="math inline">\(\rho-approximate\)</span>
+DBSCAN，改进后，算法复杂度可以降低到 <span
+class="math inline">\(O(n)\)</span>，并且确信 <span
+class="math inline">\(\rho-approximate\)</span> DBSCAN
+可以在工业上替换掉 DBSCAN。DBSCAN
+的原四位作者在看了上述文章后，发现文章已经被 SIGMOD
+2015接收，觉得有必要指出文中的夸大和误导，而且文章中描述的方法仅适用欧几里得距离并且没有选择合适的
+<span class="math inline">\(\epsilon\)</span> 参数。于是发表了一篇 <a
+target="_blank" rel="noopener" href="https://www.ccs.neu.edu/home/vip/teach/DMcourse/2_cluster_EM_mixt/notes_slides/revisitofrevisitDBSCAN.pdf">DBSCAN
+Revisited, Revisited:Why and How You Should (Still) Use DBSCAN</a>
+的文章作为对上述文章的回应:joy:。</p>
+<h3 id="clustering-简介">Clustering 简介</h3>
+<p>Clustering
+聚类算法是无监督学习的一种。聚类算法会将数据集划分成指定的群组或簇，让相同群组内的数据成员在指定的一些维度上具有相似属性(相近性)，不同群组的数据成员在同样的维度上属性不同。换句话说，聚类算法会按照维度相近程度将数据集划分成不同的簇。</p>
+<p>Clustering 算法目前有 5 种常见类别： - Connectivity-based
+clustering（基于连通性的聚类）：基于整个数据集对象间距离计算的聚类方法，近邻点比更远距离的点更具有相关性。
+- Centroid-based
+clustering（基于质心的聚类）：计算每个簇的中心向量，以此来确定每个样本所属的类别
+- Distribution-based
+clustering（基于分布的聚类）：同一簇内的数据点满足相同的分布（正态分布或高斯分布）
+- Density-based
+clustering（基于密度的聚类）：在数据空间中，搜索不同数据密度的空间区域，然后将不同密度的区域分开，同一区域内的数据点归为同一个簇
+- Grid-based
+clustering（基于网格的聚类）：通过扫描数据集，将数据空间根据所选属性划分为数个网格单元，并将样本点划分到相应的单元中，最后根据单元的密度形成簇，这种方法在低维空间中比较有效，而且只需通过扫描一遍数据集，就可以得到每个单元格中样本点的分布情况</p>
+<h3 id="dbscan-思想与实现">DBSCAN 思想与实现</h3>
+<h4 id="主要思想">主要思想</h4>
+<p>密度聚类算法的核心思想是如何描述数据集的密度。DBSCAN 使用一组参数
+<span class="math inline">\((\epsilon, minPts)\)</span>
+来描述密度。<span class="math inline">\(\epsilon\)</span>
+是选定点的空间半径阈值，<span class="math inline">\(minPts\)</span>
+是半径 <span class="math inline">\(\epsilon\)</span>
+下最小包含的样本数阈值。这种根据数据点近邻数来定义空间密度的方式，无需事先指定簇的数量，并且可以找出空间中形状不规则的簇。</p>
+<p>假设需要对一组空间数据集 D 进行聚类。定义参数 <span
+class="math inline">\(\epsilon\)</span>
+为样本点的半径，半径内的其他样本点为该点的邻域点。在 DBSCAN
+算法中，所有样本点被分类为三种：核心点，可达点，离群点（噪声）:</p>
+<ul>
+<li>点 p 满足核心点的条件：在 <span
+class="math inline">\(\epsilon\)</span> 半径内，包含 p 在内，至少要满足
+<span class="math inline">\(minPts\)</span>
+个样本点，这些样本点称为近邻点, 此时 p 称为核心点。表达式： <span
+class="math inline">\(N_{Eps}(p) = \lbrace q\in{D}|dist(p,q)\leq\epsilon
+\rbrace\)</span></li>
+<li>点 q 从点 p 密度直达的条件：点 q 在核心点 p 的可达半径 <span
+class="math inline">\(\epsilon\)</span> 内，此时称点 q 从核心点 p
+直接密度可达</li>
+<li>点 q 从点 p 密度可达的条件：在路径 <span
+class="math inline">\(p_1\)</span>,...,<span
+class="math inline">\(p_n\)</span> 中，对于每个 <span
+class="math inline">\(p_{i+1}\)</span> 都是从 <span
+class="math inline">\(p_i\)</span> 直接可达的话，就表明除了点
+q，初始点和路径上的所有点都是核心点。q 点是簇的边界，可以称为边界点</li>
+<li>所有其他从核心点不可达的样本点称为离群点或噪声</li>
+</ul>
+<p>设定 p 为核心点，则 p
+与所有可达点(包含直接密度可达和间接密度可达，包含核心点与非核心点)构成一个簇。每个簇包含至少一个核心点；非核心点也可以构成簇内成员，位于簇的边界。</p>
+<div data-align="center">
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/DBSCAN-Illustration.svg/1200px-DBSCAN-Illustration.svg.png" width = "600" height = "432" alt="DBSCAN-Illustration.svg" align=center /></p>
+</div>
+<p>如上图，设定 <span class="math inline">\(minPts\)</span> 为
+4，红圈内的所有红点为核心点，因为在半径 <span
+class="math inline">\(\epsilon\)</span> 内，他们的邻域点 &gt;= 4，满足
+<span class="math inline">\(minPts\)</span> 条件；B，C
+两个黄色点为边界点，从核心点可以到达 B，C两点，但从
+B，C无法再到达其他样本点；没有任何点可以在满足 <span
+class="math inline">\(\epsilon\)</span> 和 <span
+class="math inline">\(minPts\)</span> 两个条件下到达点 N，所以点 N
+被判定为离群点或噪声。</p>
+<p>DBSCAN
+中路径可达是不具备对称性的，从核心点可以到达非核心点，但从非核心点不可到达任何其他点。但
+DBSCAN 中定义的密度连接(density-connected)具有对称性：如果 p 和 q 均从 o
+点可达，则称 p 和 q 是密度连接的。</p>
+<p>簇满足两个属性： - 簇内所有点都是互相密度连接的 -
+如果一个点从一个簇内的其中一个点可以密度可达，则这个点也属于这个簇</p>
+<p>通过以上，我们可以理解 DBSCAN
+中基于密度和具有噪声这两个关键词的含义。基于密度：用空间半径 <span
+class="math inline">\(\epsilon\)</span> 和最小邻域点个数 <span
+class="math inline">\(minPts\)</span>(包含样本点自身)
+来定义空间密度；具有噪声：并不是每个样本点都会被划分到簇中，那些不满足密度定义的点称为离群点或噪声</p>
+<h4 id="实现步骤">实现步骤</h4>
+<p><strong>原始算法</strong></p>
+<p>算法原理比较简单，原始算法伪码表示： <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">RangeQuery(DB, distFunc, Q, eps) &#123;</span><br><span class="line">    Neighbors N := empty list</span><br><span class="line">    <span class="keyword">for</span> each point P <span class="keyword">in</span> database DB &#123;                      <span class="regexp">/* Scan all points in the database */</span></span><br><span class="line">        <span class="keyword">if</span> distFunc(Q, P) ≤ eps then &#123;                     <span class="regexp">/* Compute distance and check epsilon */</span></span><br><span class="line">            N := N ∪ &#123;P&#125;                                   <span class="regexp">/* Add to result */</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return N</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">DBSCAN(DB, distFunc, eps, minPts) &#123;</span><br><span class="line">    C := <span class="number">0</span>                                                  <span class="regexp">/* Cluster counter */</span></span><br><span class="line">    <span class="keyword">for</span> each point P <span class="keyword">in</span> database DB &#123;</span><br><span class="line">        <span class="keyword">if</span> label(P) ≠ undefined then <span class="keyword">continue</span>               <span class="regexp">/* Previously processed in inner loop */</span></span><br><span class="line">        Neighbors N := RangeQuery(DB, distFunc, P, eps)     <span class="regexp">/* Find neighbors */</span></span><br><span class="line">        <span class="keyword">if</span> |N| &lt; minPts then &#123;                              <span class="regexp">/* Density check */</span></span><br><span class="line">            label(P) := Noise                               <span class="regexp">/* Label as Noise */</span></span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        &#125;</span><br><span class="line">        C := C + <span class="number">1</span>                                          <span class="regexp">/* next cluster label */</span></span><br><span class="line">        label(P) := C                                       <span class="regexp">/* Label initial point */</span></span><br><span class="line">        SeedSet S := N \ &#123;P&#125;                                <span class="regexp">/* Neighbors to expand */</span></span><br><span class="line">        <span class="keyword">for</span> each point Q <span class="keyword">in</span> S &#123;                             <span class="regexp">/* Process every seed point Q */</span></span><br><span class="line">            <span class="keyword">if</span> label(Q) = Noise then label(Q) := C          <span class="regexp">/* Change Noise to border point */</span></span><br><span class="line">            <span class="keyword">if</span> label(Q) ≠ undefined then <span class="keyword">continue</span>           <span class="regexp">/* Previously processed (e.g., border point) */</span></span><br><span class="line">            label(Q) := C                                   <span class="regexp">/* Label neighbor */</span></span><br><span class="line">            Neighbors N := RangeQuery(DB, distFunc, Q, eps) <span class="regexp">/* Find neighbors */</span></span><br><span class="line">            <span class="keyword">if</span> |N| ≥ minPts then &#123;                          <span class="regexp">/* Density check (if Q is a core point) */</span></span><br><span class="line">                S := S ∪ N                                  <span class="regexp">/* Add new neighbors to seed set */</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>DBSCAN 只需要两个基本参数：<span class="math inline">\((\epsilon,
+minPts)\)</span>，基本步骤为： - 从数据集 DB
+中随机选择一个之前从未标记过的样本点 P，计算 P 所有满足半径 <span
+class="math inline">\(\epsilon\)</span> 条件下的近邻 N - 如果 P 的近邻数
+<span class="math inline">\(&lt; minPts\)</span>，则将 P 标记为噪音
+noise，返回步骤 1 重新选取样本点 - 如果 P 的近邻数 <span
+class="math inline">\(\geq minPts\)</span>，则将 P 标记为一个新的簇 C -
+对 P 的所有近邻进行展开 S，依次遍历近邻点 Q。如果 Q 之前被标记为
+noise，则重置标记为 C；如果 Q
+之前被标记为其他簇，则跳过取下一个近邻点；其他情况 Q 被标记为簇 C，并对
+Q 继续计算近邻，如果近邻数 <span class="math inline">\(\geq
+minPts\)</span>，则将近邻添加到 S
+中，加入遍历流程。这样，知道达到极限条件，C 不在增长。 -
+从步骤1继续重复</p>
+<p><strong>简要算法</strong></p>
+<p>可以将聚类过程简要为以下三步骤： - 找到数据集 DB
+中每个点的近邻点，并且根据 <span class="math inline">\(minPts\)</span>
+标记出所有核心点 -
+忽视所有非核心点，利用图的连通算法，将所有核心点邻边相连成不同部分，组成不同簇
+- 对于剩下的非核心点，如果满足与相邻簇距离 <span
+class="math inline">\(\leq \epsilon\)</span>
+则标记为对应簇；否则，标记为噪音</p>
+<p>原始算法只需要对数据集 DB
+整体遍历一次，相比较简要算法，原始算法更加节省内存。</p>
+<h4 id="dbscan-过程动图">DBSCAN 过程动图</h4>
+<p>限定 <span class="math inline">\((\epsilon, minPts)\)</span>
+后，DBSCAN 聚类动图过程，<a
+target="_blank" rel="noopener" href="https://www.naftaliharris.com/blog/visualizing-dbscan-clustering/">visualizing-dbscan</a>：</p>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB32862afc5329a47dc28770f1219aeb4a?method=download&shareKey=c601c9d1fb18084595d909053f5e6a23" width = "599" height = "462" alt="dbscan-01" align=center /></p>
+</div>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBa402242036e6306d6c20959cc9560b6f?method=download&shareKey=e8700161cb0fe5adc02d7b41bda8428e" width = "600" height = "458" alt="dbscan-02" align=center /></p>
+</div>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB4bf97ff27ce39b681bceff47b2d73e52?method=download&shareKey=e7461d164d8503dbcd91ea11a652490d" width = "600" height = "454" alt="dbscan-03" align=center /></p>
+</div>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB4268cabc7b5a7bbaeb37011a2c63abed?method=download&shareKey=6d67afd970b8a48a40968c66f24cf904" width = "599" height = "501" alt="dbscan-04" align=center /></p>
+</div>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB042c2b9cd9578e3f1cf75a86f1b56e63?method=download&shareKey=9f51c104bd621e145d10a3cb80136594" width = "599" height = "499" alt="dbscan-05" align=center /></p>
+</div>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB20f977e3105ccebb10cf95f305a79185?method=download&shareKey=2e57f7b824c51d13b2f7ce21d6c3837c" width = "599" height = "484" alt="dbscan-06" align=center /></p>
+</div>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB9f8cb86825b415f2667c69f0dbd2d07b?method=download&shareKey=58ff6a50b1e6aa84f021249924b2766e" width = "600" height = "451" alt="dbscan-07" align=center /></p>
+</div>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEBde597f43af0fed352abb62b77fd48239?method=download&shareKey=cdee88f782aa7d0f9f036c4e395eccfb" width = "600" height = "467" alt="dbscan-08" align=center /></p>
+</div>
+<h3 id="算法优劣">算法优劣</h3>
+<h4 id="优点">优点</h4>
+<ul>
+<li>DBSCAN 是无监督聚类算法，不需要标记样本分类</li>
+<li>相较于其他聚类算法 DBSCAN 不需要事先指定簇数量
+k，完全有密度决定最终的簇数量</li>
+<li>DBSCAN
+可以处理噪声数据，对异常点具有比较好的鲁棒性，另一方面，这些噪音点也可以被认为是异常点</li>
+<li>DBSCAN 只需要两个参数 <span class="math inline">\((\epsilon,
+minPts)\)</span>，并且对簇内样本点次序不敏感</li>
+<li>DBSCAN
+能够发现任意大小和形状的簇，并且具有较强的抗噪性，不受噪声和离群点的影响</li>
+<li>DBSCAN
+不需要对数据有特殊的专家知识，但对数据有专家经验的情况下，可以更好的设置合适的
+<span class="math inline">\((\epsilon, minPts)\)</span></li>
+</ul>
+<h4 id="缺点">缺点</h4>
+<ul>
+<li>DBSCAN
+并不是确定性算法，因为数据处理过程具有随机性，对同样的样本数据多次做
+DBSCAN
+运算，得到的结果不一定完全相同，对于边界非核心点，在前后两次处理后，可能会被划分到不同的簇。但核心点和噪声，多次处理，结果是相同的。</li>
+<li>DBSCAN 的算法复杂度依赖空间样本点的距离计算 <span
+class="math inline">\(dist(p,q)\)</span>，一般常用欧几里得距离。当计算是否是核心点时，需要扫描整个数据集查找满足参数的样本点，在高纬数据下，更加提升计算的复杂度(<a
+target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Curse_of_dimensionality#Data_Mining">Curse
+of dimensionality</a>)。采用欧氏距离的算法大多都会有这个问题。</li>
+<li>DBSCAN
+不能处理所有的聚类问题，这里对簇的定义是基于密度的，但在一些分类场景下，我们对簇的定义可能不单单从密度去考量，簇内成员的空间距离可能会很大，这时候就较难选取合适的参数。</li>
+<li>DBSCAN
+在设置参数时就假设了最终所有簇的密度都是相似的，但在实际中，不同簇，密度可能不同</li>
+<li>DBSCAN 会合并明显分离的簇，只要簇满足密度条件就会被合并</li>
+</ul>
+<p>DBSCAN
+这种基于密度的聚类方法在使用的时候有个前提，样本的类别是由样本的分布密度决定的，同一簇下的样本，他们在空间分布下更为紧密。</p>
+<h3 id="scikit-learning-实例">scikit-learning 实例</h3>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> sklearn.cluster import DBSCAN</span><br><span class="line"><span class="keyword">from</span> sklearn import metrics</span><br><span class="line"><span class="keyword">from</span> sklearn.datasets import make_blobs</span><br><span class="line"><span class="keyword">from</span> sklearn.preprocessing import StandardScaler</span><br><span class="line"></span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line"></span><br><span class="line">    centers = [[1, 1], [-1, -1], [1, -1]]</span><br><span class="line">    X, labels_true = make_blobs(<span class="attribute">n_samples</span>=800, <span class="attribute">centers</span>=centers, <span class="attribute">cluster_std</span>=0.4, <span class="attribute">random_state</span>=0)</span><br><span class="line"></span><br><span class="line">    # 特征去均值和归一化，计算距离类的算法经常要这样预处理，这样在计算距离时更高效，</span><br><span class="line">    X = StandardScaler().fit_transform(X)</span><br><span class="line"></span><br><span class="line">    db = DBSCAN(<span class="attribute">eps</span>=0.1, <span class="attribute">min_samples</span>=4).fit(X)</span><br><span class="line"></span><br><span class="line">    # db.labels_ 是对所有的数据样本运算后打的 cluster 标签，-1 表示 noise</span><br><span class="line">    # db.core_sample_indices_ 是核心点的 index 数组</span><br><span class="line"></span><br><span class="line">    # 新建一个置0的同样数组，标记核心点</span><br><span class="line">    core_samples_mask = np.zeros_like(db.labels_, <span class="attribute">dtype</span>=bool)</span><br><span class="line">    core_samples_mask[db.core_sample_indices_] = <span class="literal">True</span></span><br><span class="line">    labels = db.labels_</span><br><span class="line"></span><br><span class="line">    # 簇数量</span><br><span class="line">    n_clusters_ = len(<span class="builtin-name">set</span>(labels)) - (1 <span class="keyword">if</span> -1 <span class="keyword">in</span> labels <span class="keyword">else</span> 0)</span><br><span class="line">    # 噪音数量</span><br><span class="line">    n_noise_ = list(labels).count(-1)</span><br><span class="line"></span><br><span class="line">    <span class="builtin-name">print</span>(<span class="string">&quot;Estimated number of clusters: %d&quot;</span> % n_clusters_)</span><br><span class="line">    <span class="builtin-name">print</span>(<span class="string">&quot;Estimated number of noise points: %d&quot;</span> % n_noise_)</span><br><span class="line">    <span class="builtin-name">print</span>(<span class="string">&quot;Homogeneity: %0.3f&quot;</span> % metrics.homogeneity_score(labels_true, labels))</span><br><span class="line">    <span class="builtin-name">print</span>(<span class="string">&quot;Completeness: %0.3f&quot;</span> % metrics.completeness_score(labels_true, labels))</span><br><span class="line">    <span class="builtin-name">print</span>(<span class="string">&quot;V-measure: %0.3f&quot;</span> % metrics.v_measure_score(labels_true, labels))</span><br><span class="line">    <span class="builtin-name">print</span>(<span class="string">&quot;Adjusted Rand Index: %0.3f&quot;</span> % metrics.adjusted_rand_score(labels_true, labels))</span><br><span class="line">    <span class="builtin-name">print</span>(</span><br><span class="line">        <span class="string">&quot;Adjusted Mutual Information: %0.3f&quot;</span></span><br><span class="line">        % metrics.adjusted_mutual_info_score(labels_true, labels)</span><br><span class="line">    )</span><br><span class="line">    <span class="builtin-name">print</span>(<span class="string">&quot;Silhouette Coefficient: %0.3f&quot;</span> % metrics.silhouette_score(X, labels))</span><br><span class="line"></span><br><span class="line">    unique_labels = <span class="builtin-name">set</span>(labels)</span><br><span class="line">    colors = [plt.cm.Spectral(each) <span class="keyword">for</span> each <span class="keyword">in</span> np.linspace(0, 1, len(unique_labels))]</span><br><span class="line">    <span class="keyword">for</span> k, col <span class="keyword">in</span> zip(unique_labels, colors):</span><br><span class="line">        <span class="keyword">if</span> k == -1:</span><br><span class="line">            # Black used <span class="keyword">for</span> noise.</span><br><span class="line">            col = [0, 0, 0, 1]</span><br><span class="line"></span><br><span class="line">        class_member_mask = labels == k</span><br><span class="line"></span><br><span class="line">        xy = X[class_member_mask &amp; core_samples_mask]</span><br><span class="line">        plt.plot(</span><br><span class="line">            xy[:, 0],</span><br><span class="line">            xy[:, 1],</span><br><span class="line">            <span class="string">&quot;o&quot;</span>,</span><br><span class="line">            <span class="attribute">markerfacecolor</span>=tuple(col),</span><br><span class="line">            <span class="attribute">markeredgecolor</span>=<span class="string">&quot;k&quot;</span>,</span><br><span class="line">            <span class="attribute">markersize</span>=14,</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        xy = X[class_member_mask &amp; ~core_samples_mask]</span><br><span class="line">        plt.plot(</span><br><span class="line">            xy[:, 0],</span><br><span class="line">            xy[:, 1],</span><br><span class="line">            <span class="string">&quot;o&quot;</span>,</span><br><span class="line">            <span class="attribute">markerfacecolor</span>=tuple(col),</span><br><span class="line">            <span class="attribute">markeredgecolor</span>=<span class="string">&quot;k&quot;</span>,</span><br><span class="line">            <span class="attribute">markersize</span>=6,</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    plt.title(<span class="string">&quot;Estimated number of clusters: %d&quot;</span> % n_clusters_)</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br><span class="line">    pass</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<div data-align="center">
+<p><img src="https://note.youdao.com/yws/api/personal/file/WEB3711df65cd167cd5f632f101f45598c1?method=download&shareKey=ad4748eeed4941f66b2064ee53d68516" width = "640" height = "480" alt="dbscan-example-01" align=center /></p>
+</div>
+<h3 id="参考">参考</h3>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.kdd.org/">kdd</a></li>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/DBSCAN">DBSCAN WIKI</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.aaai.org/Papers/KDD/1996/KDD96-037.pdf">A
+density-based algorithm for discovering clusters in large spatial
+databases with noise</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://www.ccs.neu.edu/home/vip/teach/DMcourse/2_cluster_EM_mixt/notes_slides/revisitofrevisitDBSCAN.pdf">DBSCAN
+Revisited, Revisited:Why and How You Should (Still) Use DBSCAN</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://www.naftaliharris.com/blog/visualizing-dbscan-clustering/">DBSCAN
+算法可视化</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://blog.csdn.net/huacha__/article/details/81094891">DBSCAN聚类算法——机器学习（理论+图解+python代码）</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://scikit-learn.org/stable/auto_examples/cluster/plot_dbscan.html#sphx-glr-auto-examples-cluster-plot-dbscan-py">Demo
+of DBSCAN clustering algorithm</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ml/" rel="tag"># ml</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2021/11/16/ml/01-anomaly-detection-algo-iforest/" rel="next" title="iForest异常检测算法">
+                  <i class="fa fa-chevron-left"></i> iForest异常检测算法
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#clustering-%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">Clustering 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dbscan-%E6%80%9D%E6%83%B3%E4%B8%8E%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">DBSCAN 思想与实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E6%80%9D%E6%83%B3"><span class="nav-number">3.1.</span> <span class="nav-text">主要思想</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.2.</span> <span class="nav-text">实现步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dbscan-%E8%BF%87%E7%A8%8B%E5%8A%A8%E5%9B%BE"><span class="nav-number">3.3.</span> <span class="nav-text">DBSCAN 过程动图</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E4%BC%98%E5%8A%A3"><span class="nav-number">4.</span> <span class="nav-text">算法优劣</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">4.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">4.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#scikit-learning-%E5%AE%9E%E4%BE%8B"><span class="nav-number">5.</span> <span class="nav-text">scikit-learning 实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="geneblue"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">geneblue</p>
+  <div class="site-description" itemprop="description">Personal Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">40</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GeneBlue" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;GeneBlue" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:geneblue.mail@gmail.com" title="E-Mail &amp;rarr; mailto:geneblue.mail@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">geneblue</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+
+  
+
+</body>
+</html>
