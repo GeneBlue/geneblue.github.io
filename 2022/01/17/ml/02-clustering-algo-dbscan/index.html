@@ -70,7 +70,7 @@
 <meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEBde597f43af0fed352abb62b77fd48239?method=download&shareKey=cdee88f782aa7d0f9f036c4e395eccfb">
 <meta property="og:image" content="https://note.youdao.com/yws/api/personal/file/WEB3711df65cd167cd5f632f101f45598c1?method=download&shareKey=ad4748eeed4941f66b2064ee53d68516">
 <meta property="article:published_time" content="2022-01-17T04:02:08.000Z">
-<meta property="article:modified_time" content="2022-03-14T08:28:59.341Z">
+<meta property="article:modified_time" content="2022-03-14T08:39:32.929Z">
 <meta property="article:author" content="geneblue">
 <meta property="article:tag" content="ml">
 <meta name="twitter:card" content="summary">
@@ -228,7 +228,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-03-14 16:28:59" itemprop="dateModified" datetime="2022-03-14T16:28:59+08:00">2022-03-14</time>
+                <time title="Modified: 2022-03-14 16:39:32" itemprop="dateModified" datetime="2022-03-14T16:39:32+08:00">2022-03-14</time>
               </span>
 
           
@@ -346,8 +346,11 @@ class="math inline">\(minPts\)</span> 两个条件下到达点 N，所以点 N
 中路径可达是不具备对称性的，从核心点可以到达非核心点，但从非核心点不可到达任何其他点。但
 DBSCAN 中定义的密度连接(density-connected)具有对称性：如果 p 和 q 均从 o
 点可达，则称 p 和 q 是密度连接的。</p>
-<p>簇满足两个属性： - 簇内所有点都是互相密度连接的 -
-如果一个点从一个簇内的其中一个点可以密度可达，则这个点也属于这个簇</p>
+<p>簇满足两个属性：</p>
+<ul>
+<li>簇内所有点都是互相密度连接的</li>
+<li>如果一个点从一个簇内的其中一个点可以密度可达，则这个点也属于这个簇</li>
+</ul>
 <p>通过以上，我们可以理解 DBSCAN
 中基于密度和具有噪声这两个关键词的含义。基于密度：用空间半径 <span
 class="math inline">\(\epsilon\)</span> 和最小邻域点个数 <span
